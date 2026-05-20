@@ -57,7 +57,7 @@ function createCard(item, type) {
 }
 
 /* =========================
-   SCROLL SNAP
+   CENTER SNAP + ACTIVE UX
 ========================= */
 
 export function initScrollSnap() {
@@ -72,14 +72,44 @@ export function initScrollSnap() {
 
     let timer;
 
+    const updateActive = () => {
+
+      const cards = slider.querySelectorAll(".item-card");
+      const rect = slider.getBoundingClientRect();
+
+      let closest = null;
+      let min = Infinity;
+
+      cards.forEach(card => {
+
+        const r = card.getBoundingClientRect();
+
+        const center = r.left + r.width / 2;
+        const screen = rect.left + rect.width / 2;
+
+        const dist = Math.abs(center - screen);
+
+        if (dist < min) {
+          min = dist;
+          closest = card;
+        }
+      });
+
+      cards.forEach(c => c.classList.remove("active"));
+      if (closest) closest.classList.add("active");
+    };
+
     slider.addEventListener("scroll", () => {
 
       clearTimeout(timer);
+
+      updateActive();
 
       timer = setTimeout(() => {
         snapToCenter(slider);
       }, 120);
     });
+
   });
 }
 
