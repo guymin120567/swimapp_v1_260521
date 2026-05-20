@@ -1,176 +1,122 @@
-import {
-  renderApp
-} from "../ui/render.js";
+/* =========================
+   RENDER
+========================= */
 
-import {
-  renderPreview
-} from "../ui/preview.js";
+export function renderSwimList(state) {
 
-import {
-  renderSwimList,
-  renderCapList,
-  initScrollSnap
-} from "../ui/cards.js";
+  const root = document.getElementById("swimList");
+  if (!root) return;
 
-import {
-  triggerHighlight
-} from "../ui/effects.js";
-
-import {
-  renderInputSection
-} from "../ui/input.js";
-
-import {
-  loadDB,
-  saveDB
-} from "../../db/database.js";
-
-import {
-  defaultState,
-  getState,
-  setInternalState
-} from "../state/state.js";
-
-import {
-  fileToBase64
-} from "../utils/image.js";
-
-import {
-  startRoulette
-} from "./roulette.js";
-
-export function initController() {
-
-  async function boot() {
-
-    const saved = await loadDB();
-
-    const mergedState = {
-      ...structuredClone(defaultState),
-      ...(saved || {})
-    };
-
-    setInternalState(mergedState);
-
-    renderApp(getState());
-
-    bindGlobal();
-
-    console.log("APP BOOT SUCCESS");
-
-    // ⭐ 스냅은 여기서만 실행 (중요)
-    initScrollSnap();
+  if (!state.swimsuits.length) {
+    root.innerHTML = `<div class="empty-card">등록된 수영복 없음</div>`;
+    return;
   }
 
-  async function updateState(patch) {
+  root.innerHTML = state.swimsuits
+    .map(item => createCard(item, "swimsuit"))
+    .join("");
+}
 
-    const next = {
-      ...getState(),
-      ...patch
-    };
+export function renderCapList(state) {
 
-    setInternalState(next);
+  const root = document.getElementById("capList");
+  if (!root) return;
 
-    await saveDB(next);
-
-    renderPreview(next);
-    renderSwimList(next);
-    renderCapList(next);
-
-    // 재렌더 후 스냅 유지
-    initScrollSnap();
+  if (!state.caps.length) {
+    root.innerHTML = `<div class="empty-card">등록된 수모 없음</div>`;
+    return;
   }
 
-  async function addByCategory(type, text, img) {
+  root.innerHTML = state.caps
+    .map(item => createCard(item, "cap"))
+    .join("");
+}
 
-    const state = getState();
+function createCard(item, type) {
 
-    const item = {
-      id: Date.now(),
-      text,
-      img
-    };
+  return `
+    <div class="item-card">
+      <div class="card-inner">
 
-    if (type === "swimsuit") {
-      await updateState({
-        swimsuits: [...state.swimsuits, item]
-      });
+        ${
+          item.img
+            ? `<img src="${item.img}" class="card-image"/>`
+            : `<div class="card-placeholder">${type === "swimsuit" ? "🩲" : "🧢"}</div>`
+        }
+
+        <div class="card-overlay">
+          <div class="card-title">${item.text}</div>
+
+          <button
+            class="delete-btn"
+            onclick="window.app.removeItem('${type}', ${item.id})"
+          >
+            ×
+          </button>
+        </div>
+
+      </div>
+    </div>
+  `;
+}
+
+/* =========================
+   SCROLL SNAP
+========================= */
+
+export function initScrollSnap() {
+
+  const sliders = document.querySelectorAll(".slider");
+  if (!sliders.length) return;
+
+  sliders.forEach(slider => {
+
+    if (slider.dataset.snapInit) return;
+    slider.dataset.snapInit = "true";
+
+    let timer;
+
+    slider.addEventListener("scroll", () => {
+
+      clearTimeout(timer);
+
+      timer = setTimeout(() => {
+        snapToCenter(slider);
+      }, 120);
+    });
+  });
+}
+
+function snapToCenter(slider) {
+
+  const cards = slider.querySelectorAll(".item-card");
+  if (!cards.length) return;
+
+  const sliderRect = slider.getBoundingClientRect();
+
+  let closest = null;
+  let min = Infinity;
+
+  cards.forEach(card => {
+
+    const rect = card.getBoundingClientRect();
+
+    const center = rect.left + rect.width / 2;
+    const screenCenter = sliderRect.left + sliderRect.width / 2;
+
+    const dist = Math.abs(center - screenCenter);
+
+    if (dist < min) {
+      min = dist;
+      closest = card;
     }
+  });
 
-    if (type === "cap") {
-      await updateState({
-        caps: [...state.caps, item]
-      });
-    }
-  }
-
-  async function removeItem(type, id) {
-
-    const state = getState();
-
-    if (type === "swimsuit") {
-      await updateState({
-        swimsuits: state.swimsuits.filter(i => i.id !== id)
-      });
-    }
-
-    if (type === "cap") {
-      await updateState({
-        caps: state.caps.filter(i => i.id !== id)
-      });
-    }
-  }
-
-  async function addItemFromUI(type) {
-
-    const textInput = document.getElementById("itemText");
-    const fileInput = document.getElementById("itemImage");
-
-    const text = textInput?.value?.trim();
-    if (!text) return;
-
-    const file = fileInput?.files?.[0];
-
-    let img = null;
-
-    if (file) {
-      img = await fileToBase64(file);
-    }
-
-    await addByCategory(type, text, img);
-
-    textInput.value = "";
-    fileInput.value = "";
-  }
-
-  async function submitSelectedItem() {
-
-    const typeSelect = document.getElementById("itemType");
-
-    const selectedType = typeSelect?.value || "swimsuit";
-
-    await addItemFromUI(selectedType);
-  }
-
-  function spinAll() {
-
-    startRoulette({
-      state: getState(),
-      updateState,
-      triggerHighlight
+  if (closest) {
+    closest.scrollIntoView({
+      behavior: "smooth",
+      inline: "center",
+      block: "nearest"
     });
   }
-
-  function bindGlobal() {
-
-    window.app = {
-      spinAll,
-      removeItem,
-      addItemFromUI,
-      submitSelectedItem,
-      getState
-    };
-  }
-
-  return { boot };
 }
