@@ -20,6 +20,4 @@ export function initController() {
     // ⭐⭐⭐ 여기 추가 (핵심)
     initScrollSnap();
   }
-
-  ...
 }
