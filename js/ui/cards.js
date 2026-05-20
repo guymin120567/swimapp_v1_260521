@@ -47,7 +47,6 @@ function createCard(item, type) {
             onclick="window.app.removeItem('${type}', ${item.id})">
             ×
           </button>
-
         </div>
 
       </div>
@@ -55,9 +54,7 @@ function createCard(item, type) {
   `;
 }
 
-/* =========================
-   CENTER SNAP + ACTIVE UX
-========================= */
+/* scroll snap 그대로 유지 */
 
 export function initScrollSnap() {
 
@@ -71,45 +68,14 @@ export function initScrollSnap() {
 
     let timer;
 
-    const updateActive = () => {
-
-      const cards = slider.querySelectorAll(".item-card");
-      const sliderRect = slider.getBoundingClientRect();
-
-      let closest = null;
-      let min = Infinity;
-
-      cards.forEach(card => {
-
-        const rect = card.getBoundingClientRect();
-
-        const center = rect.left + rect.width / 2;
-        const screen = sliderRect.left + sliderRect.width / 2;
-
-        const dist = Math.abs(center - screen);
-
-        if (dist < min) {
-          min = dist;
-          closest = card;
-        }
-      });
-
-      cards.forEach(c => c.classList.remove("active"));
-      if (closest) closest.classList.add("active");
-    };
-
     slider.addEventListener("scroll", () => {
 
       clearTimeout(timer);
 
-      updateActive();
-
       timer = setTimeout(() => {
         snapToCenter(slider);
       }, 120);
-
     });
-
   });
 }
 
@@ -118,17 +84,17 @@ function snapToCenter(slider) {
   const cards = slider.querySelectorAll(".item-card");
   if (!cards.length) return;
 
-  const sliderRect = slider.getBoundingClientRect();
+  const rect = slider.getBoundingClientRect();
 
   let closest = null;
   let min = Infinity;
 
   cards.forEach(card => {
 
-    const rect = card.getBoundingClientRect();
+    const r = card.getBoundingClientRect();
 
-    const center = rect.left + rect.width / 2;
-    const screen = sliderRect.left + sliderRect.width / 2;
+    const center = r.left + r.width / 2;
+    const screen = rect.left + rect.width / 2;
 
     const dist = Math.abs(center - screen);
 
