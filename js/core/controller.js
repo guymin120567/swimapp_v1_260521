@@ -43,10 +43,8 @@ export function initController() {
 
   async function boot() {
 
-    // 1. DB 로드
     const saved = await loadDB();
 
-    // 2. state merge
     const mergedState = {
       ...structuredClone(defaultState),
       ...(saved || {})
@@ -54,16 +52,13 @@ export function initController() {
 
     setInternalState(mergedState);
 
-    // 3. UI 최초 렌더
     renderApp(getState());
 
-    // 4. 전역 바인딩
     bindGlobal();
 
-    // 5. 로그
     console.log("APP BOOT SUCCESS");
 
-    // 6. ⭐ UX 초기화 (자동 스냅)
+    // ⭐ 스냅은 여기서만 실행 (중요)
     initScrollSnap();
   }
 
@@ -82,7 +77,7 @@ export function initController() {
     renderSwimList(next);
     renderCapList(next);
 
-    // ⭐ 중요: render 이후에도 스냅 유지
+    // 재렌더 후 스냅 유지
     initScrollSnap();
   }
 
@@ -97,22 +92,14 @@ export function initController() {
     };
 
     if (type === "swimsuit") {
-
       await updateState({
-        swimsuits: [
-          ...state.swimsuits,
-          item
-        ]
+        swimsuits: [...state.swimsuits, item]
       });
     }
 
     if (type === "cap") {
-
       await updateState({
-        caps: [
-          ...state.caps,
-          item
-        ]
+        caps: [...state.caps, item]
       });
     }
   }
@@ -122,20 +109,14 @@ export function initController() {
     const state = getState();
 
     if (type === "swimsuit") {
-
       await updateState({
-        swimsuits: state.swimsuits.filter(
-          item => item.id !== id
-        )
+        swimsuits: state.swimsuits.filter(i => i.id !== id)
       });
     }
 
     if (type === "cap") {
-
       await updateState({
-        caps: state.caps.filter(
-          item => item.id !== id
-        )
+        caps: state.caps.filter(i => i.id !== id)
       });
     }
   }
@@ -146,7 +127,6 @@ export function initController() {
     const fileInput = document.getElementById("itemImage");
 
     const text = textInput?.value?.trim();
-
     if (!text) return;
 
     const file = fileInput?.files?.[0];
@@ -167,8 +147,7 @@ export function initController() {
 
     const typeSelect = document.getElementById("itemType");
 
-    const selectedType =
-      typeSelect?.value || "swimsuit";
+    const selectedType = typeSelect?.value || "swimsuit";
 
     await addItemFromUI(selectedType);
   }
@@ -185,7 +164,6 @@ export function initController() {
   function bindGlobal() {
 
     window.app = {
-
       spinAll,
       removeItem,
       addItemFromUI,
@@ -194,7 +172,5 @@ export function initController() {
     };
   }
 
-  return {
-    boot
-  };
+  return { boot };
 }
