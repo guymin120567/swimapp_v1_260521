@@ -1,151 +1,163 @@
-html, body {
-  margin: 0;
-  padding: 0;
-  background: #0b1b2b;
-  color: white;
-  font-family: -apple-system, sans-serif;
-  overflow-x: hidden;
+.slider{
+  display:flex;
+  overflow-x:auto;
+  gap:0;
+  padding:10px 4px 18px;
+  scroll-behavior:smooth;
 }
 
-/* ========================= */
-.container {
-  padding: 12px;
+.slider::-webkit-scrollbar{
+  display:none;
 }
 
-/* ========================= */
-.block {
-  margin-bottom: 22px;
+.item-card{
+  min-width:150px;
+  width:150px;
+  height:210px;
+  position:relative;
+  margin-right:-38px;
+  transition:
+    transform .22s ease,
+    filter .22s ease;
+  z-index:1;
 }
 
-.section-title {
-  font-size: 15px;
-  font-weight: 700;
-  margin-bottom: 10px;
-  opacity: 0.9;
+.item-card:hover{
+  transform:
+    translateY(-6px)
+    scale(1.03);
+
+  z-index:20;
 }
 
-/* ========================= */
-/* 🎰 룰렛 */
-.spin-btn {
-  width: 100%;
-  padding: 16px;
-  border: none;
-  border-radius: 14px;
-  background: linear-gradient(135deg, #ff2d95, #ff6a3d);
-  color: white;
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 12px;
+.card-inner{
+  width:100%;
+  height:100%;
+  border-radius:26px;
+  overflow:hidden;
+  position:relative;
+
+  background:
+    rgba(255,255,255,.08);
+
+  backdrop-filter:blur(14px);
+
+  border:
+    1px solid
+    rgba(255,255,255,.14);
+
+  box-shadow:
+    0 12px 30px
+    rgba(0,0,0,.24);
 }
 
-.preview-box {
-  width: 100%;
-  min-height: 120px;
-  border-radius: 14px;
-  background: rgba(255,255,255,0.08);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.card-image{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
 }
 
-/* ========================= */
-/* 결과 */
-.result-box {
-  display: flex;
-  gap: 10px;
+.card-placeholder{
+  width:100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:56px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(0,180,255,.28),
+      rgba(0,60,120,.38)
+    );
 }
 
-.result-item {
-  flex: 1;
-  text-align: center;
+.card-overlay{
+  position:absolute;
+
+  left:0;
+  right:0;
+  bottom:0;
+
+  padding:12px;
+
+  background:
+    linear-gradient(
+      to top,
+      rgba(0,0,0,.72),
+      transparent
+    );
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
 }
 
-.result-item img {
-  width: 100%;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 10px;
+.card-title{
+  font-size:14px;
+  font-weight:700;
+  color:white;
+
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+
+  flex:1;
 }
 
-/* ========================= */
-/* 슬라이더 */
-.slider {
-  display: flex;
-  gap: 10px;
-  overflow-x: auto;
-  padding-bottom: 6px;
+.delete-btn{
+  width:28px;
+  height:28px;
+
+  border:none;
+  border-radius:50%;
+
+  background:
+    rgba(255,255,255,.16);
+
+  color:white;
+
+  font-size:16px;
+
+  cursor:pointer;
+
+  flex-shrink:0;
+
+  transition:
+    transform .18s ease,
+    background .18s ease;
 }
 
-.slider::-webkit-scrollbar {
-  display: none;
+.delete-btn:hover{
+
+  transform:scale(1.08);
+
+  background:
+    rgba(255,80,80,.75);
 }
 
-/* ========================= */
-/* 카드 */
-.card {
-  min-width: 120px;
-  height: 140px;
-  background: rgba(255,255,255,0.08);
-  border-radius: 12px;
-  padding: 8px;
-  flex-shrink: 0;
-}
+.empty-card{
+  width:100%;
 
-.card img {
-  width: 100%;
-  height: 90px;
-  object-fit: cover;
-  border-radius: 10px;
-}
+  padding:34px 18px;
 
-.card .text {
-  font-size: 12px;
-  text-align: center;
-  margin-top: 6px;
-}
+  border-radius:22px;
 
-/* ========================= */
-/* 입력 */
-.add-block input,
-.add-block select {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 8px;
-  border-radius: 10px;
-  border: none;
-}
+  text-align:center;
 
-.add-block button {
-  width: 100%;
-  padding: 12px;
-  border-radius: 10px;
-  border: none;
-  background: #2bd4ff;
-  font-weight: bold;
-}
+  background:
+    rgba(255,255,255,.05);
 
-/* ========================= */
-/* 모달 */
-.modal-bg {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+  border:
+    1px dashed
+    rgba(255,255,255,.12);
 
-.modal {
-  background: #111;
-  padding: 16px;
-  border-radius: 12px;
-  width: 80%;
-}
+  color:
+    rgba(255,255,255,.58);
 
-.modal img {
-  width: 100%;
-  border-radius: 10px;
+  font-size:14px;
 }
