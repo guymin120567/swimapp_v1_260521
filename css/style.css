@@ -1,25 +1,4 @@
 
-body {
-  margin: 0;
-  font-family: system-ui, -apple-system, sans-serif;
-
-  color: white;
-
-  background: radial-gradient(
-    circle at top,
-    #38bdf8 0%,
-    #0ea5e9 25%,
-    #075985 55%,
-    #06121f 100%
-  );
-
-  overflow-x: hidden;
-}
-
-.container {
-  padding: 18px 12px 60px;
-}
-
 /* =========================
    SLIDER
 ========================= */
@@ -27,13 +6,16 @@ body {
 .slider {
   display: flex;
   align-items: center;
-  justify-content: center;
 
   overflow-x: auto;
-
-  padding: 40px 10px;
+  padding: 50px 20px;
 
   scroll-behavior: smooth;
+
+  /* ⭐ 핵심: 중앙 느낌 강화 */
+  justify-content: center;
+
+  gap: 0;
 }
 
 .slider::-webkit-scrollbar {
@@ -41,7 +23,7 @@ body {
 }
 
 /* =========================
-   CARD (핵심: 크기 고정)
+   CARD BASE (겹침 핵심)
 ========================= */
 
 .item-card {
@@ -52,8 +34,13 @@ body {
 
   position: relative;
 
+  margin-left: -45px;   /* ⭐ 핵심 겹침 */
   transition: transform 0.25s ease, opacity 0.25s ease;
-  cursor: pointer;
+}
+
+/* 첫 카드는 안 겹치게 */
+.item-card:first-child {
+  margin-left: 0;
 }
 
 /* =========================
@@ -126,13 +113,6 @@ body {
   align-items: center;
 }
 
-.card-title {
-  font-size: 13px;
-  font-weight: 600;
-  overflow: hidden;
-  white-space: nowrap;
-}
-
 /* =========================
    DELETE
 ========================= */
@@ -148,25 +128,13 @@ body {
   color: white;
 
   cursor: pointer;
-
-  transition: 0.2s;
-}
-
-.delete-btn:hover {
-  background: rgba(56,189,248,0.6);
 }
 
 /* =========================
-   BUTTON
+   ACTIVE CARD
 ========================= */
 
-.spin-btn {
-  background: linear-gradient(135deg, #38bdf8, #0284c7);
-  border: none;
-
-  padding: 14px 18px;
-  border-radius: 12px;
-
-  color: white;
-  font-weight: 700;
+.item-card.active {
+  transform: scale(1.12);
+  z-index: 999;
 }
