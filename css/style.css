@@ -1,6 +1,66 @@
 
 /* =========================
-   SLIDER
+   BASE
+========================= */
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+
+  color: white;
+
+  /* 🌊 더 깊은 물 느낌 */
+  background:
+    radial-gradient(circle at 20% 10%, #7dd3fc 0%, transparent 35%),
+    radial-gradient(circle at 80% 20%, #38bdf8 0%, transparent 40%),
+    radial-gradient(circle at 50% 100%, #0ea5e9 0%, #06121f 70%);
+
+  overflow-x: hidden;
+}
+
+/* =========================
+   LAYOUT
+========================= */
+
+.container {
+  padding: 20px 14px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+
+/* =========================
+   SECTION BLOCK
+========================= */
+
+.block {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+
+  border-radius: 20px;
+
+  padding: 16px 12px;
+
+  backdrop-filter: blur(10px);
+}
+
+/* =========================
+   TITLE
+========================= */
+
+.section-title {
+  font-size: 18px;
+  font-weight: 700;
+
+  color: #bfe9ff;
+
+  margin-bottom: 10px;
+
+  text-shadow: 0 0 12px rgba(56,189,248,0.25);
+}
+
+/* =========================
+   SLIDER (핵심 UX)
 ========================= */
 
 .slider {
@@ -8,14 +68,12 @@
   align-items: center;
 
   overflow-x: auto;
-  padding: 50px 20px;
+
+  padding: 40px 10px;
 
   scroll-behavior: smooth;
 
-  /* ⭐ 핵심: 중앙 느낌 강화 */
   justify-content: center;
-
-  gap: 0;
 }
 
 .slider::-webkit-scrollbar {
@@ -23,7 +81,7 @@
 }
 
 /* =========================
-   CARD BASE (겹침 핵심)
+   CARD (glass upgrade)
 ========================= */
 
 .item-card {
@@ -34,33 +92,36 @@
 
   position: relative;
 
-  margin-left: -45px;   /* ⭐ 핵심 겹침 */
+  margin-left: -48px;
+
   transition: transform 0.25s ease, opacity 0.25s ease;
 }
 
-/* 첫 카드는 안 겹치게 */
 .item-card:first-child {
   margin-left: 0;
 }
 
 /* =========================
-   INNER GLASS
+   CARD INNER (더 고급 glass)
 ========================= */
 
 .card-inner {
   width: 100%;
   height: 100%;
 
-  border-radius: 24px;
+  border-radius: 26px;
 
-  background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(16px);
+  background: rgba(255,255,255,0.06);
 
-  border: 1px solid rgba(255,255,255,0.15);
+  backdrop-filter: blur(18px);
+
+  border: 1px solid rgba(255,255,255,0.12);
 
   overflow: hidden;
 
-  box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+  box-shadow:
+    0 18px 45px rgba(0,0,0,0.45),
+    inset 0 0 18px rgba(56,189,248,0.08);
 }
 
 /* =========================
@@ -85,17 +146,15 @@
   align-items: center;
   justify-content: center;
 
-  font-size: 54px;
+  font-size: 56px;
 
-  background: linear-gradient(
-    135deg,
-    rgba(56,189,248,0.25),
-    rgba(3,105,161,0.4)
-  );
+  background:
+    radial-gradient(circle at top, rgba(56,189,248,0.35), transparent 60%),
+    rgba(3,105,161,0.25);
 }
 
 /* =========================
-   OVERLAY
+   OVERLAY (더 부드럽게)
 ========================= */
 
 .card-overlay {
@@ -104,30 +163,51 @@
   left: 0;
   right: 0;
 
-  padding: 10px;
+  padding: 12px;
 
-  background: linear-gradient(to top, rgba(0,0,0,0.75), transparent);
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,0.78),
+    transparent
+  );
 
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
+.card-title {
+  font-size: 13px;
+  font-weight: 600;
+
+  color: #ffffff;
+
+  opacity: 0.95;
+}
+
 /* =========================
-   DELETE
+   DELETE BUTTON
 ========================= */
 
 .delete-btn {
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
 
   border-radius: 50%;
   border: none;
 
-  background: rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.14);
+
   color: white;
 
   cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.delete-btn:hover {
+  background: rgba(56,189,248,0.6);
+  transform: scale(1.1);
 }
 
 /* =========================
@@ -135,6 +215,48 @@
 ========================= */
 
 .item-card.active {
-  transform: scale(1.12);
+  transform: scale(1.14);
   z-index: 999;
+}
+
+/* =========================
+   BUTTON
+========================= */
+
+.spin-btn {
+  background: linear-gradient(135deg, #38bdf8, #0284c7);
+
+  border: none;
+
+  padding: 14px 18px;
+
+  border-radius: 14px;
+
+  color: white;
+
+  font-weight: 700;
+
+  box-shadow: 0 12px 30px rgba(3,105,161,0.35);
+}
+
+.spin-btn:active {
+  transform: scale(0.96);
+}
+
+/* =========================
+   EMPTY
+========================= */
+
+.empty-card {
+  padding: 28px;
+
+  text-align: center;
+
+  color: rgba(255,255,255,0.6);
+
+  border: 1px dashed rgba(255,255,255,0.2);
+
+  border-radius: 16px;
+
+  background: rgba(255,255,255,0.02);
 }
