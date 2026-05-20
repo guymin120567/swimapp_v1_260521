@@ -1,11 +1,10 @@
-
 let activeIndexMap = {
   swimsuit: 0,
   cap: 0
 };
 
 /* =========================
-   RENDER SWIMSUIT
+   RENDER SWIM
 ========================= */
 
 export function renderSwimList(state) {
@@ -23,9 +22,7 @@ export function renderSwimList(state) {
   const active = activeIndexMap.swimsuit;
 
   root.innerHTML = list
-    .map((item, i) =>
-      createCard(item, "swimsuit", i, active)
-    )
+    .map((item, i) => createCard(item, "swimsuit", i, active))
     .join("");
 }
 
@@ -48,23 +45,20 @@ export function renderCapList(state) {
   const active = activeIndexMap.cap;
 
   root.innerHTML = list
-    .map((item, i) =>
-      createCard(item, "cap", i, active)
-    )
+    .map((item, i) => createCard(item, "cap", i, active))
     .join("");
 }
 
 /* =========================
-   CARD FACTORY
+   CARD
 ========================= */
 
 function createCard(item, type, index, activeIndex) {
 
   const distance = Math.abs(index - activeIndex);
 
-  // 중심 기준 scale (핵심)
   const scale = Math.max(1 - distance * 0.12, 0.72);
-  const opacity = Math.max(1 - distance * 0.15, 0.4);
+  const opacity = Math.max(1 - distance * 0.15, 0.35);
   const zIndex = 100 - distance;
 
   return `
@@ -94,6 +88,7 @@ function createCard(item, type, index, activeIndex) {
           >
             ×
           </button>
+
         </div>
 
       </div>
@@ -102,7 +97,7 @@ function createCard(item, type, index, activeIndex) {
 }
 
 /* =========================
-   ACTIVE CONTROL
+   ACTIVE INDEX
 ========================= */
 
 export function setActiveIndex(type, index) {
@@ -110,7 +105,7 @@ export function setActiveIndex(type, index) {
 }
 
 /* =========================
-   OPTIONAL SNAP (유지)
+   SNAP
 ========================= */
 
 export function initScrollSnap() {
