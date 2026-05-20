@@ -1,10 +1,11 @@
+
 let activeIndexMap = {
   swimsuit: 0,
   cap: 0
 };
 
 /* =========================
-   RENDER SWIM
+   SWIM
 ========================= */
 
 export function renderSwimList(state) {
@@ -22,12 +23,14 @@ export function renderSwimList(state) {
   const active = activeIndexMap.swimsuit;
 
   root.innerHTML = list
-    .map((item, i) => createCard(item, "swimsuit", i, active))
+    .map((item, i) =>
+      createCard(item, "swimsuit", i, active)
+    )
     .join("");
 }
 
 /* =========================
-   RENDER CAP
+   CAP
 ========================= */
 
 export function renderCapList(state) {
@@ -45,7 +48,9 @@ export function renderCapList(state) {
   const active = activeIndexMap.cap;
 
   root.innerHTML = list
-    .map((item, i) => createCard(item, "cap", i, active))
+    .map((item, i) =>
+      createCard(item, "cap", i, active)
+    )
     .join("");
 }
 
@@ -88,7 +93,6 @@ function createCard(item, type, index, activeIndex) {
           >
             ×
           </button>
-
         </div>
 
       </div>
@@ -105,7 +109,7 @@ export function setActiveIndex(type, index) {
 }
 
 /* =========================
-   SNAP
+   SNAP (optional 유지)
 ========================= */
 
 export function initScrollSnap() {
