@@ -1,4 +1,3 @@
-
 import { renderPreview } from "./preview.js";
 import { renderSwimList, renderCapList } from "./cards.js";
 import { renderInputSection } from "./input.js";
