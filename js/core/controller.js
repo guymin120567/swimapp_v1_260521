@@ -1,152 +1,271 @@
-import { renderApp } from "../ui/render.js";
 
-import {
-  renderPreview
-} from "../ui/preview.js";
+/* =========================
+   BASE
+========================= */
 
-import {
-  renderSwimList,
-  renderCapList,
-  initScrollSnap
-} from "../ui/cards.js";
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
 
-import { triggerHighlight } from "../ui/effects.js";
-import { renderInputSection } from "../ui/input.js";
+  color: white;
 
-import { loadDB, saveDB } from "../../db/database.js";
-import { defaultState, getState, setInternalState } from "../state/state.js";
-import { fileToBase64 } from "../utils/image.js";
-import { startRoulette } from "./roulette.js";
+  background: radial-gradient(
+      circle at top,
+      #38bdf8 0%,
+      #0ea5e9 25%,
+      #075985 55%,
+      #06121f 100%
+  );
 
-export function initController() {
+  overflow-x: hidden;
+}
 
-  async function boot() {
+/* =========================
+   CONTAINER
+========================= */
 
-    const saved = await loadDB();
+.container {
+  padding: 18px 12px 60px;
+}
 
-    const mergedState = {
-      ...structuredClone(defaultState),
-      ...(saved || {})
-    };
+/* =========================
+   SECTION TITLE
+========================= */
 
-    setInternalState(mergedState);
+.section-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #bfe9ff;
+  text-shadow: 0 0 12px rgba(56,189,248,0.25);
+}
 
-    renderApp(getState());
+/* =========================
+   SLIDER (중앙 카드 UX 핵심)
+========================= */
 
-    bindGlobal();
+.slider {
+  display: flex;
+  align-items: center;
 
-    console.log("APP BOOT SUCCESS");
+  overflow-x: auto;
 
-    initScrollSnap(); // ⭐ 스냅 초기화
-  }
+  padding: 42px 10px;
 
-  async function updateState(patch) {
+  scroll-behavior: smooth;
 
-    const next = {
-      ...getState(),
-      ...patch
-    };
+  gap: 0;
+}
 
-    setInternalState(next);
+.slider::-webkit-scrollbar {
+  display: none;
+}
 
-    await saveDB(next);
+/* =========================
+   CARD BASE
+========================= */
 
-    renderPreview(next);
-    renderSwimList(next);
-    renderCapList(next);
+.item-card {
+  flex-shrink: 0;
 
-    initScrollSnap();
-  }
+  transition: transform .25s ease, opacity .25s ease;
+}
 
-  async function addByCategory(type, text, img) {
+/* 카드 크기 계단 구조 */
+.item-card:nth-child(1) {
+  width: 190px;
+  height: 250px;
+  margin-right: -40px;
+  z-index: 5;
+}
 
-    const state = getState();
+.item-card:nth-child(2) {
+  width: 170px;
+  height: 230px;
+  margin-right: -50px;
+  opacity: 0.95;
+}
 
-    const item = {
-      id: Date.now(),
-      text,
-      img
-    };
+.item-card:nth-child(3) {
+  width: 150px;
+  height: 210px;
+  margin-right: -55px;
+  opacity: 0.88;
+}
 
-    if (type === "swimsuit") {
-      await updateState({
-        swimsuits: [...state.swimsuits, item]
-      });
-    }
+.item-card:nth-child(n+4) {
+  width: 135px;
+  height: 190px;
+  margin-right: -60px;
+  opacity: 0.8;
+}
 
-    if (type === "cap") {
-      await updateState({
-        caps: [...state.caps, item]
-      });
-    }
-  }
+/* =========================
+   ACTIVE CARD (중앙 강조)
+========================= */
 
-  async function removeItem(type, id) {
+.item-card.active {
+  transform: scale(1.08);
+  z-index: 100;
+}
 
-    const state = getState();
+.item-card.active .card-inner {
+  border: 1px solid rgba(56,189,248,0.8);
+  box-shadow:
+    0 0 18px rgba(56,189,248,0.45),
+    0 15px 40px rgba(0,0,0,0.4);
+}
 
-    if (type === "swimsuit") {
-      await updateState({
-        swimsuits: state.swimsuits.filter(i => i.id !== id)
-      });
-    }
+/* =========================
+   CARD INNER (glass water)
+========================= */
 
-    if (type === "cap") {
-      await updateState({
-        caps: state.caps.filter(i => i.id !== id)
-      });
-    }
-  }
+.card-inner {
+  width: 100%;
+  height: 100%;
 
-  async function addItemFromUI(type) {
+  border-radius: 24px;
 
-    const textInput = document.getElementById("itemText");
-    const fileInput = document.getElementById("itemImage");
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(16px);
 
-    const text = textInput?.value?.trim();
-    if (!text) return;
+  border: 1px solid rgba(255,255,255,0.15);
 
-    const file = fileInput?.files?.[0];
+  overflow: hidden;
 
-    let img = null;
+  box-shadow:
+    0 12px 30px rgba(0,0,0,0.35),
+    inset 0 0 20px rgba(56,189,248,0.08);
+}
 
-    if (file) {
-      img = await fileToBase64(file);
-    }
+/* =========================
+   IMAGE
+========================= */
 
-    await addByCategory(type, text, img);
+.card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
 
-    textInput.value = "";
-    fileInput.value = "";
-  }
+/* =========================
+   PLACEHOLDER
+========================= */
 
-  async function submitSelectedItem() {
+.card-placeholder {
+  width: 100%;
+  height: 100%;
 
-    const typeSelect = document.getElementById("itemType");
-    const selectedType = typeSelect?.value || "swimsuit";
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-    await addItemFromUI(selectedType);
-  }
+  font-size: 54px;
 
-  function spinAll() {
+  background: linear-gradient(
+    135deg,
+    rgba(56,189,248,0.25),
+    rgba(3,105,161,0.4)
+  );
+}
 
-    startRoulette({
-      state: getState(),
-      updateState,
-      triggerHighlight
-    });
-  }
+/* =========================
+   OVERLAY
+========================= */
 
-  function bindGlobal() {
+.card-overlay {
+  position: absolute;
 
-    window.app = {
-      spinAll,
-      removeItem,
-      addItemFromUI,
-      submitSelectedItem,
-      getState
-    };
-  }
+  left: 0;
+  right: 0;
+  bottom: 0;
 
-  return { boot };
+  padding: 12px;
+
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,0.75),
+    transparent
+  );
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* =========================
+   DELETE BUTTON
+========================= */
+
+.delete-btn {
+  width: 26px;
+  height: 26px;
+
+  border-radius: 50%;
+  border: none;
+
+  background: rgba(255,255,255,0.15);
+  color: white;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.delete-btn:hover {
+  background: rgba(56,189,248,0.6);
+  transform: scale(1.08);
+}
+
+/* =========================
+   BUTTON (spin)
+========================= */
+
+.spin-btn {
+  background: linear-gradient(
+    135deg,
+    #38bdf8,
+    #0284c7
+  );
+
+  color: white;
+
+  border: none;
+  border-radius: 14px;
+
+  padding: 14px 18px;
+
+  font-weight: 700;
+
+  box-shadow: 0 10px 25px rgba(3,105,161,0.35);
+
+  transition: 0.2s;
+}
+
+.spin-btn:active {
+  transform: scale(0.96);
+}
+
+/* =========================
+   EMPTY STATE
+========================= */
+
+.empty-card {
+  padding: 28px;
+  text-align: center;
+
+  color: rgba(255,255,255,0.6);
+
+  border: 1px dashed rgba(255,255,255,0.2);
+  border-radius: 16px;
 }
