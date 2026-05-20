@@ -1,12 +1,9 @@
-
 import { renderApp } from "../ui/render.js";
-
 import { renderPreview } from "../ui/preview.js";
-
 import {
   renderSwimList,
   renderCapList,
-  initScrollSnap,
+  runWaveCleanup,
   setActiveIndex
 } from "../ui/cards.js";
 
@@ -17,10 +14,6 @@ import { loadDB, saveDB } from "../../db/database.js";
 import { defaultState, getState, setInternalState } from "../state/state.js";
 import { fileToBase64 } from "../utils/image.js";
 import { startRoulette } from "./roulette.js";
-
-/* =========================
-   CONTROLLER
-========================= */
 
 export function initController() {
 
@@ -36,12 +29,9 @@ export function initController() {
     setInternalState(mergedState);
 
     renderApp(getState());
-
     bindGlobal();
 
     console.log("APP BOOT SUCCESS");
-
-    initScrollSnap();
   }
 
   async function updateState(patch) {
@@ -59,7 +49,7 @@ export function initController() {
     renderSwimList(next);
     renderCapList(next);
 
-    initScrollSnap();
+    runWaveCleanup();
   }
 
   async function addByCategory(type, text, img) {
@@ -113,9 +103,7 @@ export function initController() {
     const file = fileInput?.files?.[0];
 
     let img = null;
-    if (file) {
-      img = await fileToBase64(file);
-    }
+    if (file) img = await fileToBase64(file);
 
     await addByCategory(type, text, img);
 
@@ -126,7 +114,6 @@ export function initController() {
   async function submitSelectedItem() {
 
     const typeSelect = document.getElementById("itemType");
-
     const selectedType = typeSelect?.value || "swimsuit";
 
     await addItemFromUI(selectedType);
@@ -142,9 +129,7 @@ export function initController() {
   }
 
   function selectCard(type, index) {
-
     setActiveIndex(type, index);
-
     renderSwimList(getState());
     renderCapList(getState());
   }
