@@ -5,7 +5,7 @@ let activeIndexMap = {
 };
 
 /* =========================
-   SWIM
+   RENDER SWIM
 ========================= */
 
 export function renderSwimList(state) {
@@ -30,7 +30,7 @@ export function renderSwimList(state) {
 }
 
 /* =========================
-   CAP
+   RENDER CAP
 ========================= */
 
 export function renderCapList(state) {
@@ -55,22 +55,30 @@ export function renderCapList(state) {
 }
 
 /* =========================
-   CARD
+   CARD (🌊 wave effect)
 ========================= */
 
 function createCard(item, type, index, activeIndex) {
 
-  const distance = Math.abs(index - activeIndex);
+  const distance = index - activeIndex;
+  const abs = Math.abs(distance);
 
-  const scale = Math.max(1 - distance * 0.12, 0.72);
-  const opacity = Math.max(1 - distance * 0.15, 0.35);
-  const zIndex = 100 - distance;
+  const scale = Math.max(1 - abs * 0.12, 0.7);
+  const opacity = Math.max(1 - abs * 0.15, 0.35);
+
+  // 🌊 wave motion
+  const wave = Math.sin(distance * 0.8) * 10;
+
+  const zIndex = 100 - abs;
 
   return `
     <div
       class="item-card"
       style="
-        transform: scale(${scale});
+        transform:
+          translateY(${wave}px)
+          scale(${scale});
+
         opacity: ${opacity};
         z-index: ${zIndex};
       "
@@ -106,4 +114,65 @@ function createCard(item, type, index, activeIndex) {
 
 export function setActiveIndex(type, index) {
   activeIndexMap[type] = index;
+}
+
+/* =========================
+   SNAP SYSTEM (METHOD 1 유지)
+========================= */
+
+export function initScrollSnap() {
+
+  const sliders = document.querySelectorAll(".slider");
+
+  sliders.forEach(slider => {
+
+    if (slider.dataset.snapInit) return;
+    slider.dataset.snapInit = "true";
+
+    let timer;
+
+    slider.addEventListener("scroll", () => {
+
+      clearTimeout(timer);
+
+      timer = setTimeout(() => {
+        snapToCenter(slider);
+      }, 120);
+
+    });
+  });
+}
+
+function snapToCenter(slider) {
+
+  const cards = slider.querySelectorAll(".item-card");
+  if (!cards.length) return;
+
+  const rect = slider.getBoundingClientRect();
+
+  let closest = null;
+  let min = Infinity;
+
+  cards.forEach(card => {
+
+    const r = card.getBoundingClientRect();
+
+    const center = r.left + r.width / 2;
+    const screen = rect.left + rect.width / 2;
+
+    const dist = Math.abs(center - screen);
+
+    if (dist < min) {
+      min = dist;
+      closest = card;
+    }
+  });
+
+  if (closest) {
+    closest.scrollIntoView({
+      behavior: "smooth",
+      inline: "center",
+      block: "nearest"
+    });
+  }
 }
