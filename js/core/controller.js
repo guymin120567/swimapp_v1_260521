@@ -1,6 +1,4 @@
-import {
-  renderApp
-} from "../ui/render.js";
+import { renderApp } from "../ui/render.js";
 
 import {
   renderPreview
@@ -12,36 +10,13 @@ import {
   initScrollSnap
 } from "../ui/cards.js";
 
-import {
-  triggerHighlight
-} from "../ui/effects.js";
+import { triggerHighlight } from "../ui/effects.js";
+import { renderInputSection } from "../ui/input.js";
 
-import {
-  renderInputSection
-} from "../ui/input.js";
-
-import {
-  loadDB,
-  saveDB
-} from "../../db/database.js";
-
-import {
-  defaultState,
-  getState,
-  setInternalState
-} from "../state/state.js";
-
-import {
-  fileToBase64
-} from "../utils/image.js";
-
-import {
-  startRoulette
-} from "./roulette.js";
-
-/* =========================
-   CONTROLLER
-========================= */
+import { loadDB, saveDB } from "../../db/database.js";
+import { defaultState, getState, setInternalState } from "../state/state.js";
+import { fileToBase64 } from "../utils/image.js";
+import { startRoulette } from "./roulette.js";
 
 export function initController() {
 
@@ -62,8 +37,7 @@ export function initController() {
 
     console.log("APP BOOT SUCCESS");
 
-    // ⭐ 스냅 초기화 (DOM 이후)
-    initScrollSnap();
+    initScrollSnap(); // ⭐ 스냅 초기화
   }
 
   async function updateState(patch) {
@@ -149,7 +123,6 @@ export function initController() {
   async function submitSelectedItem() {
 
     const typeSelect = document.getElementById("itemType");
-
     const selectedType = typeSelect?.value || "swimsuit";
 
     await addItemFromUI(selectedType);
@@ -175,7 +148,5 @@ export function initController() {
     };
   }
 
-  return {
-    boot
-  };
+  return { boot };
 }
