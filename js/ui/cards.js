@@ -1,117 +1,105 @@
-function createCard(
-  item,
-  type
-) {
+import { renderPreview }
+  from "./preview.js";
 
-  return `
-    <div class="item-card">
+import {
+  renderSwimList,
+  renderCapList
+} from "./cards.js";
 
-      <div class="card-inner">
+import {
+  renderInputSection
+} from "./input.js";
 
-        ${
-          item.img
-            ? `
-          <img
-            src="${item.img}"
-            class="card-image"
-          />
-        `
-            : `
-          <div class="card-placeholder">
-            ${
-              type === "swimsuit"
-                ? "🩲"
-                : "🧢"
-            }
+export function renderApp(state) {
+
+  const root =
+    document.getElementById("app");
+
+  if (!root) return;
+
+  root.innerHTML = `
+    <div class="container">
+
+      <section class="block roulette-block">
+
+        <div class="section-title">
+          🎰 룰렛
+        </div>
+
+        <div
+          id="previewRoot"
+          class="preview-box"
+        ></div>
+
+        <button
+          class="spin-btn"
+          onclick="window.app.spinAll()"
+        >
+          오늘 뭐 입지?
+        </button>
+
+      </section>
+
+      <section class="block">
+
+        <div class="section-header">
+
+          <div class="section-title">
+            🩲 수영복
           </div>
-        `
-        }
 
-        <div class="card-overlay">
-
-          <div class="card-title">
-            ${item.text}
+          <div class="count-badge">
+            ${state.swimsuits.length}
           </div>
-
-          <button
-            class="delete-btn"
-            onclick="window.app.removeItem('${type}', ${item.id})"
-          >
-            ×
-          </button>
 
         </div>
 
-      </div>
+        <div
+          id="swimList"
+          class="slider"
+        ></div>
+
+      </section>
+
+      <section class="block">
+
+        <div class="section-header">
+
+          <div class="section-title">
+            🧢 수모
+          </div>
+
+          <div class="count-badge">
+            ${state.caps.length}
+          </div>
+
+        </div>
+
+        <div
+          id="capList"
+          class="slider"
+        ></div>
+
+      </section>
+
+      <section class="block add-block">
+
+        <div class="section-title">
+          ➕ 아이템 추가
+        </div>
+
+        <div id="inputRoot"></div>
+
+      </section>
 
     </div>
   `;
-}
 
-export function renderSwimList(
-  state
-) {
+  renderPreview(state);
+  renderSwimList(state);
+  renderCapList(state);
+  renderInputSection();
 
-  const root =
-    document.getElementById(
-      "swimList"
-    );
-
-  if (!root) return;
-
-  if (
-    !state.swimsuits.length
-  ) {
-
-    root.innerHTML = `
-      <div class="empty-card">
-        등록된 수영복 없음
-      </div>
-    `;
-
-    return;
-  }
-
-  root.innerHTML =
-    state.swimsuits
-      .map(item =>
-        createCard(
-          item,
-          "swimsuit"
-        )
-      )
-      .join("");
-}
-
-export function renderCapList(
-  state
-) {
-
-  const root =
-    document.getElementById(
-      "capList"
-    );
-
-  if (!root) return;
-
-  if (!state.caps.length) {
-
-    root.innerHTML = `
-      <div class="empty-card">
-        등록된 수모 없음
-      </div>
-    `;
-
-    return;
-  }
-
-  root.innerHTML =
-    state.caps
-      .map(item =>
-        createCard(
-          item,
-          "cap"
-        )
-      )
-      .join("");
+  // ⭐ 추가: 렌더 끝난 후 스냅 초기화
+  window.app?.initScrollSnap?.();
 }
