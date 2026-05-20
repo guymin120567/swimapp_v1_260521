@@ -1,9 +1,52 @@
+import {
+  renderApp
+} from "../ui/render.js";
+
+import {
+  renderPreview
+} from "../ui/preview.js";
+
+import {
+  renderSwimList,
+  renderCapList,
+  initScrollSnap
+} from "../ui/cards.js";
+
+import {
+  triggerHighlight
+} from "../ui/effects.js";
+
+import {
+  renderInputSection
+} from "../ui/input.js";
+
+import {
+  loadDB,
+  saveDB
+} from "../../db/database.js";
+
+import {
+  defaultState,
+  getState,
+  setInternalState
+} from "../state/state.js";
+
+import {
+  fileToBase64
+} from "../utils/image.js";
+
+import {
+  startRoulette
+} from "./roulette.js";
+
 export function initController() {
 
   async function boot() {
 
+    // 1. DB 로드
     const saved = await loadDB();
 
+    // 2. state merge
     const mergedState = {
       ...structuredClone(defaultState),
       ...(saved || {})
@@ -11,13 +54,147 @@ export function initController() {
 
     setInternalState(mergedState);
 
+    // 3. UI 최초 렌더
     renderApp(getState());
 
+    // 4. 전역 바인딩
     bindGlobal();
 
+    // 5. 로그
     console.log("APP BOOT SUCCESS");
 
-    // ⭐⭐⭐ 여기 추가 (핵심)
+    // 6. ⭐ UX 초기화 (자동 스냅)
     initScrollSnap();
   }
+
+  async function updateState(patch) {
+
+    const next = {
+      ...getState(),
+      ...patch
+    };
+
+    setInternalState(next);
+
+    await saveDB(next);
+
+    renderPreview(next);
+    renderSwimList(next);
+    renderCapList(next);
+
+    // ⭐ 중요: render 이후에도 스냅 유지
+    initScrollSnap();
+  }
+
+  async function addByCategory(type, text, img) {
+
+    const state = getState();
+
+    const item = {
+      id: Date.now(),
+      text,
+      img
+    };
+
+    if (type === "swimsuit") {
+
+      await updateState({
+        swimsuits: [
+          ...state.swimsuits,
+          item
+        ]
+      });
+    }
+
+    if (type === "cap") {
+
+      await updateState({
+        caps: [
+          ...state.caps,
+          item
+        ]
+      });
+    }
+  }
+
+  async function removeItem(type, id) {
+
+    const state = getState();
+
+    if (type === "swimsuit") {
+
+      await updateState({
+        swimsuits: state.swimsuits.filter(
+          item => item.id !== id
+        )
+      });
+    }
+
+    if (type === "cap") {
+
+      await updateState({
+        caps: state.caps.filter(
+          item => item.id !== id
+        )
+      });
+    }
+  }
+
+  async function addItemFromUI(type) {
+
+    const textInput = document.getElementById("itemText");
+    const fileInput = document.getElementById("itemImage");
+
+    const text = textInput?.value?.trim();
+
+    if (!text) return;
+
+    const file = fileInput?.files?.[0];
+
+    let img = null;
+
+    if (file) {
+      img = await fileToBase64(file);
+    }
+
+    await addByCategory(type, text, img);
+
+    textInput.value = "";
+    fileInput.value = "";
+  }
+
+  async function submitSelectedItem() {
+
+    const typeSelect = document.getElementById("itemType");
+
+    const selectedType =
+      typeSelect?.value || "swimsuit";
+
+    await addItemFromUI(selectedType);
+  }
+
+  function spinAll() {
+
+    startRoulette({
+      state: getState(),
+      updateState,
+      triggerHighlight
+    });
+  }
+
+  function bindGlobal() {
+
+    window.app = {
+
+      spinAll,
+      removeItem,
+      addItemFromUI,
+      submitSelectedItem,
+      getState
+    };
+  }
+
+  return {
+    boot
+  };
 }
