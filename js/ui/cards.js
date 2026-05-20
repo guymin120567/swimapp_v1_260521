@@ -1,37 +1,82 @@
+
+let activeIndexMap = {
+  swimsuit: 0,
+  cap: 0
+};
+
+/* =========================
+   RENDER SWIMSUIT
+========================= */
+
 export function renderSwimList(state) {
 
   const root = document.getElementById("swimList");
   if (!root) return;
 
-  if (!state.swimsuits.length) {
+  const list = state.swimsuits;
+
+  if (!list.length) {
     root.innerHTML = `<div class="empty-card">등록된 수영복 없음</div>`;
     return;
   }
 
-  root.innerHTML = state.swimsuits
-    .map(item => createCard(item, "swimsuit"))
+  const active = activeIndexMap.swimsuit;
+
+  root.innerHTML = list
+    .map((item, i) =>
+      createCard(item, "swimsuit", i, active)
+    )
     .join("");
 }
+
+/* =========================
+   RENDER CAP
+========================= */
 
 export function renderCapList(state) {
 
   const root = document.getElementById("capList");
   if (!root) return;
 
-  if (!state.caps.length) {
+  const list = state.caps;
+
+  if (!list.length) {
     root.innerHTML = `<div class="empty-card">등록된 수모 없음</div>`;
     return;
   }
 
-  root.innerHTML = state.caps
-    .map(item => createCard(item, "cap"))
+  const active = activeIndexMap.cap;
+
+  root.innerHTML = list
+    .map((item, i) =>
+      createCard(item, "cap", i, active)
+    )
     .join("");
 }
 
-function createCard(item, type) {
+/* =========================
+   CARD FACTORY
+========================= */
+
+function createCard(item, type, index, activeIndex) {
+
+  const distance = Math.abs(index - activeIndex);
+
+  // 중심 기준 scale (핵심)
+  const scale = Math.max(1 - distance * 0.12, 0.72);
+  const opacity = Math.max(1 - distance * 0.15, 0.4);
+  const zIndex = 100 - distance;
 
   return `
-    <div class="item-card">
+    <div
+      class="item-card"
+      style="
+        transform: scale(${scale});
+        opacity: ${opacity};
+        z-index: ${zIndex};
+      "
+      onclick="window.app.selectCard('${type}', ${index})"
+    >
       <div class="card-inner">
 
         ${
@@ -43,8 +88,10 @@ function createCard(item, type) {
         <div class="card-overlay">
           <div class="card-title">${item.text}</div>
 
-          <button class="delete-btn"
-            onclick="window.app.removeItem('${type}', ${item.id})">
+          <button
+            class="delete-btn"
+            onclick="event.stopPropagation(); window.app.removeItem('${type}', ${item.id})"
+          >
             ×
           </button>
         </div>
@@ -54,12 +101,21 @@ function createCard(item, type) {
   `;
 }
 
-/* scroll snap 그대로 유지 */
+/* =========================
+   ACTIVE CONTROL
+========================= */
+
+export function setActiveIndex(type, index) {
+  activeIndexMap[type] = index;
+}
+
+/* =========================
+   OPTIONAL SNAP (유지)
+========================= */
 
 export function initScrollSnap() {
 
   const sliders = document.querySelectorAll(".slider");
-  if (!sliders.length) return;
 
   sliders.forEach(slider => {
 
@@ -75,7 +131,9 @@ export function initScrollSnap() {
       timer = setTimeout(() => {
         snapToCenter(slider);
       }, 120);
+
     });
+
   });
 }
 
