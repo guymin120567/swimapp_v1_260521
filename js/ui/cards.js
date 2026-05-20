@@ -43,12 +43,11 @@ function createCard(item, type) {
         <div class="card-overlay">
           <div class="card-title">${item.text}</div>
 
-          <button
-            class="delete-btn"
-            onclick="window.app.removeItem('${type}', ${item.id})"
-          >
+          <button class="delete-btn"
+            onclick="window.app.removeItem('${type}', ${item.id})">
             ×
           </button>
+
         </div>
 
       </div>
@@ -75,17 +74,17 @@ export function initScrollSnap() {
     const updateActive = () => {
 
       const cards = slider.querySelectorAll(".item-card");
-      const rect = slider.getBoundingClientRect();
+      const sliderRect = slider.getBoundingClientRect();
 
       let closest = null;
       let min = Infinity;
 
       cards.forEach(card => {
 
-        const r = card.getBoundingClientRect();
+        const rect = card.getBoundingClientRect();
 
-        const center = r.left + r.width / 2;
-        const screen = rect.left + rect.width / 2;
+        const center = rect.left + rect.width / 2;
+        const screen = sliderRect.left + sliderRect.width / 2;
 
         const dist = Math.abs(center - screen);
 
@@ -108,6 +107,7 @@ export function initScrollSnap() {
       timer = setTimeout(() => {
         snapToCenter(slider);
       }, 120);
+
     });
 
   });
@@ -118,17 +118,17 @@ function snapToCenter(slider) {
   const cards = slider.querySelectorAll(".item-card");
   if (!cards.length) return;
 
-  const rect = slider.getBoundingClientRect();
+  const sliderRect = slider.getBoundingClientRect();
 
   let closest = null;
   let min = Infinity;
 
   cards.forEach(card => {
 
-    const r = card.getBoundingClientRect();
+    const rect = card.getBoundingClientRect();
 
-    const center = r.left + r.width / 2;
-    const screen = rect.left + rect.width / 2;
+    const center = rect.left + rect.width / 2;
+    const screen = sliderRect.left + sliderRect.width / 2;
 
     const dist = Math.abs(center - screen);
 
