@@ -1,3 +1,4 @@
+
 body {
   margin: 0;
   font-family: system-ui, -apple-system, sans-serif;
@@ -5,11 +6,11 @@ body {
   color: white;
 
   background: radial-gradient(
-      circle at top,
-      #38bdf8 0%,
-      #0ea5e9 25%,
-      #075985 55%,
-      #06121f 100%
+    circle at top,
+    #38bdf8 0%,
+    #0ea5e9 25%,
+    #075985 55%,
+    #06121f 100%
   );
 
   overflow-x: hidden;
@@ -19,18 +20,18 @@ body {
   padding: 18px 12px 60px;
 }
 
-.section-title {
-  font-size: 18px;
-  font-weight: 700;
-  color: #bfe9ff;
-}
+/* =========================
+   SLIDER
+========================= */
 
 .slider {
   display: flex;
   align-items: center;
+  justify-content: center;
+
   overflow-x: auto;
 
-  padding: 42px 10px;
+  padding: 40px 10px;
 
   scroll-behavior: smooth;
 }
@@ -39,16 +40,26 @@ body {
   display: none;
 }
 
-/* ❌ nth-child 제거됨 */
+/* =========================
+   CARD (핵심: 크기 고정)
+========================= */
 
-/* CARD */
 .item-card {
+  width: 160px;
+  height: 210px;
+
+  flex-shrink: 0;
+
   position: relative;
+
   transition: transform 0.25s ease, opacity 0.25s ease;
   cursor: pointer;
 }
 
-/* INNER */
+/* =========================
+   INNER GLASS
+========================= */
+
 .card-inner {
   width: 100%;
   height: 100%;
@@ -61,52 +72,101 @@ body {
   border: 1px solid rgba(255,255,255,0.15);
 
   overflow: hidden;
+
+  box-shadow: 0 12px 30px rgba(0,0,0,0.35);
 }
 
-/* IMAGE */
+/* =========================
+   IMAGE
+========================= */
+
 .card-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-/* PLACEHOLDER */
+/* =========================
+   PLACEHOLDER
+========================= */
+
 .card-placeholder {
+  width: 100%;
+  height: 100%;
+
   display: flex;
   align-items: center;
   justify-content: center;
 
   font-size: 54px;
 
-  height: 100%;
+  background: linear-gradient(
+    135deg,
+    rgba(56,189,248,0.25),
+    rgba(3,105,161,0.4)
+  );
 }
 
-/* OVERLAY */
+/* =========================
+   OVERLAY
+========================= */
+
 .card-overlay {
   position: absolute;
   bottom: 0;
+  left: 0;
+  right: 0;
 
-  width: 100%;
   padding: 10px;
 
-  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+  background: linear-gradient(to top, rgba(0,0,0,0.75), transparent);
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-/* TITLE */
 .card-title {
   font-size: 13px;
+  font-weight: 600;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
-/* DELETE */
+/* =========================
+   DELETE
+========================= */
+
 .delete-btn {
-  border: none;
+  width: 26px;
+  height: 26px;
+
   border-radius: 50%;
+  border: none;
+
+  background: rgba(255,255,255,0.15);
+  color: white;
+
+  cursor: pointer;
+
+  transition: 0.2s;
 }
 
-/* BUTTON */
+.delete-btn:hover {
+  background: rgba(56,189,248,0.6);
+}
+
+/* =========================
+   BUTTON
+========================= */
+
 .spin-btn {
-  background: #38bdf8;
+  background: linear-gradient(135deg, #38bdf8, #0284c7);
   border: none;
-  padding: 14px;
+
+  padding: 14px 18px;
   border-radius: 12px;
+
+  color: white;
+  font-weight: 700;
 }
