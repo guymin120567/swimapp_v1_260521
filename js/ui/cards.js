@@ -1,10 +1,3 @@
-import { renderPreview } from "./preview.js";
-import { renderInputSection } from "./input.js";
-
-/* =========================
-   RENDER FUNCTIONS
-========================= */
-
 export function renderSwimList(state) {
 
   const root = document.getElementById("swimList");
@@ -39,24 +32,16 @@ function createCard(item, type) {
 
   return `
     <div class="item-card">
-
       <div class="card-inner">
 
         ${
           item.img
             ? `<img src="${item.img}" class="card-image"/>`
-            : `
-              <div class="card-placeholder">
-                ${type === "swimsuit" ? "🩲" : "🧢"}
-              </div>
-            `
+            : `<div class="card-placeholder">${type === "swimsuit" ? "🩲" : "🧢"}</div>`
         }
 
         <div class="card-overlay">
-
-          <div class="card-title">
-            ${item.text}
-          </div>
+          <div class="card-title">${item.text}</div>
 
           <button
             class="delete-btn"
@@ -64,78 +49,67 @@ function createCard(item, type) {
           >
             ×
           </button>
-
         </div>
 
       </div>
-
     </div>
   `;
 }
 
 /* =========================
-   SCROLL SNAP SYSTEM
+   SCROLL SNAP
 ========================= */
-
-let snapInitialized = false;
 
 export function initScrollSnap() {
 
   const sliders = document.querySelectorAll(".slider");
-
   if (!sliders.length) return;
 
   sliders.forEach(slider => {
 
     if (slider.dataset.snapInit) return;
-
     slider.dataset.snapInit = "true";
 
-    let isScrolling;
+    let timer;
 
     slider.addEventListener("scroll", () => {
 
-      clearTimeout(isScrolling);
+      clearTimeout(timer);
 
-      isScrolling = setTimeout(() => {
+      timer = setTimeout(() => {
         snapToCenter(slider);
       }, 120);
-
     });
-
   });
-
-  snapInitialized = true;
 }
 
 function snapToCenter(slider) {
 
   const cards = slider.querySelectorAll(".item-card");
-
   if (!cards.length) return;
 
-  const sliderRect = slider.getBoundingClientRect();
+  const rect = slider.getBoundingClientRect();
 
-  let closestCard = null;
-  let closestDistance = Infinity;
+  let closest = null;
+  let min = Infinity;
 
   cards.forEach(card => {
 
-    const rect = card.getBoundingClientRect();
+    const r = card.getBoundingClientRect();
 
-    const cardCenter = rect.left + rect.width / 2;
-    const screenCenter = sliderRect.left + sliderRect.width / 2;
+    const center = r.left + r.width / 2;
+    const screen = rect.left + rect.width / 2;
 
-    const distance = Math.abs(cardCenter - screenCenter);
+    const dist = Math.abs(center - screen);
 
-    if (distance < closestDistance) {
-      closestDistance = distance;
-      closestCard = card;
+    if (dist < min) {
+      min = dist;
+      closest = card;
     }
   });
 
-  if (closestCard) {
-    closestCard.scrollIntoView({
+  if (closest) {
+    closest.scrollIntoView({
       behavior: "smooth",
       inline: "center",
       block: "nearest"
