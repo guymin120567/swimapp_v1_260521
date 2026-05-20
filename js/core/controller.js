@@ -1,122 +1,49 @@
-/* =========================
-   RENDER
-========================= */
+export function renderApp(state) {
 
-export function renderSwimList(state) {
-
-  const root = document.getElementById("swimList");
+  const root = document.getElementById("app");
   if (!root) return;
 
-  if (!state.swimsuits.length) {
-    root.innerHTML = `<div class="empty-card">등록된 수영복 없음</div>`;
-    return;
-  }
+  root.innerHTML = `
+    <div class="container">
 
-  root.innerHTML = state.swimsuits
-    .map(item => createCard(item, "swimsuit"))
-    .join("");
-}
+      <section class="block roulette-block">
+        <div class="section-title">🎰 룰렛</div>
 
-export function renderCapList(state) {
+        <div id="previewRoot" class="preview-box"></div>
 
-  const root = document.getElementById("capList");
-  if (!root) return;
+        <button class="spin-btn" onclick="window.app.spinAll()">
+          오늘 뭐 입지?
+        </button>
+      </section>
 
-  if (!state.caps.length) {
-    root.innerHTML = `<div class="empty-card">등록된 수모 없음</div>`;
-    return;
-  }
-
-  root.innerHTML = state.caps
-    .map(item => createCard(item, "cap"))
-    .join("");
-}
-
-function createCard(item, type) {
-
-  return `
-    <div class="item-card">
-      <div class="card-inner">
-
-        ${
-          item.img
-            ? `<img src="${item.img}" class="card-image"/>`
-            : `<div class="card-placeholder">${type === "swimsuit" ? "🩲" : "🧢"}</div>`
-        }
-
-        <div class="card-overlay">
-          <div class="card-title">${item.text}</div>
-
-          <button
-            class="delete-btn"
-            onclick="window.app.removeItem('${type}', ${item.id})"
-          >
-            ×
-          </button>
+      <section class="block">
+        <div class="section-header">
+          <div class="section-title">🩲 수영복</div>
+          <div class="count-badge">${state.swimsuits.length}</div>
         </div>
 
-      </div>
+        <div id="swimList" class="slider"></div>
+      </section>
+
+      <section class="block">
+        <div class="section-header">
+          <div class="section-title">🧢 수모</div>
+          <div class="count-badge">${state.caps.length}</div>
+        </div>
+
+        <div id="capList" class="slider"></div>
+      </section>
+
+      <section class="block add-block">
+        <div class="section-title">➕ 아이템 추가</div>
+        <div id="inputRoot"></div>
+      </section>
+
     </div>
   `;
-}
 
-/* =========================
-   SCROLL SNAP
-========================= */
-
-export function initScrollSnap() {
-
-  const sliders = document.querySelectorAll(".slider");
-  if (!sliders.length) return;
-
-  sliders.forEach(slider => {
-
-    if (slider.dataset.snapInit) return;
-    slider.dataset.snapInit = "true";
-
-    let timer;
-
-    slider.addEventListener("scroll", () => {
-
-      clearTimeout(timer);
-
-      timer = setTimeout(() => {
-        snapToCenter(slider);
-      }, 120);
-    });
-  });
-}
-
-function snapToCenter(slider) {
-
-  const cards = slider.querySelectorAll(".item-card");
-  if (!cards.length) return;
-
-  const sliderRect = slider.getBoundingClientRect();
-
-  let closest = null;
-  let min = Infinity;
-
-  cards.forEach(card => {
-
-    const rect = card.getBoundingClientRect();
-
-    const center = rect.left + rect.width / 2;
-    const screenCenter = sliderRect.left + sliderRect.width / 2;
-
-    const dist = Math.abs(center - screenCenter);
-
-    if (dist < min) {
-      min = dist;
-      closest = card;
-    }
-  });
-
-  if (closest) {
-    closest.scrollIntoView({
-      behavior: "smooth",
-      inline: "center",
-      block: "nearest"
-    });
-  }
+  renderPreview(state);
+  renderSwimList(state);
+  renderCapList(state);
+  renderInputSection();
 }
