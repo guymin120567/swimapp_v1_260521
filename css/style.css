@@ -1,200 +1,24 @@
-.slider{
-  display:flex;
-  align-items:flex-end;
+.slider {
+  display: flex;
+  align-items: center; /* ⭐ 핵심: 중앙 정렬 */
+  justify-content: flex-start;
 
-  overflow-x:auto;
-  scroll-behavior:smooth;
+  overflow-x: auto;
+  gap: 0;
 
-  gap:0;
-  padding: 18px 10px 26px;
+  padding: 40px 10px; /* ⭐ 위아래 여백 추가 (중앙 느낌) */
 
-  /* ⭐ 핵심: 스냅 추가 */
-  scroll-snap-type: x mandatory;
-
-  /* 중앙 느낌 보정 */
-  justify-content:flex-start;
+  scroll-behavior: smooth;
 }
 
-.slider::-webkit-scrollbar{
-  display:none;
+/* active 카드 강조 */
+.item-card.active {
+  transform: scale(1.08);
+  z-index: 100;
+  opacity: 1 !important;
 }
 
-.item-card{
-  position:relative;
-  flex-shrink:0;
-
-  transform-origin:center bottom;
-
-  /* ⭐ 핵심 */
-  scroll-snap-align: center;
-
-  transition:
-    transform .25s ease,
-    filter .25s ease,
-    opacity .25s ease;
-
-  z-index:1;
-}
-
-/* 첫 카드 */
-.item-card:nth-child(1){
-  width:190px;
-  height:250px;
-
-  margin-right:-42px;
-
-  z-index:10;
-}
-
-/* 두번째 (완전 동일 크기 유지) */
-.item-card:nth-child(2){
-  width:190px;
-  height:250px;
-
-  margin-right:-52px;
-
-  z-index:9;
-
-  opacity:1;
-}
-
-/* 세번째 */
-.item-card:nth-child(3){
-  width:150px;
-  height:210px;
-
-  margin-right:-58px;
-
-  z-index:8;
-
-  opacity:.9;
-}
-
-/* 네번째 이후 */
-.item-card:nth-child(n+4){
-  width:135px;
-  height:190px;
-
-  margin-right:-62px;
-
-  z-index:7;
-
-  opacity:.82;
-}
-
-/* hover */
-.item-card:hover{
-  transform:
-    translateY(-8px)
-    scale(1.04);
-
-  z-index:100;
-  opacity:1;
-}
-
-.card-inner{
-  width:100%;
-  height:100%;
-  border-radius:28px;
-  overflow:hidden;
-
-  position:relative;
-
-  background: rgba(255,255,255,.08);
-  backdrop-filter: blur(14px);
-
-  border: 1px solid rgba(255,255,255,.14);
-
-  box-shadow: 0 16px 38px rgba(0,0,0,.28);
-}
-
-.card-image{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  display:block;
-}
-
-.card-placeholder{
-  width:100%;
-  height:100%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  font-size:58px;
-
-  background: linear-gradient(
-    135deg,
-    rgba(0,180,255,.28),
-    rgba(0,60,120,.4)
-  );
-}
-
-.card-overlay{
-  position:absolute;
-  left:0;
-  right:0;
-  bottom:0;
-
-  padding:14px;
-
-  background: linear-gradient(
-    to top,
-    rgba(0,0,0,.76),
-    transparent
-  );
-
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:8px;
-}
-
-.card-title{
-  flex:1;
-  color:white;
-  font-size:14px;
-  font-weight:700;
-
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-}
-
-.delete-btn{
-  width:28px;
-  height:28px;
-
-  border:none;
-  border-radius:50%;
-
-  background: rgba(255,255,255,.16);
-  color:white;
-
-  font-size:16px;
-  cursor:pointer;
-
-  flex-shrink:0;
-
-  transition: transform .18s ease, background .18s ease;
-}
-
-.delete-btn:hover{
-  transform:scale(1.08);
-  background: rgba(255,80,80,.75);
-}
-
-.empty-card{
-  width:100%;
-  padding:34px 18px;
-
-  border-radius:24px;
-  text-align:center;
-
-  background: rgba(255,255,255,.05);
-  border: 1px dashed rgba(255,255,255,.12);
-
-  color: rgba(255,255,255,.58);
-  font-size:14px;
+/* 기본 카드 depth */
+.item-card {
+  transition: transform .25s ease, opacity .25s ease;
 }
