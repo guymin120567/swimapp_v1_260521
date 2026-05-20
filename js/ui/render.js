@@ -1,4 +1,6 @@
-import { initScrollSnap } from "./cards.js";
+import { renderPreview } from "./preview.js";
+import { renderSwimList, renderCapList } from "./cards.js";
+import { renderInputSection } from "./input.js";
 
 export function renderApp(state) {
 
@@ -48,7 +50,4 @@ export function renderApp(state) {
   renderSwimList(state);
   renderCapList(state);
   renderInputSection();
-
-  // ⭐ 핵심: DOM 생성 후 스냅 초기화
-  initScrollSnap();
 }
