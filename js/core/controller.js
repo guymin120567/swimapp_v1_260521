@@ -1,271 +1,196 @@
+import { renderApp } from "../ui/render.js";
 
-/* =========================
-   BASE
-========================= */
-
-body {
-  margin: 0;
-  font-family: system-ui, -apple-system, sans-serif;
-
-  color: white;
-
-  background: radial-gradient(
-      circle at top,
-      #38bdf8 0%,
-      #0ea5e9 25%,
-      #075985 55%,
-      #06121f 100%
-  );
-
-  overflow-x: hidden;
-}
-
-/* =========================
-   CONTAINER
-========================= */
-
-.container {
-  padding: 18px 12px 60px;
-}
-
-/* =========================
-   SECTION TITLE
-========================= */
-
-.section-title {
-  font-size: 18px;
-  font-weight: 700;
-  color: #bfe9ff;
-  text-shadow: 0 0 12px rgba(56,189,248,0.25);
-}
-
-/* =========================
-   SLIDER (중앙 카드 UX 핵심)
-========================= */
-
-.slider {
-  display: flex;
-  align-items: center;
-
-  overflow-x: auto;
-
-  padding: 42px 10px;
-
-  scroll-behavior: smooth;
-
-  gap: 0;
-}
-
-.slider::-webkit-scrollbar {
-  display: none;
-}
-
-/* =========================
-   CARD BASE
-========================= */
-
-.item-card {
-  flex-shrink: 0;
-
-  transition: transform .25s ease, opacity .25s ease;
-}
-
-/* 카드 크기 계단 구조 */
-.item-card:nth-child(1) {
-  width: 190px;
-  height: 250px;
-  margin-right: -40px;
-  z-index: 5;
-}
-
-.item-card:nth-child(2) {
-  width: 170px;
-  height: 230px;
-  margin-right: -50px;
-  opacity: 0.95;
-}
-
-.item-card:nth-child(3) {
-  width: 150px;
-  height: 210px;
-  margin-right: -55px;
-  opacity: 0.88;
-}
-
-.item-card:nth-child(n+4) {
-  width: 135px;
-  height: 190px;
-  margin-right: -60px;
-  opacity: 0.8;
-}
-
-/* =========================
-   ACTIVE CARD (중앙 강조)
-========================= */
-
-.item-card.active {
-  transform: scale(1.08);
-  z-index: 100;
-}
-
-.item-card.active .card-inner {
-  border: 1px solid rgba(56,189,248,0.8);
-  box-shadow:
-    0 0 18px rgba(56,189,248,0.45),
-    0 15px 40px rgba(0,0,0,0.4);
-}
+import { renderPreview } from "../ui/preview.js";
 
-/* =========================
-   CARD INNER (glass water)
-========================= */
+import {
+  renderSwimList,
+  renderCapList,
+  initScrollSnap,
+  setActiveIndex
+} from "../ui/cards.js";
 
-.card-inner {
-  width: 100%;
-  height: 100%;
+import { triggerHighlight } from "../ui/effects.js";
+import { renderInputSection } from "../ui/input.js";
 
-  border-radius: 24px;
+import { loadDB, saveDB } from "../../db/database.js";
+import { defaultState, getState, setInternalState } from "../state/state.js";
+import { fileToBase64 } from "../utils/image.js";
+import { startRoulette } from "./roulette.js";
 
-  background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(16px);
+export function initController() {
 
-  border: 1px solid rgba(255,255,255,0.15);
+  /* =========================
+     BOOT
+  ========================= */
 
-  overflow: hidden;
+  async function boot() {
 
-  box-shadow:
-    0 12px 30px rgba(0,0,0,0.35),
-    inset 0 0 20px rgba(56,189,248,0.08);
-}
-
-/* =========================
-   IMAGE
-========================= */
+    const saved = await loadDB();
 
-.card-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
+    const mergedState = {
+      ...structuredClone(defaultState),
+      ...(saved || {})
+    };
 
-/* =========================
-   PLACEHOLDER
-========================= */
+    setInternalState(mergedState);
 
-.card-placeholder {
-  width: 100%;
-  height: 100%;
+    renderApp(getState());
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    bindGlobal();
 
-  font-size: 54px;
+    console.log("APP BOOT SUCCESS");
 
-  background: linear-gradient(
-    135deg,
-    rgba(56,189,248,0.25),
-    rgba(3,105,161,0.4)
-  );
-}
+    initScrollSnap();
+  }
 
-/* =========================
-   OVERLAY
-========================= */
+  /* =========================
+     STATE UPDATE
+  ========================= */
 
-.card-overlay {
-  position: absolute;
+  async function updateState(patch) {
 
-  left: 0;
-  right: 0;
-  bottom: 0;
+    const next = {
+      ...getState(),
+      ...patch
+    };
 
-  padding: 12px;
+    setInternalState(next);
 
-  background: linear-gradient(
-    to top,
-    rgba(0,0,0,0.75),
-    transparent
-  );
+    await saveDB(next);
 
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+    renderPreview(next);
+    renderSwimList(next);
+    renderCapList(next);
 
-.card-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: white;
+    initScrollSnap();
+  }
 
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
+  /* =========================
+     ADD ITEM
+  ========================= */
 
-/* =========================
-   DELETE BUTTON
-========================= */
+  async function addByCategory(type, text, img) {
 
-.delete-btn {
-  width: 26px;
-  height: 26px;
+    const state = getState();
 
-  border-radius: 50%;
-  border: none;
+    const item = {
+      id: Date.now(),
+      text,
+      img
+    };
 
-  background: rgba(255,255,255,0.15);
-  color: white;
+    if (type === "swimsuit") {
+      await updateState({
+        swimsuits: [...state.swimsuits, item]
+      });
+    }
 
-  cursor: pointer;
+    if (type === "cap") {
+      await updateState({
+        caps: [...state.caps, item]
+      });
+    }
+  }
 
-  transition: 0.2s;
-}
+  /* =========================
+     REMOVE ITEM
+  ========================= */
 
-.delete-btn:hover {
-  background: rgba(56,189,248,0.6);
-  transform: scale(1.08);
-}
+  async function removeItem(type, id) {
 
-/* =========================
-   BUTTON (spin)
-========================= */
+    const state = getState();
 
-.spin-btn {
-  background: linear-gradient(
-    135deg,
-    #38bdf8,
-    #0284c7
-  );
+    if (type === "swimsuit") {
+      await updateState({
+        swimsuits: state.swimsuits.filter(i => i.id !== id)
+      });
+    }
 
-  color: white;
+    if (type === "cap") {
+      await updateState({
+        caps: state.caps.filter(i => i.id !== id)
+      });
+    }
+  }
 
-  border: none;
-  border-radius: 14px;
+  /* =========================
+     ADD FROM UI
+  ========================= */
 
-  padding: 14px 18px;
+  async function addItemFromUI(type) {
 
-  font-weight: 700;
+    const textInput = document.getElementById("itemText");
+    const fileInput = document.getElementById("itemImage");
 
-  box-shadow: 0 10px 25px rgba(3,105,161,0.35);
+    const text = textInput?.value?.trim();
+    if (!text) return;
 
-  transition: 0.2s;
-}
+    const file = fileInput?.files?.[0];
 
-.spin-btn:active {
-  transform: scale(0.96);
-}
+    let img = null;
+    if (file) {
+      img = await fileToBase64(file);
+    }
 
-/* =========================
-   EMPTY STATE
-========================= */
+    await addByCategory(type, text, img);
 
-.empty-card {
-  padding: 28px;
-  text-align: center;
+    textInput.value = "";
+    fileInput.value = "";
+  }
 
-  color: rgba(255,255,255,0.6);
+  async function submitSelectedItem() {
 
-  border: 1px dashed rgba(255,255,255,0.2);
-  border-radius: 16px;
+    const typeSelect = document.getElementById("itemType");
+
+    const selectedType =
+      typeSelect?.value || "swimsuit";
+
+    await addItemFromUI(selectedType);
+  }
+
+  /* =========================
+     ROULETTE
+  ========================= */
+
+  function spinAll() {
+
+    startRoulette({
+      state: getState(),
+      updateState,
+      triggerHighlight
+    });
+  }
+
+  /* =========================
+     ⭐ 핵심 추가: CARD SELECT
+  ========================= */
+
+  function selectCard(type, index) {
+
+    setActiveIndex(type, index);
+
+    renderSwimList(getState());
+    renderCapList(getState());
+  }
+
+  /* =========================
+     GLOBAL BIND
+  ========================= */
+
+  function bindGlobal() {
+
+    window.app = {
+
+      spinAll,
+      removeItem,
+      addItemFromUI,
+      submitSelectedItem,
+      getState,
+
+      // ⭐ 반드시 있어야 하는 핵심
+      selectCard
+    };
+  }
+
+  return { boot };
 }
