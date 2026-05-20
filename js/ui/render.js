@@ -1,3 +1,4 @@
+
 import { renderPreview } from "./preview.js";
 import { renderSwimList, renderCapList } from "./cards.js";
 import { renderInputSection } from "./input.js";
@@ -7,15 +8,18 @@ export function renderApp(state) {
   const root = document.getElementById("app");
   if (!root) return;
 
+  /* =========================
+     🔥 핵심: 완전 초기화
+  ========================= */
+  root.replaceChildren();
+
   root.innerHTML = `
     <div class="container">
 
-      <!-- 🧢🩲 헤더 -->
       <section class="block header-block">
         <div class="section-title">🧢 수모 🩲 수영복</div>
       </section>
 
-      <!-- 🎰 룰렛 -->
       <section class="block roulette-block">
 
         <div class="section-title">
@@ -30,19 +34,16 @@ export function renderApp(state) {
 
       </section>
 
-      <!-- 🧢 수모 -->
       <section class="block">
         <div class="section-title">🧢 수모</div>
         <div id="capList" class="slider"></div>
       </section>
 
-      <!-- 🩲 수영복 -->
       <section class="block">
         <div class="section-title">🩲 수영복</div>
         <div id="swimList" class="slider"></div>
       </section>
 
-      <!-- ➕ 아이템 추가 -->
       <section class="block">
         <div class="section-title">아이템 추가</div>
         <div id="inputRoot"></div>
@@ -51,8 +52,19 @@ export function renderApp(state) {
     </div>
   `;
 
+  /* =========================
+     render pipeline
+  ========================= */
+
   renderPreview(state);
   renderCapList(state);
   renderSwimList(state);
   renderInputSection();
+
+  /* 🔥 Safari repaint 강제 */
+  requestAnimationFrame(() => {
+    root.style.display = "none";
+    root.offsetHeight;
+    root.style.display = "block";
+  });
 }
