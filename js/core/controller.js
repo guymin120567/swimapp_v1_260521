@@ -1,3 +1,4 @@
+
 import { renderApp } from "../ui/render.js";
 
 import { renderPreview } from "../ui/preview.js";
@@ -17,11 +18,11 @@ import { defaultState, getState, setInternalState } from "../state/state.js";
 import { fileToBase64 } from "../utils/image.js";
 import { startRoulette } from "./roulette.js";
 
-export function initController() {
+/* =========================
+   CONTROLLER
+========================= */
 
-  /* =========================
-     BOOT
-  ========================= */
+export function initController() {
 
   async function boot() {
 
@@ -43,10 +44,6 @@ export function initController() {
     initScrollSnap();
   }
 
-  /* =========================
-     STATE UPDATE
-  ========================= */
-
   async function updateState(patch) {
 
     const next = {
@@ -64,10 +61,6 @@ export function initController() {
 
     initScrollSnap();
   }
-
-  /* =========================
-     ADD ITEM
-  ========================= */
 
   async function addByCategory(type, text, img) {
 
@@ -92,10 +85,6 @@ export function initController() {
     }
   }
 
-  /* =========================
-     REMOVE ITEM
-  ========================= */
-
   async function removeItem(type, id) {
 
     const state = getState();
@@ -112,10 +101,6 @@ export function initController() {
       });
     }
   }
-
-  /* =========================
-     ADD FROM UI
-  ========================= */
 
   async function addItemFromUI(type) {
 
@@ -142,15 +127,10 @@ export function initController() {
 
     const typeSelect = document.getElementById("itemType");
 
-    const selectedType =
-      typeSelect?.value || "swimsuit";
+    const selectedType = typeSelect?.value || "swimsuit";
 
     await addItemFromUI(selectedType);
   }
-
-  /* =========================
-     ROULETTE
-  ========================= */
 
   function spinAll() {
 
@@ -161,10 +141,6 @@ export function initController() {
     });
   }
 
-  /* =========================
-     ⭐ 핵심 추가: CARD SELECT
-  ========================= */
-
   function selectCard(type, index) {
 
     setActiveIndex(type, index);
@@ -173,21 +149,14 @@ export function initController() {
     renderCapList(getState());
   }
 
-  /* =========================
-     GLOBAL BIND
-  ========================= */
-
   function bindGlobal() {
 
     window.app = {
-
       spinAll,
       removeItem,
       addItemFromUI,
       submitSelectedItem,
       getState,
-
-      // ⭐ 반드시 있어야 하는 핵심
       selectCard
     };
   }
