@@ -58,7 +58,7 @@ export function initController(){
   }
 
   // =========================
-  // ADD ITEM
+  // ADD
   // =========================
   async function submitSelectedItem(){
 
@@ -164,7 +164,7 @@ export function initController(){
   }
 
   // =========================
-  // SET ACTIVE
+  // ACTIVE
   // =========================
   async function setActiveIndex(
     type,
@@ -189,7 +189,9 @@ export function initController(){
       ...state
     });
 
-    await update();
+    renderApp();
+
+    bindDrag();
   }
 
   // =========================
@@ -242,7 +244,9 @@ export function initController(){
       ...state
     });
 
-    await update();
+    renderApp();
+
+    bindDrag();
   }
 
   // =========================
@@ -260,6 +264,10 @@ export function initController(){
     button.innerText =
       "돌리는 중...";
 
+    document.body.classList.add(
+      "roulette-active"
+    );
+
     await Promise.all([
 
       animateRoulette(
@@ -271,6 +279,10 @@ export function initController(){
       )
     ]);
 
+    document.body.classList.remove(
+      "roulette-active"
+    );
+
     button.disabled = false;
 
     button.innerText =
@@ -278,7 +290,7 @@ export function initController(){
   }
 
   // =========================
-  // ROULETTE EFFECT
+  // ROULETTE
   // =========================
   async function animateRoulette(
     type
@@ -297,17 +309,34 @@ export function initController(){
       return;
     }
 
-    const loops =
-      18 +
-      Math.floor(
-        Math.random() * 10
-      );
+    const totalDuration =
+      2400 +
+      Math.random() * 600;
 
-    for(
-      let i=0;
-      i<loops;
-      i++
-    ){
+    const start =
+      performance.now();
+
+    while(true){
+
+      const now =
+        performance.now();
+
+      const elapsed =
+        now - start;
+
+      if(
+        elapsed >= totalDuration
+      ){
+        break;
+      }
+
+      const progress =
+        elapsed /
+        totalDuration;
+
+      const delay =
+        40 +
+        progress * 140;
 
       const random =
         Math.floor(
@@ -337,9 +366,7 @@ export function initController(){
 
       bindDrag();
 
-      await sleep(
-        50 + i * 12
-      );
+      await sleep(delay);
     }
 
     const finalIndex =
@@ -367,6 +394,34 @@ export function initController(){
     });
 
     await update();
+
+    triggerBurst(type);
+  }
+
+  // =========================
+  // BURST
+  // =========================
+  function triggerBurst(type){
+
+    const target =
+      document.querySelector(
+        `.roulette-slot.${type}`
+      );
+
+    if(!target){
+
+      return;
+    }
+
+    target.classList.remove(
+      "burst"
+    );
+
+    void target.offsetWidth;
+
+    target.classList.add(
+      "burst"
+    );
   }
 
   // =========================
