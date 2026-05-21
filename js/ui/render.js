@@ -1,114 +1,84 @@
-import {
-  getState
-} from "../state/state.js";
+<!DOCTYPE html>
+<html lang="ko">
 
-export function renderApp(){
+<head>
 
-  const app =
-    document.getElementById(
-      "app"
-    );
+<meta charset="UTF-8" />
 
-  const state =
-    getState();
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+/>
 
-  app.innerHTML = `
+<!-- CACHE -->
+<meta
+  http-equiv="Cache-Control"
+  content="no-cache, no-store, must-revalidate"
+/>
 
-    <div class="container">
+<meta
+  http-equiv="Pragma"
+  content="no-cache"
+/>
 
-      <div class="block">
+<meta
+  http-equiv="Expires"
+  content="0"
+/>
 
-        <div class="section-title">
-          🎰 룰렛
-        </div>
+<!-- MOBILE -->
+<meta
+  name="mobile-web-app-capable"
+  content="yes"
+/>
 
-        <div class="roulette-wrap">
+<meta
+  name="apple-mobile-web-app-capable"
+  content="yes"
+/>
 
-          <div class="roulette-slot cap">
+<meta
+  name="apple-mobile-web-app-status-bar-style"
+  content="black-translucent"
+/>
 
-            <div class="roulette-label">
-              🧢 수모
-            </div>
+<meta
+  name="theme-color"
+  content="#0f172a"
+/>
 
-            ${
-              state.selectedCap
-              ? renderRouletteCard(
-                  state.selectedCap
-                )
-              : `
-                <div class="empty-card">
-                  수모 없음
-                </div>
-              `
-            }
+<title>
+  Swim Roulette
+</title>
 
-          </div>
+<!-- CSS -->
+<link
+  rel="stylesheet"
+  href="./css/style.css?v=20260522"
+/>
 
-          <div class="roulette-slot swim">
+<!-- ICON -->
+<link
+  rel="icon"
+  href="./favicon.ico"
+/>
 
-            <div class="roulette-label">
-              🩲 수영복
-            </div>
+<link
+  rel="apple-touch-icon"
+  href="./icon-192.png"
+/>
 
-            ${
-              state.selectedSwim
-              ? renderRouletteCard(
-                  state.selectedSwim
-                )
-              : `
-                <div class="empty-card">
-                  수영복 없음
-                </div>
-              `
-            }
+</head>
 
-          </div>
+<body>
 
-        </div>
+<div id="app"></div>
 
-        <button
-          class="spin-btn"
-          onclick="window.app.spinAll()"
-        >
-          오늘 뭐 입지?
-        </button>
+<!-- JS -->
+<script
+  type="module"
+  src="./js/app.js?v=20260522"
+></script>
 
-      </div>
-
-    </div>
-  `;
-}
-
-function renderRouletteCard(item){
-
-  return `
-    <div class="roulette-card">
-
-      <div class="roulette-image-wrap">
-
-        ${
-          item.image
-          ? `
-            <img
-              src="${item.image}"
-              class="card-image"
-            />
-          `
-          : `
-            <div class="card-placeholder">
-              🌊
-            </div>
-          `
-        }
-
-        <div class="ripple"></div>
-
-      </div>
-
-      <div class="roulette-name">
-        ${item.name}
-      </div>
-
-    </div>
-  `;
-}
+</body>
+</html>
