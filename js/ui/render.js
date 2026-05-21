@@ -29,7 +29,7 @@ export function renderApp(){
 
         <div class="roulette-wrap">
 
-          <!-- CAP RESULT -->
+          <!-- CAP -->
           <div class="roulette-slot">
 
             <div class="roulette-label">
@@ -50,7 +50,7 @@ export function renderApp(){
 
           </div>
 
-          <!-- SWIM RESULT -->
+          <!-- SWIM -->
           <div class="roulette-slot">
 
             <div class="roulette-label">
@@ -90,6 +90,7 @@ export function renderApp(){
 
         <div class="section-title">
           🧢 수모
+          (${state.caps.length})
         </div>
 
         <div class="slider">
@@ -123,6 +124,7 @@ export function renderApp(){
 
         <div class="section-title">
           🩲 수영복
+          (${state.swimsuits.length})
         </div>
 
         <div class="slider">
@@ -149,7 +151,7 @@ export function renderApp(){
       </div>
 
       <!-- =========================
-           INPUT AREA
+           INPUT
       ========================== -->
 
       <div class="block">
@@ -205,9 +207,9 @@ export function renderApp(){
 function renderRouletteCard(item){
 
   return `
-    <div class="item-card active">
+    <div class="roulette-card">
 
-      <div class="card-inner">
+      <div class="roulette-image-wrap">
 
         ${
           item.image
@@ -224,14 +226,10 @@ function renderRouletteCard(item){
           `
         }
 
-        <div class="card-overlay">
+      </div>
 
-          <div class="card-title">
-            ${item.name}
-          </div>
-
-        </div>
-
+      <div class="roulette-name">
+        ${item.name}
       </div>
 
     </div>
