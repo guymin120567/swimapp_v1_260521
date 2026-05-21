@@ -1,376 +1,395 @@
 import {
-  getState,
-  setState,
-  defaultState
+  getState
 } from "../state/state.js";
 
-import {
-  renderApp
-} from "../ui/render.js";
-
-import {
-  saveState,
-  loadState
-} from "./db.js";
-
 // =========================
-// INIT
+// MAIN RENDER
 // =========================
-export function initController(){
+export function renderApp(){
 
-  async function boot(){
-
-    bindGlobal();
-
-    const saved =
-      await loadState();
-
-    if(saved){
-
-      setState(saved);
-    }
-    else{
-
-      setState(
-        structuredClone(
-          defaultState
-        )
-      );
-    }
-
-    renderApp();
-  }
-
-  // =========================
-  // SAVE + RENDER
-  // =========================
-  async function update(){
-
-    await saveState(
-      getState()
+  const app =
+    document.getElementById(
+      "app"
     );
 
-    renderApp();
-  }
+  const state =
+    getState();
 
-  // =========================
-  // ADD ITEM
-  // =========================
-  async function submitSelectedItem(){
+  app.innerHTML = `
 
-    const type =
-      document.getElementById(
-        "itemType"
-      ).value;
+    <div class="container">
 
-    const text =
-      document.getElementById(
-        "itemText"
-      ).value.trim();
+      <!-- =========================
+           ROULETTE
+      ========================== -->
 
-    const file =
-      document.getElementById(
-        "itemImage"
-      ).files[0];
+      <div class="block">
 
-    if(!text){
+        <div class="section-title">
+          🎰 룰렛
+        </div>
 
-      alert("이름 입력");
+        <div class="roulette-wrap">
 
-      return;
-    }
+          <!-- CAP -->
+          <div class="roulette-slot">
 
-    let image = null;
+            <div class="roulette-label">
+              🧢 수모
+            </div>
 
-    if(file){
+            ${
+              state.selectedCap
+              ? renderRouletteCard(
+                  state.selectedCap
+                )
+              : `
+                <div class="empty-card">
+                  수모 없음
+                </div>
+              `
+            }
 
-      image =
-        await fileToBase64(file);
-    }
+          </div>
 
-    const state =
-      getState();
+          <!-- SWIM -->
+          <div class="roulette-slot">
 
-    const item = {
+            <div class="roulette-label">
+              🩲 수영복
+            </div>
 
-      id: Date.now(),
+            ${
+              state.selectedSwim
+              ? renderRouletteCard(
+                  state.selectedSwim
+                )
+              : `
+                <div class="empty-card">
+                  수영복 없음
+                </div>
+              `
+            }
 
-      name: text,
-
-      image
-    };
-
-    if(type === "cap"){
+          </div>
 
-      state.caps.push(item);
+        </div>
 
-      state.activeCapIndex =
-        state.caps.length - 1;
-    }
-    else{
+        <button
+          class="spin-btn"
+          onclick="window.app.spinAll()"
+        >
+          오늘 뭐 입지?
+        </button>
 
-      state.swimsuits.push(item);
+      </div>
 
-      state.activeSwimIndex =
-        state.swimsuits.length - 1;
-    }
+      <!-- =========================
+           CAP
+      ========================== -->
 
-    setState({
-      ...state
-    });
+      <div class="block">
 
-    document.getElementById(
-      "itemText"
-    ).value = "";
+        <div class="section-title">
+          🧢 수모 (${state.caps.length})
+        </div>
 
-    document.getElementById(
-      "itemImage"
-    ).value = "";
+        <div class="coverflow">
 
-    await update();
-  }
+          ${
+            renderVisibleCards(
+              state.caps,
+              state.activeCapIndex,
+              "cap"
+            )
+          }
 
-  // =========================
-  // REMOVE
-  // =========================
-  async function removeItem(
-    type,
-    id
-  ){
+        </div>
 
-    const state =
-      getState();
+      </div>
 
-    if(type === "cap"){
+      <!-- =========================
+           SWIM
+      ========================== -->
 
-      state.caps =
-        state.caps.filter(
-          item =>
-            item.id != id
-        );
+      <div class="block">
 
-      if(
-        state.activeCapIndex >=
-        state.caps.length
-      ){
-
-        state.activeCapIndex =
-          Math.max(
-            0,
-            state.caps.length - 1
-          );
-      }
-    }
-    else{
-
-      state.swimsuits =
-        state.swimsuits.filter(
-          item =>
-            item.id != id
-        );
-
-      if(
-        state.activeSwimIndex >=
-        state.swimsuits.length
-      ){
-
-        state.activeSwimIndex =
-          Math.max(
-            0,
-            state.swimsuits.length - 1
-          );
-      }
-    }
-
-    setState({
-      ...state
-    });
-
-    await update();
-  }
-
-  // =========================
-  // ACTIVE INDEX
-  // =========================
-  async function setActiveIndex(
-    type,
-    index
-  ){
-
-    const state =
-      getState();
-
-    if(type === "cap"){
-
-      state.activeCapIndex =
-        index;
-    }
-    else{
-
-      state.activeSwimIndex =
-        index;
-    }
-
-    setState({
-      ...state
-    });
-
-    await update();
-  }
-
-  // =========================
-  // NEXT / PREV
-  // =========================
-  async function slide(
-    type,
-    direction
-  ){
-
-    const state =
-      getState();
-
-    const items =
-      type === "cap"
-      ? state.caps
-      : state.swimsuits;
-
-    if(!items.length){
-
-      return;
-    }
-
-    if(type === "cap"){
-
-      state.activeCapIndex +=
-        direction;
-
-      if(
-        state.activeCapIndex < 0
-      ){
-        state.activeCapIndex =
-          0;
-      }
-
-      if(
-        state.activeCapIndex >
-        items.length - 1
-      ){
-        state.activeCapIndex =
-          items.length - 1;
-      }
-    }
-    else{
-
-      state.activeSwimIndex +=
-        direction;
-
-      if(
-        state.activeSwimIndex < 0
-      ){
-        state.activeSwimIndex =
-          0;
-      }
-
-      if(
-        state.activeSwimIndex >
-        items.length - 1
-      ){
-        state.activeSwimIndex =
-          items.length - 1;
-      }
-    }
-
-    setState({
-      ...state
-    });
-
-    await update();
-  }
-
-  // =========================
-  // SPIN
-  // =========================
-  async function spinAll(){
-
-    const state =
-      getState();
-
-    if(state.caps.length){
-
-      const random =
-        Math.floor(
-          Math.random() *
-          state.caps.length
-        );
-
-      state.activeCapIndex =
-        random;
-
-      state.selectedCap =
-        state.caps[random];
-    }
-
-    if(state.swimsuits.length){
-
-      const random =
-        Math.floor(
-          Math.random() *
-          state.swimsuits.length
-        );
-
-      state.activeSwimIndex =
-        random;
-
-      state.selectedSwim =
-        state.swimsuits[random];
-    }
-
-    setState({
-      ...state
-    });
-
-    await update();
-  }
-
-  // =========================
-  // GLOBAL
-  // =========================
-  function bindGlobal(){
-
-    window.app = {
-
-      submitSelectedItem,
-
-      removeItem,
-
-      setActiveIndex,
-
-      slide,
-
-      spinAll
-    };
-  }
-
-  return {
-    boot
-  };
+        <div class="section-title">
+          🩲 수영복 (${state.swimsuits.length})
+        </div>
+
+        <div class="coverflow">
+
+          ${
+            renderVisibleCards(
+              state.swimsuits,
+              state.activeSwimIndex,
+              "swim"
+            )
+          }
+
+        </div>
+
+      </div>
+
+      <!-- =========================
+           INPUT
+      ========================== -->
+
+      <div class="block">
+
+        <div class="section-title">
+          ➕ 추가하기
+        </div>
+
+        <div class="input-area">
+
+          <select id="itemType">
+
+            <option value="cap">
+              🧢 수모
+            </option>
+
+            <option value="swim">
+              🩲 수영복
+            </option>
+
+          </select>
+
+          <input
+            id="itemText"
+            type="text"
+            placeholder="이름 입력"
+          />
+
+          <input
+            id="itemImage"
+            type="file"
+            accept="image/*"
+          />
+
+          <button
+            class="spin-btn"
+            onclick="window.app.submitSelectedItem()"
+          >
+            추가
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+  `;
 }
 
 // =========================
-// FILE -> BASE64
+// VISIBLE CARDS
 // =========================
-function fileToBase64(file){
+function renderVisibleCards(
+  items,
+  activeIndex,
+  type
+){
 
-  return new Promise(resolve=>{
+  if(!items.length){
 
-    const reader =
-      new FileReader();
+    return `
+      <div class="empty-card">
+        아이템 없음
+      </div>
+    `;
+  }
 
-    reader.onload =
-      ()=>resolve(
-        reader.result
+  const start =
+    Math.max(
+      0,
+      activeIndex - 2
+    );
+
+  const end =
+    Math.min(
+      items.length,
+      activeIndex + 3
+    );
+
+  const visible =
+    items.slice(start,end);
+
+  return `
+
+    <button
+      class="nav-btn"
+      onclick="
+        window.app.slide(
+          '${type}',
+          -1
+        )
+      "
+    >
+      ‹
+    </button>
+
+    ${visible.map((item,i)=>{
+
+      const realIndex =
+        start + i;
+
+      return renderCoverflowCard(
+        item,
+        realIndex,
+        activeIndex,
+        type
       );
 
-    reader.readAsDataURL(file);
-  });
+    }).join("")}
+
+    <button
+      class="nav-btn"
+      onclick="
+        window.app.slide(
+          '${type}',
+          1
+        )
+      "
+    >
+      ›
+    </button>
+
+  `;
+}
+
+// =========================
+// ROULETTE CARD
+// =========================
+function renderRouletteCard(
+  item
+){
+
+  return `
+    <div class="roulette-card">
+
+      <div class="roulette-image-wrap">
+
+        ${
+          item.image
+          ? `
+            <img
+              src="${item.image}"
+              class="card-image"
+            />
+          `
+          : `
+            <div class="card-placeholder">
+              🌊
+            </div>
+          `
+        }
+
+      </div>
+
+      <div class="roulette-name">
+        ${item.name}
+      </div>
+
+    </div>
+  `;
+}
+
+// =========================
+// COVERFLOW CARD
+// =========================
+function renderCoverflowCard(
+  item,
+  index,
+  activeIndex,
+  type
+){
+
+  const distance =
+    Math.abs(
+      index - activeIndex
+    );
+
+  const scale =
+    Math.max(
+      0.72,
+      1 - distance * 0.12
+    );
+
+  const opacity =
+    Math.max(
+      0.35,
+      1 - distance * 0.18
+    );
+
+  const translateY =
+    distance * 8;
+
+  const zIndex =
+    100 - distance;
+
+  return `
+    <div
+      class="cover-card"
+      onclick="
+        window.app.setActiveIndex(
+          '${type}',
+          ${index}
+        )
+      "
+      style="
+        transform:
+          scale(${scale})
+          translateY(${translateY}px);
+
+        opacity:${opacity};
+
+        z-index:${zIndex};
+      "
+    >
+
+      <div class="card-inner">
+
+        ${
+          item.image
+          ? `
+            <img
+              src="${item.image}"
+              class="card-image"
+            />
+          `
+          : `
+            <div class="card-placeholder">
+              🌊
+            </div>
+          `
+        }
+
+        <div class="card-overlay">
+
+          <div class="card-title">
+            ${item.name}
+          </div>
+
+          <button
+            class="delete-btn"
+            onclick="
+              event.stopPropagation();
+
+              window.app.removeItem(
+                '${type}',
+                '${item.id}'
+              )
+            "
+          >
+            ×
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+  `;
 }
