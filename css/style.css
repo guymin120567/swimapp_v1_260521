@@ -67,7 +67,7 @@ body{
 .container{
   width:100%;
 
-  max-width:900px;
+  max-width:920px;
 
   margin:0 auto;
 
@@ -81,23 +81,6 @@ body{
   flex-direction:column;
 
   gap:22px;
-}
-
-/* =========================
-   APP TITLE
-========================= */
-
-.app-title{
-  margin:0;
-
-  font-size:30px;
-
-  font-weight:800;
-
-  color:white;
-
-  text-shadow:
-    0 0 18px rgba(56,189,248,0.35);
 }
 
 /* =========================
@@ -125,13 +108,16 @@ body{
 ========================= */
 
 .section-title{
-  margin:0 0 14px;
+  margin:0 0 16px;
 
   font-size:18px;
 
   font-weight:700;
 
   color:#bfe9ff;
+
+  text-shadow:
+    0 0 12px rgba(56,189,248,0.25);
 }
 
 /* =========================
@@ -143,9 +129,9 @@ body{
 
   gap:18px;
 
-  justify-content:center;
-
   align-items:flex-start;
+
+  justify-content:center;
 
   margin-bottom:18px;
 }
@@ -262,7 +248,9 @@ body{
   box-shadow:
     0 12px 30px rgba(3,105,161,0.35);
 
-  transition:0.15s;
+  transition:
+    transform 0.15s ease,
+    opacity 0.15s ease;
 }
 
 .spin-btn:active{
@@ -270,61 +258,64 @@ body{
 }
 
 /* =========================
-   SLIDER
+   COVERFLOW
 ========================= */
 
-.slider{
+.coverflow{
+  width:100%;
+
   display:flex;
 
   align-items:center;
+
+  justify-content:center;
 
   overflow-x:auto;
 
   overflow-y:visible;
 
   padding:
-    34px
-    10px;
+    42px
+    18px;
 
   scroll-behavior:smooth;
 
   -webkit-overflow-scrolling:touch;
 }
 
-.slider::-webkit-scrollbar{
+.coverflow::-webkit-scrollbar{
   display:none;
 }
 
 /* =========================
-   ITEM CARD
+   COVER CARD
 ========================= */
 
-.item-card{
-  width:160px;
+.cover-card{
+  width:170px;
 
   aspect-ratio:1 / 1;
 
   flex-shrink:0;
 
-  position:relative;
-
   margin-left:-42px;
 
+  position:relative;
+
+  cursor:pointer;
+
   transition:
-    transform 0.25s ease,
-    opacity 0.25s ease;
+    transform 0.28s ease,
+    opacity 0.28s ease,
+    filter 0.28s ease;
 }
 
-.item-card:first-child{
+.cover-card:first-child{
   margin-left:0;
 }
 
-.item-card.active{
-  transform:
-    scale(1.12)
-    translateY(-8px);
-
-  z-index:999;
+.cover-card:hover{
+  filter:brightness(1.08);
 }
 
 /* =========================
@@ -340,7 +331,7 @@ body{
 
   overflow:hidden;
 
-  border-radius:26px;
+  border-radius:28px;
 
   background:
     rgba(255,255,255,0.06);
@@ -351,7 +342,8 @@ body{
   backdrop-filter:blur(18px);
 
   box-shadow:
-    0 18px 45px rgba(0,0,0,0.45);
+    0 18px 45px rgba(0,0,0,0.45),
+    inset 0 0 18px rgba(56,189,248,0.08);
 }
 
 /* =========================
@@ -476,7 +468,7 @@ body{
 }
 
 /* =========================
-   EMPTY CARD
+   EMPTY
 ========================= */
 
 .empty-card{
@@ -534,6 +526,8 @@ body{
   font-size:15px;
 
   outline:none;
+
+  backdrop-filter:blur(10px);
 }
 
 .input-area input::placeholder{
@@ -558,32 +552,28 @@ body{
       72px;
   }
 
-  .app-title{
-    font-size:26px;
-  }
-
   .roulette-wrap{
     gap:10px;
   }
 
   .roulette-image-wrap{
-    width:120px;
+    width:118px;
   }
 
   .roulette-name{
     font-size:13px;
   }
 
-  .item-card{
-    width:130px;
-
-    margin-left:-30px;
+  .coverflow{
+    padding:
+      28px
+      4px;
   }
 
-  .slider{
-    padding:
-      24px
-      6px;
+  .cover-card{
+    width:132px;
+
+    margin-left:-28px;
   }
 
   .card-title{
