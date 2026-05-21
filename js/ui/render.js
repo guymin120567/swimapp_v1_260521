@@ -16,6 +16,8 @@ export function renderApp(){
 
     <div class="container">
 
+      <!-- ROULETTE -->
+
       <div class="block">
 
         <div class="section-title">
@@ -75,6 +77,8 @@ export function renderApp(){
 
       </div>
 
+      <!-- CAP -->
+
       <div class="block">
 
         <div class="section-title">
@@ -98,6 +102,8 @@ export function renderApp(){
 
       </div>
 
+      <!-- SWIM -->
+
       <div class="block">
 
         <div class="section-title">
@@ -120,6 +126,8 @@ export function renderApp(){
         </div>
 
       </div>
+
+      <!-- INPUT -->
 
       <div class="block">
 
@@ -162,6 +170,38 @@ export function renderApp(){
 
         </div>
 
+      </div>
+
+    </div>
+  `;
+}
+
+function renderRouletteCard(item){
+
+  return `
+    <div class="roulette-card roulette-animate">
+
+      <div class="roulette-image-wrap">
+
+        ${
+          item.image
+          ? `
+            <img
+              src="${item.image}"
+              class="card-image"
+            />
+          `
+          : `
+            <div class="card-placeholder">
+              🌊
+            </div>
+          `
+        }
+
+      </div>
+
+      <div class="roulette-name">
+        ${item.name}
       </div>
 
     </div>
@@ -213,38 +253,6 @@ function renderVisibleCards(
     .join("");
 }
 
-function renderRouletteCard(item){
-
-  return `
-    <div class="roulette-card">
-
-      <div class="roulette-image-wrap">
-
-        ${
-          item.image
-          ? `
-            <img
-              src="${item.image}"
-              class="card-image"
-            />
-          `
-          : `
-            <div class="card-placeholder">
-              🌊
-            </div>
-          `
-        }
-
-      </div>
-
-      <div class="roulette-name">
-        ${item.name}
-      </div>
-
-    </div>
-  `;
-}
-
 function renderCard(
   item,
   index,
@@ -272,9 +280,6 @@ function renderCard(
       1 - distance * 0.18
     );
 
-  const translateY =
-    distance * 10;
-
   return `
     <div
       class="
@@ -290,7 +295,7 @@ function renderCard(
       style="
         transform:
           scale(${scale})
-          translateY(${translateY}px);
+          translateY(${distance*10}px);
 
         opacity:${opacity};
 
