@@ -114,6 +114,9 @@ body{
   font-weight:700;
 
   color:#bfe9ff;
+
+  text-shadow:
+    0 0 12px rgba(56,189,248,0.25);
 }
 
 /* =========================
@@ -199,6 +202,8 @@ body{
   font-size:14px;
 
   font-weight:700;
+
+  color:white;
 }
 
 /* =========================
@@ -228,6 +233,17 @@ body{
   font-weight:800;
 
   cursor:pointer;
+
+  box-shadow:
+    0 12px 30px rgba(3,105,161,0.35);
+
+  transition:
+    transform 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.spin-btn:active{
+  transform:scale(0.97);
 }
 
 /* =========================
@@ -237,17 +253,58 @@ body{
 .coverflow{
   width:100%;
 
+  min-height:260px;
+
   display:flex;
 
   align-items:center;
 
   justify-content:center;
 
-  min-height:260px;
-
-  overflow:hidden;
+  gap:8px;
 
   position:relative;
+
+  overflow:hidden;
+}
+
+/* =========================
+   NAV BUTTON
+========================= */
+
+.nav-btn{
+  width:42px;
+
+  height:42px;
+
+  border:none;
+
+  border-radius:50%;
+
+  background:
+    rgba(255,255,255,0.08);
+
+  color:white;
+
+  font-size:26px;
+
+  cursor:pointer;
+
+  flex-shrink:0;
+
+  backdrop-filter:blur(10px);
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.nav-btn:hover{
+  background:
+    rgba(56,189,248,0.4);
+
+  transform:scale(1.08);
 }
 
 /* =========================
@@ -265,13 +322,20 @@ body{
 
   margin-left:-42px;
 
+  cursor:pointer;
+
   transition:
     transform 0.28s ease,
-    opacity 0.28s ease;
+    opacity 0.28s ease,
+    filter 0.28s ease;
 }
 
-.cover-card:first-child{
+.cover-card:first-of-type{
   margin-left:0;
+}
+
+.cover-card:hover{
+  filter:brightness(1.08);
 }
 
 /* =========================
@@ -298,7 +362,8 @@ body{
   backdrop-filter:blur(18px);
 
   box-shadow:
-    0 18px 45px rgba(0,0,0,0.45);
+    0 18px 45px rgba(0,0,0,0.45),
+    inset 0 0 18px rgba(56,189,248,0.08);
 
   display:flex;
 
@@ -387,6 +452,8 @@ body{
 
   font-weight:700;
 
+  color:white;
+
   overflow:hidden;
 
   text-overflow:ellipsis;
@@ -413,6 +480,19 @@ body{
   color:white;
 
   cursor:pointer;
+
+  flex-shrink:0;
+
+  transition:
+    transform 0.15s ease,
+    background 0.15s ease;
+}
+
+.delete-btn:hover{
+  background:
+    rgba(56,189,248,0.6);
+
+  transform:scale(1.08);
 }
 
 /* =========================
@@ -439,7 +519,7 @@ body{
 }
 
 /* =========================
-   INPUT
+   INPUT AREA
 ========================= */
 
 .input-area{
@@ -449,6 +529,10 @@ body{
 
   gap:12px;
 }
+
+/* =========================
+   INPUT
+========================= */
 
 .input-area input,
 .input-area select{
@@ -470,6 +554,13 @@ body{
   font-size:15px;
 
   outline:none;
+
+  backdrop-filter:blur(10px);
+}
+
+.input-area input::placeholder{
+  color:
+    rgba(255,255,255,0.5);
 }
 
 .input-area input[type="file"]{
@@ -497,14 +588,28 @@ body{
     width:118px;
   }
 
+  .roulette-name{
+    font-size:13px;
+  }
+
   .coverflow{
     min-height:210px;
+
+    gap:4px;
   }
 
   .cover-card{
     width:128px;
 
-    margin-left:-26px;
+    margin-left:-24px;
+  }
+
+  .nav-btn{
+    width:36px;
+
+    height:36px;
+
+    font-size:22px;
   }
 
   .card-title{
@@ -515,5 +620,17 @@ body{
     height:52px;
 
     font-size:16px;
+  }
+}
+
+/* =========================
+   SAFE AREA
+========================= */
+
+@supports(padding:max(0px)){
+
+  body{
+    padding-bottom:
+      env(safe-area-inset-bottom);
   }
 }
