@@ -1,395 +1,501 @@
 import {
-  getState
+  getState,
+  setState,
+  defaultState
 } from "../state/state.js";
 
-// =========================
-// MAIN RENDER
-// =========================
-export function renderApp(){
+import {
+  renderApp
+} from "../ui/render.js";
 
-  const app =
-    document.getElementById(
-      "app"
+import {
+  saveState,
+  loadState
+} from "./db.js";
+
+// =========================
+// INIT CONTROLLER
+// =========================
+export function initController(){
+
+  async function boot(){
+
+    console.log(
+      "APP BOOT START"
     );
 
-  const state =
-    getState();
+    bindGlobal();
 
-  app.innerHTML = `
+    const saved =
+      await loadState();
 
-    <div class="container">
+    if(saved){
 
-      <!-- =========================
-           ROULETTE
-      ========================== -->
+      setState(saved);
+    }
+    else{
 
-      <div class="block">
+      setState(
+        structuredClone(
+          defaultState
+        )
+      );
+    }
 
-        <div class="section-title">
-          🎰 룰렛
-        </div>
+    renderApp();
 
-        <div class="roulette-wrap">
+    bindDrag();
 
-          <!-- CAP -->
-          <div class="roulette-slot">
-
-            <div class="roulette-label">
-              🧢 수모
-            </div>
-
-            ${
-              state.selectedCap
-              ? renderRouletteCard(
-                  state.selectedCap
-                )
-              : `
-                <div class="empty-card">
-                  수모 없음
-                </div>
-              `
-            }
-
-          </div>
-
-          <!-- SWIM -->
-          <div class="roulette-slot">
-
-            <div class="roulette-label">
-              🩲 수영복
-            </div>
-
-            ${
-              state.selectedSwim
-              ? renderRouletteCard(
-                  state.selectedSwim
-                )
-              : `
-                <div class="empty-card">
-                  수영복 없음
-                </div>
-              `
-            }
-
-          </div>
-
-        </div>
-
-        <button
-          class="spin-btn"
-          onclick="window.app.spinAll()"
-        >
-          오늘 뭐 입지?
-        </button>
-
-      </div>
-
-      <!-- =========================
-           CAP
-      ========================== -->
-
-      <div class="block">
-
-        <div class="section-title">
-          🧢 수모 (${state.caps.length})
-        </div>
-
-        <div class="coverflow">
-
-          ${
-            renderVisibleCards(
-              state.caps,
-              state.activeCapIndex,
-              "cap"
-            )
-          }
-
-        </div>
-
-      </div>
-
-      <!-- =========================
-           SWIM
-      ========================== -->
-
-      <div class="block">
-
-        <div class="section-title">
-          🩲 수영복 (${state.swimsuits.length})
-        </div>
-
-        <div class="coverflow">
-
-          ${
-            renderVisibleCards(
-              state.swimsuits,
-              state.activeSwimIndex,
-              "swim"
-            )
-          }
-
-        </div>
-
-      </div>
-
-      <!-- =========================
-           INPUT
-      ========================== -->
-
-      <div class="block">
-
-        <div class="section-title">
-          ➕ 추가하기
-        </div>
-
-        <div class="input-area">
-
-          <select id="itemType">
-
-            <option value="cap">
-              🧢 수모
-            </option>
-
-            <option value="swim">
-              🩲 수영복
-            </option>
-
-          </select>
-
-          <input
-            id="itemText"
-            type="text"
-            placeholder="이름 입력"
-          />
-
-          <input
-            id="itemImage"
-            type="file"
-            accept="image/*"
-          />
-
-          <button
-            class="spin-btn"
-            onclick="window.app.submitSelectedItem()"
-          >
-            추가
-          </button>
-
-        </div>
-
-      </div>
-
-    </div>
-  `;
-}
-
-// =========================
-// VISIBLE CARDS
-// =========================
-function renderVisibleCards(
-  items,
-  activeIndex,
-  type
-){
-
-  if(!items.length){
-
-    return `
-      <div class="empty-card">
-        아이템 없음
-      </div>
-    `;
+    console.log(
+      "APP BOOT SUCCESS"
+    );
   }
 
-  const start =
-    Math.max(
-      0,
-      activeIndex - 2
+  // =========================
+  // UPDATE
+  // =========================
+  async function update(){
+
+    await saveState(
+      getState()
     );
 
-  const end =
-    Math.min(
-      items.length,
-      activeIndex + 3
+    renderApp();
+
+    bindDrag();
+  }
+
+  // =========================
+  // ADD ITEM
+  // =========================
+  async function submitSelectedItem(){
+
+    const type =
+      document.getElementById(
+        "itemType"
+      ).value;
+
+    const text =
+      document.getElementById(
+        "itemText"
+      ).value.trim();
+
+    const file =
+      document.getElementById(
+        "itemImage"
+      ).files[0];
+
+    if(!text){
+
+      alert("이름 입력");
+
+      return;
+    }
+
+    let image = null;
+
+    if(file){
+
+      image =
+        await fileToBase64(file);
+    }
+
+    const state =
+      getState();
+
+    const item = {
+
+      id: Date.now(),
+
+      name: text,
+
+      image
+    };
+
+    if(type === "cap"){
+
+      state.caps.push(item);
+
+      state.activeCapIndex =
+        state.caps.length - 1;
+    }
+    else{
+
+      state.swimsuits.push(item);
+
+      state.activeSwimIndex =
+        state.swimsuits.length - 1;
+    }
+
+    setState({
+      ...state
+    });
+
+    document.getElementById(
+      "itemText"
+    ).value = "";
+
+    document.getElementById(
+      "itemImage"
+    ).value = "";
+
+    await update();
+  }
+
+  // =========================
+  // REMOVE
+  // =========================
+  async function removeItem(
+    type,
+    id
+  ){
+
+    const state =
+      getState();
+
+    if(type === "cap"){
+
+      state.caps =
+        state.caps.filter(
+          item =>
+            item.id != id
+        );
+
+      state.activeCapIndex =
+        Math.max(
+          0,
+          Math.min(
+            state.activeCapIndex,
+            state.caps.length - 1
+          )
+        );
+    }
+    else{
+
+      state.swimsuits =
+        state.swimsuits.filter(
+          item =>
+            item.id != id
+        );
+
+      state.activeSwimIndex =
+        Math.max(
+          0,
+          Math.min(
+            state.activeSwimIndex,
+            state.swimsuits.length - 1
+          )
+        );
+    }
+
+    setState({
+      ...state
+    });
+
+    await update();
+  }
+
+  // =========================
+  // SET ACTIVE
+  // =========================
+  async function setActiveIndex(
+    type,
+    index
+  ){
+
+    const state =
+      getState();
+
+    if(type === "cap"){
+
+      state.activeCapIndex =
+        index;
+    }
+    else{
+
+      state.activeSwimIndex =
+        index;
+    }
+
+    setState({
+      ...state
+    });
+
+    await update();
+  }
+
+  // =========================
+  // SLIDE
+  // =========================
+  async function slide(
+    type,
+    direction
+  ){
+
+    const state =
+      getState();
+
+    const items =
+      type === "cap"
+      ? state.caps
+      : state.swimsuits;
+
+    if(!items.length){
+
+      return;
+    }
+
+    if(type === "cap"){
+
+      state.activeCapIndex +=
+        direction;
+
+      state.activeCapIndex =
+        clamp(
+          state.activeCapIndex,
+          0,
+          items.length - 1
+        );
+    }
+    else{
+
+      state.activeSwimIndex +=
+        direction;
+
+      state.activeSwimIndex =
+        clamp(
+          state.activeSwimIndex,
+          0,
+          items.length - 1
+        );
+    }
+
+    setState({
+      ...state
+    });
+
+    await update();
+  }
+
+  // =========================
+  // SPIN
+  // =========================
+  async function spinAll(){
+
+    const state =
+      getState();
+
+    await animateSpin(
+      "cap",
+      state.caps
     );
 
-  const visible =
-    items.slice(start,end);
+    await animateSpin(
+      "swim",
+      state.swimsuits
+    );
 
-  return `
+    await update();
+  }
 
-    <button
-      class="nav-btn"
-      onclick="
-        window.app.slide(
-          '${type}',
-          -1
-        )
-      "
-    >
-      ‹
-    </button>
+  // =========================
+  // SPIN ANIMATION
+  // =========================
+  async function animateSpin(
+    type,
+    items
+  ){
 
-    ${visible.map((item,i)=>{
+    if(!items.length){
 
-      const realIndex =
-        start + i;
+      return;
+    }
 
-      return renderCoverflowCard(
-        item,
-        realIndex,
-        activeIndex,
-        type
+    const state =
+      getState();
+
+    const loops =
+      16 + Math.floor(
+        Math.random() * 8
       );
 
-    }).join("")}
+    for(
+      let i=0;
+      i<loops;
+      i++
+    ){
 
-    <button
-      class="nav-btn"
-      onclick="
-        window.app.slide(
-          '${type}',
-          1
-        )
-      "
-    >
-      ›
-    </button>
+      const random =
+        Math.floor(
+          Math.random() *
+          items.length
+        );
 
-  `;
+      if(type === "cap"){
+
+        state.activeCapIndex =
+          random;
+      }
+      else{
+
+        state.activeSwimIndex =
+          random;
+      }
+
+      setState({
+        ...state
+      });
+
+      renderApp();
+
+      bindDrag();
+
+      await sleep(
+        40 + i * 8
+      );
+    }
+
+    const finalIndex =
+      Math.floor(
+        Math.random() *
+        items.length
+      );
+
+    if(type === "cap"){
+
+      state.activeCapIndex =
+        finalIndex;
+
+      state.selectedCap =
+        items[finalIndex];
+    }
+    else{
+
+      state.activeSwimIndex =
+        finalIndex;
+
+      state.selectedSwim =
+        items[finalIndex];
+    }
+
+    setState({
+      ...state
+    });
+  }
+
+  // =========================
+  // DRAG
+  // =========================
+  function bindDrag(){
+
+    document
+      .querySelectorAll(
+        ".coverflow"
+      )
+      .forEach(flow=>{
+
+        let startX = 0;
+
+        flow.ontouchstart =
+          e=>{
+
+            startX =
+              e.touches[0].clientX;
+          };
+
+        flow.ontouchend =
+          e=>{
+
+            const endX =
+              e.changedTouches[0]
+                .clientX;
+
+            const diff =
+              startX - endX;
+
+            const type =
+              flow.dataset.type;
+
+            if(
+              Math.abs(diff) < 40
+            ){
+              return;
+            }
+
+            if(diff > 0){
+
+              slide(type,1);
+            }
+            else{
+
+              slide(type,-1);
+            }
+          };
+      });
+  }
+
+  // =========================
+  // GLOBAL
+  // =========================
+  function bindGlobal(){
+
+    window.app = {
+
+      submitSelectedItem,
+
+      removeItem,
+
+      setActiveIndex,
+
+      slide,
+
+      spinAll
+    };
+  }
+
+  return {
+    boot
+  };
 }
 
 // =========================
-// ROULETTE CARD
+// UTIL
 // =========================
-function renderRouletteCard(
-  item
-){
+function fileToBase64(file){
 
-  return `
-    <div class="roulette-card">
+  return new Promise(resolve=>{
 
-      <div class="roulette-image-wrap">
+    const reader =
+      new FileReader();
 
-        ${
-          item.image
-          ? `
-            <img
-              src="${item.image}"
-              class="card-image"
-            />
-          `
-          : `
-            <div class="card-placeholder">
-              🌊
-            </div>
-          `
-        }
+    reader.onload =
+      ()=>resolve(
+        reader.result
+      );
 
-      </div>
-
-      <div class="roulette-name">
-        ${item.name}
-      </div>
-
-    </div>
-  `;
+    reader.readAsDataURL(file);
+  });
 }
 
-// =========================
-// COVERFLOW CARD
-// =========================
-function renderCoverflowCard(
-  item,
-  index,
-  activeIndex,
-  type
+function sleep(ms){
+
+  return new Promise(
+    resolve=>
+      setTimeout(
+        resolve,
+        ms
+      )
+  );
+}
+
+function clamp(
+  value,
+  min,
+  max
 ){
 
-  const distance =
-    Math.abs(
-      index - activeIndex
-    );
-
-  const scale =
-    Math.max(
-      0.72,
-      1 - distance * 0.12
-    );
-
-  const opacity =
-    Math.max(
-      0.35,
-      1 - distance * 0.18
-    );
-
-  const translateY =
-    distance * 8;
-
-  const zIndex =
-    100 - distance;
-
-  return `
-    <div
-      class="cover-card"
-      onclick="
-        window.app.setActiveIndex(
-          '${type}',
-          ${index}
-        )
-      "
-      style="
-        transform:
-          scale(${scale})
-          translateY(${translateY}px);
-
-        opacity:${opacity};
-
-        z-index:${zIndex};
-      "
-    >
-
-      <div class="card-inner">
-
-        ${
-          item.image
-          ? `
-            <img
-              src="${item.image}"
-              class="card-image"
-            />
-          `
-          : `
-            <div class="card-placeholder">
-              🌊
-            </div>
-          `
-        }
-
-        <div class="card-overlay">
-
-          <div class="card-title">
-            ${item.name}
-          </div>
-
-          <button
-            class="delete-btn"
-            onclick="
-              event.stopPropagation();
-
-              window.app.removeItem(
-                '${type}',
-                '${item.id}'
-              )
-            "
-          >
-            ×
-          </button>
-
-        </div>
-
-      </div>
-
-    </div>
-  `;
+  return Math.min(
+    Math.max(value,min),
+    max
+  );
 }
