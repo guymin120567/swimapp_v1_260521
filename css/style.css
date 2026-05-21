@@ -1,151 +1,636 @@
-html, body {
-  margin: 0;
-  padding: 0;
-  background: #0b1b2b;
-  color: white;
-  font-family: -apple-system, sans-serif;
-  overflow-x: hidden;
+/* =========================
+   RESET
+========================= */
+
+*{
+  box-sizing:border-box;
 }
 
-/* ========================= */
-.container {
-  padding: 12px;
+html,
+body{
+  width:100%;
+  min-height:100%;
 }
 
-/* ========================= */
-.block {
-  margin-bottom: 22px;
+/* =========================
+   BODY
+========================= */
+
+body{
+  margin:0;
+
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+
+  color:white;
+
+  background:
+    radial-gradient(
+      circle at 20% 10%,
+      #7dd3fc 0%,
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 80% 20%,
+      #38bdf8 0%,
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 50% 100%,
+      #0ea5e9 0%,
+      #06121f 70%
+    );
+
+  background-attachment:fixed;
+
+  overflow-x:hidden;
+
+  -webkit-font-smoothing:antialiased;
 }
 
-.section-title {
-  font-size: 15px;
-  font-weight: 700;
-  margin-bottom: 10px;
-  opacity: 0.9;
+/* =========================
+   ROOT
+========================= */
+
+#app{
+  width:100%;
+  min-height:100vh;
 }
 
-/* ========================= */
-/* 🎰 룰렛 */
-.spin-btn {
-  width: 100%;
-  padding: 16px;
-  border: none;
-  border-radius: 14px;
-  background: linear-gradient(135deg, #ff2d95, #ff6a3d);
-  color: white;
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 12px;
+/* =========================
+   CONTAINER
+========================= */
+
+.container{
+  width:100%;
+
+  max-width:920px;
+
+  margin:0 auto;
+
+  padding:
+    18px
+    14px
+    80px;
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:22px;
 }
 
-.preview-box {
-  width: 100%;
-  min-height: 120px;
-  border-radius: 14px;
-  background: rgba(255,255,255,0.08);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+/* =========================
+   BLOCK
+========================= */
+
+.block{
+  background:
+    rgba(255,255,255,0.04);
+
+  border:
+    1px solid rgba(255,255,255,0.08);
+
+  border-radius:24px;
+
+  padding:16px 12px;
+
+  backdrop-filter:blur(12px);
+
+  overflow:hidden;
 }
 
-/* ========================= */
-/* 결과 */
-.result-box {
-  display: flex;
-  gap: 10px;
+/* =========================
+   SECTION TITLE
+========================= */
+
+.section-title{
+  margin:0 0 16px;
+
+  font-size:18px;
+
+  font-weight:700;
+
+  color:#bfe9ff;
+
+  text-shadow:
+    0 0 12px rgba(56,189,248,0.25);
 }
 
-.result-item {
-  flex: 1;
-  text-align: center;
+/* =========================
+   ROULETTE
+========================= */
+
+.roulette-wrap{
+  display:flex;
+
+  gap:18px;
+
+  justify-content:center;
+
+  align-items:flex-start;
+
+  margin-bottom:18px;
 }
 
-.result-item img {
-  width: 100%;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 10px;
+.roulette-slot{
+  flex:1;
+
+  display:flex;
+
+  flex-direction:column;
+
+  align-items:center;
+
+  gap:14px;
 }
 
-/* ========================= */
-/* 슬라이더 */
-.slider {
-  display: flex;
-  gap: 10px;
-  overflow-x: auto;
-  padding-bottom: 6px;
+.roulette-label{
+  font-size:15px;
+
+  font-weight:700;
+
+  color:#bfe9ff;
 }
 
-.slider::-webkit-scrollbar {
-  display: none;
+/* =========================
+   ROULETTE CARD
+========================= */
+
+.roulette-card{
+  display:flex;
+
+  flex-direction:column;
+
+  align-items:center;
+
+  gap:10px;
 }
 
-/* ========================= */
-/* 카드 */
-.card {
-  min-width: 120px;
-  height: 140px;
-  background: rgba(255,255,255,0.08);
-  border-radius: 12px;
-  padding: 8px;
-  flex-shrink: 0;
+.roulette-image-wrap{
+  width:140px;
+
+  aspect-ratio:1 / 1;
+
+  overflow:hidden;
+
+  border-radius:24px;
+
+  background:
+    rgba(255,255,255,0.06);
+
+  border:
+    1px solid rgba(255,255,255,0.12);
+
+  backdrop-filter:blur(18px);
+
+  box-shadow:
+    0 18px 45px rgba(0,0,0,0.45);
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
 }
 
-.card img {
-  width: 100%;
-  height: 90px;
-  object-fit: cover;
-  border-radius: 10px;
+.roulette-name{
+  text-align:center;
+
+  font-size:14px;
+
+  font-weight:700;
+
+  color:white;
 }
 
-.card .text {
-  font-size: 12px;
-  text-align: center;
-  margin-top: 6px;
+/* =========================
+   BUTTON
+========================= */
+
+.spin-btn{
+  width:100%;
+
+  height:56px;
+
+  border:none;
+
+  border-radius:18px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #38bdf8,
+      #0284c7
+    );
+
+  color:white;
+
+  font-size:18px;
+
+  font-weight:800;
+
+  cursor:pointer;
+
+  box-shadow:
+    0 12px 30px rgba(3,105,161,0.35);
+
+  transition:
+    transform 0.15s ease,
+    opacity 0.15s ease;
 }
 
-/* ========================= */
-/* 입력 */
-.add-block input,
-.add-block select {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 8px;
-  border-radius: 10px;
-  border: none;
+.spin-btn:active{
+  transform:scale(0.97);
 }
 
-.add-block button {
-  width: 100%;
-  padding: 12px;
-  border-radius: 10px;
-  border: none;
-  background: #2bd4ff;
-  font-weight: bold;
+/* =========================
+   COVERFLOW
+========================= */
+
+.coverflow{
+  width:100%;
+
+  min-height:260px;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  gap:8px;
+
+  position:relative;
+
+  overflow:hidden;
 }
 
-/* ========================= */
-/* 모달 */
-.modal-bg {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+/* =========================
+   NAV BUTTON
+========================= */
+
+.nav-btn{
+  width:42px;
+
+  height:42px;
+
+  border:none;
+
+  border-radius:50%;
+
+  background:
+    rgba(255,255,255,0.08);
+
+  color:white;
+
+  font-size:26px;
+
+  cursor:pointer;
+
+  flex-shrink:0;
+
+  backdrop-filter:blur(10px);
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    opacity 0.2s ease;
 }
 
-.modal {
-  background: #111;
-  padding: 16px;
-  border-radius: 12px;
-  width: 80%;
+.nav-btn:hover{
+  background:
+    rgba(56,189,248,0.4);
+
+  transform:scale(1.08);
 }
 
-.modal img {
-  width: 100%;
-  border-radius: 10px;
+/* =========================
+   COVER CARD
+========================= */
+
+.cover-card{
+  width:170px;
+
+  aspect-ratio:1 / 1;
+
+  position:relative;
+
+  flex-shrink:0;
+
+  margin-left:-42px;
+
+  cursor:pointer;
+
+  transition:
+    transform 0.28s ease,
+    opacity 0.28s ease,
+    filter 0.28s ease;
+}
+
+.cover-card:first-of-type{
+  margin-left:0;
+}
+
+.cover-card:hover{
+  filter:brightness(1.08);
+}
+
+/* =========================
+   CARD INNER
+========================= */
+
+.card-inner{
+  width:100%;
+
+  height:100%;
+
+  position:relative;
+
+  overflow:hidden;
+
+  border-radius:28px;
+
+  background:
+    rgba(255,255,255,0.06);
+
+  border:
+    1px solid rgba(255,255,255,0.12);
+
+  backdrop-filter:blur(18px);
+
+  box-shadow:
+    0 18px 45px rgba(0,0,0,0.45),
+    inset 0 0 18px rgba(56,189,248,0.08);
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+}
+
+/* =========================
+   IMAGE
+========================= */
+
+.card-image{
+  width:100%;
+
+  height:100%;
+
+  object-fit:cover;
+
+  object-position:center;
+
+  display:block;
+}
+
+/* =========================
+   PLACEHOLDER
+========================= */
+
+.card-placeholder{
+  width:100%;
+
+  height:100%;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  font-size:56px;
+
+  background:
+    radial-gradient(
+      circle at top,
+      rgba(56,189,248,0.35),
+      transparent 60%
+    ),
+    rgba(3,105,161,0.25);
+}
+
+/* =========================
+   OVERLAY
+========================= */
+
+.card-overlay{
+  position:absolute;
+
+  left:0;
+  right:0;
+  bottom:0;
+
+  padding:12px;
+
+  background:
+    linear-gradient(
+      to top,
+      rgba(0,0,0,0.82),
+      transparent
+    );
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  gap:10px;
+}
+
+/* =========================
+   TITLE
+========================= */
+
+.card-title{
+  font-size:13px;
+
+  font-weight:700;
+
+  color:white;
+
+  overflow:hidden;
+
+  text-overflow:ellipsis;
+
+  white-space:nowrap;
+}
+
+/* =========================
+   DELETE
+========================= */
+
+.delete-btn{
+  width:28px;
+
+  height:28px;
+
+  border:none;
+
+  border-radius:50%;
+
+  background:
+    rgba(255,255,255,0.14);
+
+  color:white;
+
+  cursor:pointer;
+
+  flex-shrink:0;
+
+  transition:
+    transform 0.15s ease,
+    background 0.15s ease;
+}
+
+.delete-btn:hover{
+  background:
+    rgba(56,189,248,0.6);
+
+  transform:scale(1.08);
+}
+
+/* =========================
+   EMPTY
+========================= */
+
+.empty-card{
+  width:100%;
+
+  padding:32px 18px;
+
+  text-align:center;
+
+  border-radius:18px;
+
+  border:
+    1px dashed rgba(255,255,255,0.18);
+
+  background:
+    rgba(255,255,255,0.03);
+
+  color:
+    rgba(255,255,255,0.65);
+}
+
+/* =========================
+   INPUT AREA
+========================= */
+
+.input-area{
+  display:flex;
+
+  flex-direction:column;
+
+  gap:12px;
+}
+
+/* =========================
+   INPUT
+========================= */
+
+.input-area input,
+.input-area select{
+  width:100%;
+
+  height:52px;
+
+  border:none;
+
+  border-radius:14px;
+
+  padding:0 14px;
+
+  background:
+    rgba(255,255,255,0.08);
+
+  color:white;
+
+  font-size:15px;
+
+  outline:none;
+
+  backdrop-filter:blur(10px);
+}
+
+.input-area input::placeholder{
+  color:
+    rgba(255,255,255,0.5);
+}
+
+.input-area input[type="file"]{
+  padding:12px;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width:480px){
+
+  .container{
+    padding:
+      14px
+      10px
+      72px;
+  }
+
+  .roulette-wrap{
+    gap:10px;
+  }
+
+  .roulette-image-wrap{
+    width:118px;
+  }
+
+  .roulette-name{
+    font-size:13px;
+  }
+
+  .coverflow{
+    min-height:210px;
+
+    gap:4px;
+  }
+
+  .cover-card{
+    width:128px;
+
+    margin-left:-24px;
+  }
+
+  .nav-btn{
+    width:36px;
+
+    height:36px;
+
+    font-size:22px;
+  }
+
+  .card-title{
+    font-size:12px;
+  }
+
+  .spin-btn{
+    height:52px;
+
+    font-size:16px;
+  }
+}
+
+/* =========================
+   SAFE AREA
+========================= */
+
+@supports(padding:max(0px)){
+
+  body{
+    padding-bottom:
+      env(safe-area-inset-bottom);
+  }
 }

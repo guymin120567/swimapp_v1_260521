@@ -1,169 +1,222 @@
 const DB_NAME = "swim_app_db";
+const DB_VERSION = 2;
 
-const STORE = "stateStore";
+const STATE_STORE = "stateStore";
+const IMAGE_STORE = "imageStore";
 
-const KEY = "main";
+const STATE_KEY = "main_state";
 
-let db = null;
+let dbInstance = null;
 
 // =========================
-// DB OPEN
+// OPEN DB
 // =========================
-function openDB() {
+async function openDB(){
 
-  return new Promise((resolve, reject) => {
+  if(dbInstance){
+    return dbInstance;
+  }
 
-    const request =
-      indexedDB.open(DB_NAME, 1);
+  return new Promise((resolve,reject)=>{
 
-    request.onupgradeneeded = (e) => {
+    const request = indexedDB.open(
+      DB_NAME,
+      DB_VERSION
+    );
 
-      const db = e.target.result;
+    request.onupgradeneeded = (event)=>{
 
-      if (
-        !db.objectStoreNames.contains(STORE)
-      ) {
-        db.createObjectStore(STORE);
+      const db = event.target.result;
+
+      // STATE STORE
+      if(!db.objectStoreNames.contains(STATE_STORE)){
+        db.createObjectStore(STATE_STORE);
+      }
+
+      // IMAGE STORE
+      if(!db.objectStoreNames.contains(IMAGE_STORE)){
+        db.createObjectStore(IMAGE_STORE);
       }
     };
 
-    request.onsuccess = () => {
+    request.onsuccess = ()=>{
 
-      db = request.result;
+      dbInstance = request.result;
 
-      console.log("DB OPEN SUCCESS");
-
-      resolve(db);
+      resolve(dbInstance);
     };
 
-    request.onerror = () => {
-
-      console.error(
-        "DB OPEN ERROR",
-        request.error
-      );
-
+    request.onerror = ()=>{
       reject(request.error);
     };
   });
 }
 
 // =========================
-// SAVE
+// SAVE STATE
 // =========================
-export async function saveDB(state) {
+export async function saveState(state){
 
-  if (!db) {
-    await openDB();
-  }
+  const db = await openDB();
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve,reject)=>{
 
-    const tx =
-      db.transaction(STORE, "readwrite");
+    const tx = db.transaction(
+      STATE_STORE,
+      "readwrite"
+    );
 
-    const store =
-      tx.objectStore(STORE);
+    const store = tx.objectStore(
+      STATE_STORE
+    );
 
-    const req =
-      store.put(state, KEY);
+    const request = store.put(
+      state,
+      STATE_KEY
+    );
 
-    req.onsuccess = () => {
-
-      console.log("DB SAVED");
-
+    request.onsuccess = ()=>{
       resolve(true);
     };
 
-    req.onerror = () => {
-
-      console.error(
-        "DB SAVE ERROR",
-        req.error
-      );
-
-      reject(req.error);
+    request.onerror = ()=>{
+      reject(request.error);
     };
   });
 }
 
 // =========================
-// LOAD
+// LOAD STATE
 // =========================
-export async function loadDB() {
+export async function loadState(){
 
-  if (!db) {
-    await openDB();
-  }
+  const db = await openDB();
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve,reject)=>{
 
-    const tx =
-      db.transaction(STORE, "readonly");
+    const tx = db.transaction(
+      STATE_STORE,
+      "readonly"
+    );
 
-    const store =
-      tx.objectStore(STORE);
+    const store = tx.objectStore(
+      STATE_STORE
+    );
 
-    const req =
-      store.get(KEY);
+    const request = store.get(
+      STATE_KEY
+    );
 
-    req.onsuccess = () => {
-
-      console.log(
-        "DB LOADED",
-        req.result
-      );
-
-      resolve(req.result || null);
+    request.onsuccess = ()=>{
+      resolve(request.result || null);
     };
 
-    req.onerror = () => {
-
-      console.error(
-        "DB LOAD ERROR",
-        req.error
-      );
-
-      reject(req.error);
+    request.onerror = ()=>{
+      reject(request.error);
     };
   });
 }
 
 // =========================
-// CLEAR
+// SAVE IMAGE
 // =========================
-export async function clearDB() {
+export async function saveImage(
+  imageId,
+  imageData
+){
 
-  if (!db) {
-    await openDB();
-  }
+  const db = await openDB();
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve,reject)=>{
 
-    const tx =
-      db.transaction(STORE, "readwrite");
+    const tx = db.transaction(
+      IMAGE_STORE,
+      "readwrite"
+    );
 
-    const store =
-      tx.objectStore(STORE);
+    const store = tx.objectStore(
+      IMAGE_STORE
+    );
 
-    const req =
-      store.delete(KEY);
+    const request = store.put(
+      imageData,
+      imageId
+    );
 
-    req.onsuccess = () => {
-
-      console.log("DB CLEARED");
-
+    request.onsuccess = ()=>{
       resolve(true);
     };
 
-    req.onerror = () => {
+    request.onerror = ()=>{
+      reject(request.error);
+    };
+  });
+}
 
-      console.error(
-        "DB CLEAR ERROR",
-        req.error
-      );
+// =========================
+// LOAD IMAGE
+// =========================
+export async function loadImage(
+  imageId
+){
 
-      reject(req.error);
+  const db = await openDB();
+
+  return new Promise((resolve,reject)=>{
+
+    const tx = db.transaction(
+      IMAGE_STORE,
+      "readonly"
+    );
+
+    const store = tx.objectStore(
+      IMAGE_STORE
+    );
+
+    const request = store.get(
+      imageId
+    );
+
+    request.onsuccess = ()=>{
+      resolve(request.result || null);
+    };
+
+    request.onerror = ()=>{
+      reject(request.error);
+    };
+  });
+}
+
+// =========================
+// DELETE IMAGE
+// =========================
+export async function deleteImage(
+  imageId
+){
+
+  const db = await openDB();
+
+  return new Promise((resolve,reject)=>{
+
+    const tx = db.transaction(
+      IMAGE_STORE,
+      "readwrite"
+    );
+
+    const store = tx.objectStore(
+      IMAGE_STORE
+    );
+
+    const request = store.delete(
+      imageId
+    );
+
+    request.onsuccess = ()=>{
+      resolve(true);
+    };
+
+    request.onerror = ()=>{
+      reject(request.error);
     };
   });
 }

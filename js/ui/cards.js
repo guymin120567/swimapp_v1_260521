@@ -1,101 +1,48 @@
-export function renderSwimList(state) {
+import {
+  loadImage
+} from "../../db/database.js";
 
-  const root =
-    document.getElementById("swimList");
+export async function renderCards(
+  list,
+  container
+){
 
-  if (!root) return;
+  container.innerHTML = "";
 
-  const list = state.swimsuits;
+  for(const item of list){
 
-  if (!list.length) {
+    const card =
+      document.createElement("div");
 
-    root.innerHTML = `
-      <div class="empty">
-        등록된 수영복 없음
+    card.className = "card";
+
+    let imageHTML = "";
+
+    if(item.imageId){
+
+      const image =
+        await loadImage(
+          item.imageId
+        );
+
+      if(image){
+
+        imageHTML = `
+          <img
+            src="${image}"
+            class="thumb"
+          />
+        `;
+      }
+    }
+
+    card.innerHTML = `
+      ${imageHTML}
+      <div class="name">
+        ${item.text}
       </div>
     `;
 
-    return;
+    container.appendChild(card);
   }
-
-  root.innerHTML = list.map(item => `
-    <div class="item-card">
-
-      ${
-        item.img
-          ? `
-            <img
-              class="item-img"
-              src="${item.img}"
-            />
-          `
-          : `
-            <div class="item-img empty"></div>
-          `
-      }
-
-      <div class="item-name">
-        ${item.text}
-      </div>
-
-      <button
-        class="delete-btn"
-        onclick="window.app.removeItem('swimsuit', ${item.id})"
-      >
-        삭제
-      </button>
-
-    </div>
-  `).join("");
-}
-
-export function renderCapList(state) {
-
-  const root =
-    document.getElementById("capList");
-
-  if (!root) return;
-
-  const list = state.caps;
-
-  if (!list.length) {
-
-    root.innerHTML = `
-      <div class="empty">
-        등록된 수모 없음
-      </div>
-    `;
-
-    return;
-  }
-
-  root.innerHTML = list.map(item => `
-    <div class="item-card">
-
-      ${
-        item.img
-          ? `
-            <img
-              class="item-img"
-              src="${item.img}"
-            />
-          `
-          : `
-            <div class="item-img empty"></div>
-          `
-      }
-
-      <div class="item-name">
-        ${item.text}
-      </div>
-
-      <button
-        class="delete-btn"
-        onclick="window.app.removeItem('cap', ${item.id})"
-      >
-        삭제
-      </button>
-
-    </div>
-  `).join("");
 }

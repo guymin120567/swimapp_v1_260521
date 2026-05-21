@@ -1,3 +1,14 @@
-import { initApp } from "./core/init.js";
+import {
+  initController
+} from "./core/controller.js";
 
-initApp();
+window.addEventListener(
+  "DOMContentLoaded",
+  async ()=>{
+
+    const controller =
+      initController();
+
+    await controller.boot();
+  }
+);

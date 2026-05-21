@@ -1,246 +1,376 @@
 import {
+  getState,
+  setState,
+  defaultState
+} from "../state/state.js";
+
+import {
   renderApp
 } from "../ui/render.js";
 
 import {
-  renderPreview
-} from "../ui/preview.js";
+  saveState,
+  loadState
+} from "./db.js";
 
-import {
-  renderSwimList,
-  renderCapList
-} from "../ui/cards.js";
+// =========================
+// INIT
+// =========================
+export function initController(){
 
-import {
-  triggerHighlight
-} from "../ui/effects.js";
-
-import {
-  renderInputSection
-} from "../ui/input.js";
-
-import {
-  loadDB,
-  saveDB
-} from "../../db/database.js";
-
-import {
-  defaultState,
-  getState,
-  setInternalState
-} from "../state/state.js";
-
-import {
-  fileToBase64
-} from "../utils/image.js";
-
-import {
-  startRoulette
-} from "./roulette.js";
-
-export function initController() {
-
-  async function boot() {
-
-    const saved =
-      await loadDB();
-
-    const mergedState = {
-      ...structuredClone(defaultState),
-      ...(saved || {})
-    };
-
-    setInternalState(
-      mergedState
-    );
-
-    renderApp(
-      getState()
-    );
+  async function boot(){
 
     bindGlobal();
 
-    console.log(
-      "APP BOOT SUCCESS"
+    const saved =
+      await loadState();
+
+    if(saved){
+
+      setState(saved);
+    }
+    else{
+
+      setState(
+        structuredClone(
+          defaultState
+        )
+      );
+    }
+
+    renderApp();
+  }
+
+  // =========================
+  // SAVE + RENDER
+  // =========================
+  async function update(){
+
+    await saveState(
+      getState()
     );
+
+    renderApp();
   }
 
-  async function updateState(
-    patch
-  ) {
+  // =========================
+  // ADD ITEM
+  // =========================
+  async function submitSelectedItem(){
 
-    const next = {
-      ...getState(),
-      ...patch
-    };
+    const type =
+      document.getElementById(
+        "itemType"
+      ).value;
 
-    setInternalState(next);
+    const text =
+      document.getElementById(
+        "itemText"
+      ).value.trim();
 
-    await saveDB(next);
+    const file =
+      document.getElementById(
+        "itemImage"
+      ).files[0];
 
-    renderPreview(next);
+    if(!text){
 
-    renderSwimList(next);
+      alert("이름 입력");
 
-    renderCapList(next);
-  }
+      return;
+    }
 
-  async function addByCategory(
-    type,
-    text,
-    img
-  ) {
+    let image = null;
+
+    if(file){
+
+      image =
+        await fileToBase64(file);
+    }
 
     const state =
       getState();
 
     const item = {
+
       id: Date.now(),
-      text,
-      img
+
+      name: text,
+
+      image
     };
 
-    if (
-      type === "swimsuit"
-    ) {
+    if(type === "cap"){
 
-      await updateState({
-        swimsuits: [
-          ...state.swimsuits,
-          item
-        ]
-      });
+      state.caps.push(item);
+
+      state.activeCapIndex =
+        state.caps.length - 1;
+    }
+    else{
+
+      state.swimsuits.push(item);
+
+      state.activeSwimIndex =
+        state.swimsuits.length - 1;
     }
 
-    if (type === "cap") {
+    setState({
+      ...state
+    });
 
-      await updateState({
-        caps: [
-          ...state.caps,
-          item
-        ]
-      });
-    }
+    document.getElementById(
+      "itemText"
+    ).value = "";
+
+    document.getElementById(
+      "itemImage"
+    ).value = "";
+
+    await update();
   }
 
+  // =========================
+  // REMOVE
+  // =========================
   async function removeItem(
     type,
     id
-  ) {
+  ){
 
     const state =
       getState();
 
-    if (
-      type === "swimsuit"
-    ) {
+    if(type === "cap"){
 
-      await updateState({
-        swimsuits:
-          state.swimsuits.filter(
-            item =>
-              item.id !== id
-          )
-      });
-    }
-
-    if (type === "cap") {
-
-      await updateState({
-        caps:
-          state.caps.filter(
-            item =>
-              item.id !== id
-          )
-      });
-    }
-  }
-
-  async function addItemFromUI(
-    type
-  ) {
-
-    const textInput =
-      document.getElementById(
-        "itemText"
-      );
-
-    const fileInput =
-      document.getElementById(
-        "itemImage"
-      );
-
-    const text =
-      textInput?.value?.trim();
-
-    if (!text) return;
-
-    const file =
-      fileInput?.files?.[0];
-
-    let img = null;
-
-    if (file) {
-
-      img =
-        await fileToBase64(
-          file
+      state.caps =
+        state.caps.filter(
+          item =>
+            item.id != id
         );
+
+      if(
+        state.activeCapIndex >=
+        state.caps.length
+      ){
+
+        state.activeCapIndex =
+          Math.max(
+            0,
+            state.caps.length - 1
+          );
+      }
+    }
+    else{
+
+      state.swimsuits =
+        state.swimsuits.filter(
+          item =>
+            item.id != id
+        );
+
+      if(
+        state.activeSwimIndex >=
+        state.swimsuits.length
+      ){
+
+        state.activeSwimIndex =
+          Math.max(
+            0,
+            state.swimsuits.length - 1
+          );
+      }
     }
 
-    await addByCategory(
-      type,
-      text,
-      img
-    );
-
-    textInput.value = "";
-
-    fileInput.value = "";
-  }
-
-  async function submitSelectedItem() {
-
-    const typeSelect =
-      document.getElementById(
-        "itemType"
-      );
-
-    const selectedType =
-      typeSelect?.value ||
-      "swimsuit";
-
-    await addItemFromUI(
-      selectedType
-    );
-  }
-
-  function spinAll() {
-
-    startRoulette({
-      state: getState(),
-      updateState,
-      triggerHighlight
+    setState({
+      ...state
     });
+
+    await update();
   }
 
-  function bindGlobal() {
+  // =========================
+  // ACTIVE INDEX
+  // =========================
+  async function setActiveIndex(
+    type,
+    index
+  ){
+
+    const state =
+      getState();
+
+    if(type === "cap"){
+
+      state.activeCapIndex =
+        index;
+    }
+    else{
+
+      state.activeSwimIndex =
+        index;
+    }
+
+    setState({
+      ...state
+    });
+
+    await update();
+  }
+
+  // =========================
+  // NEXT / PREV
+  // =========================
+  async function slide(
+    type,
+    direction
+  ){
+
+    const state =
+      getState();
+
+    const items =
+      type === "cap"
+      ? state.caps
+      : state.swimsuits;
+
+    if(!items.length){
+
+      return;
+    }
+
+    if(type === "cap"){
+
+      state.activeCapIndex +=
+        direction;
+
+      if(
+        state.activeCapIndex < 0
+      ){
+        state.activeCapIndex =
+          0;
+      }
+
+      if(
+        state.activeCapIndex >
+        items.length - 1
+      ){
+        state.activeCapIndex =
+          items.length - 1;
+      }
+    }
+    else{
+
+      state.activeSwimIndex +=
+        direction;
+
+      if(
+        state.activeSwimIndex < 0
+      ){
+        state.activeSwimIndex =
+          0;
+      }
+
+      if(
+        state.activeSwimIndex >
+        items.length - 1
+      ){
+        state.activeSwimIndex =
+          items.length - 1;
+      }
+    }
+
+    setState({
+      ...state
+    });
+
+    await update();
+  }
+
+  // =========================
+  // SPIN
+  // =========================
+  async function spinAll(){
+
+    const state =
+      getState();
+
+    if(state.caps.length){
+
+      const random =
+        Math.floor(
+          Math.random() *
+          state.caps.length
+        );
+
+      state.activeCapIndex =
+        random;
+
+      state.selectedCap =
+        state.caps[random];
+    }
+
+    if(state.swimsuits.length){
+
+      const random =
+        Math.floor(
+          Math.random() *
+          state.swimsuits.length
+        );
+
+      state.activeSwimIndex =
+        random;
+
+      state.selectedSwim =
+        state.swimsuits[random];
+    }
+
+    setState({
+      ...state
+    });
+
+    await update();
+  }
+
+  // =========================
+  // GLOBAL
+  // =========================
+  function bindGlobal(){
 
     window.app = {
 
-      spinAll,
+      submitSelectedItem,
 
       removeItem,
 
-      addItemFromUI,
+      setActiveIndex,
 
-      submitSelectedItem,
+      slide,
 
-      getState
+      spinAll
     };
   }
 
   return {
     boot
   };
+}
+
+// =========================
+// FILE -> BASE64
+// =========================
+function fileToBase64(file){
+
+  return new Promise(resolve=>{
+
+    const reader =
+      new FileReader();
+
+    reader.onload =
+      ()=>resolve(
+        reader.result
+      );
+
+    reader.readAsDataURL(file);
+  });
 }
