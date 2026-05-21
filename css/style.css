@@ -43,7 +43,7 @@ body{
       #06121f 70%
     );
 
-  background-attachment: fixed;
+  background-attachment:fixed;
 
   overflow-x:hidden;
 
@@ -51,23 +51,17 @@ body{
 }
 
 /* =========================
-   ROOT APP
+   ROOT
 ========================= */
 
 #app{
   width:100%;
-
   min-height:100vh;
-
   display:block;
-
-  opacity:1;
-
-  visibility:visible;
 }
 
 /* =========================
-   MAIN CONTAINER
+   CONTAINER
 ========================= */
 
 .container{
@@ -78,7 +72,7 @@ body{
   margin:0 auto;
 
   padding:
-    20px
+    18px
     14px
     80px;
 
@@ -86,19 +80,7 @@ body{
 
   flex-direction:column;
 
-  gap:26px;
-}
-
-/* =========================
-   HEADER
-========================= */
-
-.top-area{
-  display:flex;
-
-  flex-direction:column;
-
-  gap:18px;
+  gap:22px;
 }
 
 /* =========================
@@ -108,60 +90,18 @@ body{
 .app-title{
   margin:0;
 
-  font-size:32px;
+  font-size:30px;
 
   font-weight:800;
 
-  letter-spacing:-0.5px;
-
-  color:#ffffff;
+  color:white;
 
   text-shadow:
     0 0 18px rgba(56,189,248,0.35);
 }
 
 /* =========================
-   BUTTON
-========================= */
-
-.spin-btn{
-  width:100%;
-
-  height:58px;
-
-  border:none;
-
-  border-radius:18px;
-
-  background:
-    linear-gradient(
-      135deg,
-      #38bdf8,
-      #0284c7
-    );
-
-  color:white;
-
-  font-size:18px;
-
-  font-weight:800;
-
-  cursor:pointer;
-
-  box-shadow:
-    0 12px 30px rgba(3,105,161,0.35);
-
-  transition:
-    transform 0.15s ease,
-    opacity 0.15s ease;
-}
-
-.spin-btn:active{
-  transform:scale(0.97);
-}
-
-/* =========================
-   SECTION BLOCK
+   BLOCK
 ========================= */
 
 .block{
@@ -192,9 +132,90 @@ body{
   font-weight:700;
 
   color:#bfe9ff;
+}
 
-  text-shadow:
-    0 0 12px rgba(56,189,248,0.25);
+/* =========================
+   ROULETTE
+========================= */
+
+.roulette-wrap{
+  display:flex;
+
+  gap:18px;
+
+  justify-content:center;
+
+  align-items:flex-start;
+
+  margin-bottom:18px;
+}
+
+.roulette-slot{
+  flex:1;
+
+  min-width:0;
+
+  display:flex;
+
+  flex-direction:column;
+
+  align-items:center;
+
+  gap:10px;
+}
+
+.roulette-label{
+  font-size:15px;
+
+  font-weight:700;
+
+  color:#bfe9ff;
+}
+
+.roulette-slot .item-card{
+  width:140px;
+
+  height:190px;
+
+  margin-left:0;
+}
+
+/* =========================
+   BUTTON
+========================= */
+
+.spin-btn{
+  width:100%;
+
+  height:56px;
+
+  border:none;
+
+  border-radius:18px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #38bdf8,
+      #0284c7
+    );
+
+  color:white;
+
+  font-size:18px;
+
+  font-weight:800;
+
+  cursor:pointer;
+
+  box-shadow:
+    0 12px 30px rgba(3,105,161,0.35);
+
+  transition:0.15s;
+}
+
+.spin-btn:active{
+  transform:scale(0.97);
 }
 
 /* =========================
@@ -202,8 +223,6 @@ body{
 ========================= */
 
 .slider{
-  width:100%;
-
   display:flex;
 
   align-items:center;
@@ -213,12 +232,10 @@ body{
   overflow-y:visible;
 
   padding:
-    36px
-    14px;
+    34px
+    10px;
 
   scroll-behavior:smooth;
-
-  justify-content:flex-start;
 
   -webkit-overflow-scrolling:touch;
 }
@@ -245,17 +262,11 @@ body{
   transition:
     transform 0.25s ease,
     opacity 0.25s ease;
-
-  z-index:1;
 }
 
 .item-card:first-child{
   margin-left:0;
 }
-
-/* =========================
-   ACTIVE CARD
-========================= */
 
 .item-card.active{
   transform:
@@ -276,9 +287,9 @@ body{
 
   position:relative;
 
-  border-radius:26px;
-
   overflow:hidden;
+
+  border-radius:26px;
 
   background:
     rgba(255,255,255,0.06);
@@ -289,8 +300,7 @@ body{
   backdrop-filter:blur(18px);
 
   box-shadow:
-    0 18px 45px rgba(0,0,0,0.45),
-    inset 0 0 18px rgba(56,189,248,0.08);
+    0 18px 45px rgba(0,0,0,0.45);
 }
 
 /* =========================
@@ -358,8 +368,6 @@ body{
   align-items:center;
 
   justify-content:space-between;
-
-  gap:10px;
 }
 
 /* =========================
@@ -381,7 +389,7 @@ body{
 }
 
 /* =========================
-   DELETE BUTTON
+   DELETE
 ========================= */
 
 .delete-btn{
@@ -393,29 +401,16 @@ body{
 
   border-radius:50%;
 
-  flex-shrink:0;
-
   background:
     rgba(255,255,255,0.14);
 
   color:white;
 
   cursor:pointer;
-
-  transition:
-    transform 0.15s ease,
-    background 0.15s ease;
-}
-
-.delete-btn:hover{
-  background:
-    rgba(56,189,248,0.6);
-
-  transform:scale(1.08);
 }
 
 /* =========================
-   EMPTY CARD
+   EMPTY
 ========================= */
 
 .empty-card{
@@ -438,7 +433,7 @@ body{
 }
 
 /* =========================
-   INPUT AREA
+   INPUT
 ========================= */
 
 .input-area{
@@ -448,10 +443,6 @@ body{
 
   gap:12px;
 }
-
-/* =========================
-   INPUT
-========================= */
 
 .input-area input,
 .input-area select{
@@ -473,8 +464,6 @@ body{
   font-size:15px;
 
   outline:none;
-
-  backdrop-filter:blur(10px);
 }
 
 .input-area input::placeholder{
@@ -482,16 +471,61 @@ body{
     rgba(255,255,255,0.5);
 }
 
-/* =========================
-   FILE INPUT
-========================= */
-
 .input-area input[type="file"]{
   padding:12px;
 }
 
 /* =========================
-   MOBILE SAFE AREA
+   MOBILE
+========================= */
+
+@media (max-width:480px){
+
+  .container{
+    padding:
+      14px
+      10px
+      72px;
+  }
+
+  .app-title{
+    font-size:26px;
+  }
+
+  .roulette-wrap{
+    gap:10px;
+  }
+
+  .roulette-slot .item-card{
+    width:120px;
+    height:170px;
+  }
+
+  .item-card{
+    width:140px;
+    height:190px;
+
+    margin-left:-34px;
+  }
+
+  .slider{
+    padding:
+      24px
+      6px;
+  }
+
+  .card-title{
+    font-size:12px;
+  }
+
+  .spin-btn{
+    height:52px;
+    font-size:16px;
+  }
+}
+
+/* =========================
+   SAFE AREA
 ========================= */
 
 @supports(padding:max(0px)){
