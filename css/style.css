@@ -6,16 +6,6 @@
   box-sizing:border-box;
 }
 
-html,
-body{
-  width:100%;
-  min-height:100%;
-}
-
-/* =========================
-   BODY
-========================= */
-
 body{
   margin:0;
 
@@ -27,36 +17,13 @@ body{
   color:white;
 
   background:
-    radial-gradient(
-      circle at 20% 10%,
-      #7dd3fc 0%,
-      transparent 35%
-    ),
-    radial-gradient(
-      circle at 80% 20%,
-      #38bdf8 0%,
-      transparent 40%
-    ),
-    radial-gradient(
-      circle at 50% 100%,
-      #0ea5e9 0%,
-      #06121f 70%
-    );
+    radial-gradient(circle at 20% 10%, #7dd3fc 0%, transparent 35%),
+    radial-gradient(circle at 80% 20%, #38bdf8 0%, transparent 40%),
+    radial-gradient(circle at 50% 100%, #0ea5e9 0%, #06121f 70%);
 
   background-attachment:fixed;
 
   overflow-x:hidden;
-
-  -webkit-font-smoothing:antialiased;
-}
-
-/* =========================
-   ROOT
-========================= */
-
-#app{
-  width:100%;
-  min-height:100vh;
 }
 
 /* =========================
@@ -64,16 +31,11 @@ body{
 ========================= */
 
 .container{
-  width:100%;
-
   max-width:920px;
 
   margin:0 auto;
 
-  padding:
-    18px
-    14px
-    80px;
+  padding:18px 14px 80px;
 
   display:flex;
 
@@ -103,20 +65,17 @@ body{
 }
 
 /* =========================
-   SECTION TITLE
+   TITLE
 ========================= */
 
 .section-title{
-  margin:0 0 16px;
-
   font-size:18px;
 
   font-weight:700;
 
   color:#bfe9ff;
 
-  text-shadow:
-    0 0 12px rgba(56,189,248,0.25);
+  margin-bottom:16px;
 }
 
 /* =========================
@@ -130,9 +89,7 @@ body{
 
   justify-content:center;
 
-  align-items:flex-start;
-
-  margin-bottom:18px;
+  margin-bottom:20px;
 }
 
 .roulette-slot{
@@ -144,22 +101,17 @@ body{
 
   align-items:center;
 
-  gap:14px;
+  gap:12px;
 }
 
 .roulette-label{
-  font-size:15px;
-
   font-weight:700;
 
   color:#bfe9ff;
 }
 
-/* =========================
-   ROULETTE CARD
-========================= */
-
 .roulette-card{
+
   display:flex;
 
   flex-direction:column;
@@ -169,41 +121,40 @@ body{
   gap:10px;
 }
 
-.roulette-image-wrap{
-  width:140px;
+.roulette-animate{
 
-  aspect-ratio:1 / 1;
+  animation:
+    rouletteBounce 0.45s ease;
+}
+
+.roulette-image-wrap{
+
+  width:150px;
+
+  aspect-ratio:1/1;
 
   overflow:hidden;
 
-  border-radius:24px;
-
-  background:
-    rgba(255,255,255,0.06);
+  border-radius:26px;
 
   border:
-    1px solid rgba(255,255,255,0.12);
+    2px solid rgba(56,189,248,0.5);
 
-  backdrop-filter:blur(18px);
+  background:
+    rgba(255,255,255,0.08);
 
   box-shadow:
+    0 0 28px rgba(56,189,248,0.35),
     0 18px 45px rgba(0,0,0,0.45);
-
-  display:flex;
-
-  align-items:center;
-
-  justify-content:center;
 }
 
 .roulette-name{
+
+  font-weight:800;
+
+  font-size:15px;
+
   text-align:center;
-
-  font-size:14px;
-
-  font-weight:700;
-
-  color:white;
 }
 
 /* =========================
@@ -211,6 +162,7 @@ body{
 ========================= */
 
 .spin-btn{
+
   width:100%;
 
   height:56px;
@@ -233,17 +185,6 @@ body{
   font-weight:800;
 
   cursor:pointer;
-
-  box-shadow:
-    0 12px 30px rgba(3,105,161,0.35);
-
-  transition:
-    transform 0.15s ease,
-    opacity 0.15s ease;
-}
-
-.spin-btn:active{
-  transform:scale(0.97);
 }
 
 /* =========================
@@ -251,9 +192,8 @@ body{
 ========================= */
 
 .coverflow{
-  width:100%;
 
-  min-height:260px;
+  min-height:240px;
 
   display:flex;
 
@@ -261,38 +201,27 @@ body{
 
   justify-content:center;
 
-  position:relative;
-
   overflow:hidden;
 
   touch-action:pan-y;
-
-  user-select:none;
 }
 
 /* =========================
-   COVER CARD
+   CARD
 ========================= */
 
 .cover-card{
+
   width:170px;
 
-  aspect-ratio:1 / 1;
-
-  position:relative;
-
-  flex-shrink:0;
+  aspect-ratio:1/1;
 
   margin-left:-42px;
 
-  cursor:pointer;
-
-  will-change:
-    transform,
-    opacity;
+  position:relative;
 
   transition:
-    transform 0.35s cubic-bezier(.2,.8,.2,1),
+    transform 0.35s ease,
     opacity 0.35s ease,
     filter 0.35s ease;
 }
@@ -301,44 +230,35 @@ body{
   margin-left:0;
 }
 
-/* =========================
-   ACTIVE CARD
-========================= */
-
 .cover-card.active{
 
-  animation:
-    glowPulse 2s infinite ease-in-out;
-
-  filter:
-    brightness(1.08);
-
   z-index:999;
-}
 
-/* =========================
-   DEPTH EFFECT
-========================= */
+  filter:brightness(1.1);
+
+  animation:
+    glowPulse 2s infinite;
+}
 
 .cover-card:not(.active){
 
   filter:
     blur(0.4px)
-    brightness(0.9);
+    brightness(0.88);
 }
 
 /* =========================
-   CARD INNER
+   INNER
 ========================= */
 
 .card-inner{
-  width:100%;
 
+  width:100%;
   height:100%;
 
-  position:relative;
-
   overflow:hidden;
+
+  position:relative;
 
   border-radius:28px;
 
@@ -351,14 +271,7 @@ body{
   backdrop-filter:blur(18px);
 
   box-shadow:
-    0 18px 45px rgba(0,0,0,0.45),
-    inset 0 0 18px rgba(56,189,248,0.08);
-
-  display:flex;
-
-  align-items:center;
-
-  justify-content:center;
+    0 18px 45px rgba(0,0,0,0.45);
 }
 
 /* =========================
@@ -366,24 +279,18 @@ body{
 ========================= */
 
 .card-image{
-  width:100%;
 
+  width:100%;
   height:100%;
 
   object-fit:cover;
 
   object-position:center;
-
-  display:block;
 }
 
-/* =========================
-   PLACEHOLDER
-========================= */
-
 .card-placeholder{
-  width:100%;
 
+  width:100%;
   height:100%;
 
   display:flex;
@@ -393,14 +300,6 @@ body{
   justify-content:center;
 
   font-size:56px;
-
-  background:
-    radial-gradient(
-      circle at top,
-      rgba(56,189,248,0.35),
-      transparent 60%
-    ),
-    rgba(3,105,161,0.25);
 }
 
 /* =========================
@@ -408,6 +307,7 @@ body{
 ========================= */
 
 .card-overlay{
+
   position:absolute;
 
   left:0;
@@ -425,23 +325,16 @@ body{
 
   display:flex;
 
-  align-items:center;
-
   justify-content:space-between;
 
-  gap:10px;
+  align-items:center;
 }
 
-/* =========================
-   TITLE
-========================= */
-
 .card-title{
+
   font-size:13px;
 
   font-weight:700;
-
-  color:white;
 
   overflow:hidden;
 
@@ -450,13 +343,9 @@ body{
   white-space:nowrap;
 }
 
-/* =========================
-   DELETE
-========================= */
-
 .delete-btn{
-  width:28px;
 
+  width:28px;
   height:28px;
 
   border:none;
@@ -464,24 +353,11 @@ body{
   border-radius:50%;
 
   background:
-    rgba(255,255,255,0.14);
+    rgba(255,255,255,0.16);
 
   color:white;
 
   cursor:pointer;
-
-  flex-shrink:0;
-
-  transition:
-    transform 0.15s ease,
-    background 0.15s ease;
-}
-
-.delete-btn:hover{
-  background:
-    rgba(56,189,248,0.6);
-
-  transform:scale(1.08);
 }
 
 /* =========================
@@ -489,29 +365,28 @@ body{
 ========================= */
 
 .empty-card{
+
   width:100%;
 
-  padding:32px 18px;
+  padding:28px;
 
   text-align:center;
 
   border-radius:18px;
 
-  border:
-    1px dashed rgba(255,255,255,0.18);
-
   background:
     rgba(255,255,255,0.03);
 
-  color:
-    rgba(255,255,255,0.65);
+  border:
+    1px dashed rgba(255,255,255,0.2);
 }
 
 /* =========================
-   INPUT AREA
+   INPUT
 ========================= */
 
 .input-area{
+
   display:flex;
 
   flex-direction:column;
@@ -519,13 +394,8 @@ body{
   gap:12px;
 }
 
-/* =========================
-   INPUT
-========================= */
-
 .input-area input,
 .input-area select{
-  width:100%;
 
   height:52px;
 
@@ -539,25 +409,10 @@ body{
     rgba(255,255,255,0.08);
 
   color:white;
-
-  font-size:15px;
-
-  outline:none;
-
-  backdrop-filter:blur(10px);
-}
-
-.input-area input::placeholder{
-  color:
-    rgba(255,255,255,0.5);
-}
-
-.input-area input[type="file"]{
-  padding:12px;
 }
 
 /* =========================
-   GLOW ANIMATION
+   ANIMATION
 ========================= */
 
 @keyframes glowPulse{
@@ -569,12 +424,37 @@ body{
 
   50%{
     box-shadow:
-      0 0 26px rgba(56,189,248,0.45);
+      0 0 30px rgba(56,189,248,0.5);
   }
 
   100%{
     box-shadow:
       0 0 0 rgba(56,189,248,0);
+  }
+}
+
+@keyframes rouletteBounce{
+
+  0%{
+    transform:
+      scale(0.8)
+      rotate(-8deg);
+
+    opacity:0.2;
+  }
+
+  50%{
+    transform:
+      scale(1.08)
+      rotate(5deg);
+  }
+
+  100%{
+    transform:
+      scale(1)
+      rotate(0deg);
+
+    opacity:1;
   }
 }
 
@@ -584,54 +464,20 @@ body{
 
 @media (max-width:480px){
 
-  .container{
-    padding:
-      14px
-      10px
-      72px;
-  }
-
-  .roulette-wrap{
-    gap:10px;
-  }
-
-  .roulette-image-wrap{
-    width:118px;
-  }
-
-  .roulette-name{
-    font-size:13px;
-  }
-
-  .coverflow{
-    min-height:210px;
-  }
-
   .cover-card{
+
     width:128px;
 
     margin-left:-24px;
   }
 
-  .card-title{
-    font-size:12px;
+  .roulette-image-wrap{
+
+    width:118px;
   }
 
-  .spin-btn{
-    height:52px;
+  .coverflow{
 
-    font-size:16px;
-  }
-}
-
-/* =========================
-   SAFE AREA
-========================= */
-
-@supports(padding:max(0px)){
-
-  body{
-    padding-bottom:
-      env(safe-area-inset-bottom);
+    min-height:210px;
   }
 }
