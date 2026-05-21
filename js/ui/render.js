@@ -3,7 +3,7 @@ import {
 } from "../state/state.js";
 
 // =========================
-// RENDER
+// MAIN RENDER
 // =========================
 export function renderApp(){
 
@@ -31,6 +31,7 @@ export function renderApp(){
 
         <div class="roulette-wrap">
 
+          <!-- CAP -->
           <div class="roulette-slot">
 
             <div class="roulette-label">
@@ -51,6 +52,7 @@ export function renderApp(){
 
           </div>
 
+          <!-- SWIM -->
           <div class="roulette-slot">
 
             <div class="roulette-label">
@@ -95,21 +97,11 @@ export function renderApp(){
         <div class="coverflow">
 
           ${
-            state.caps.length
-            ? state.caps.map(
-                (item,index)=>
-                  renderCoverflowCard(
-                    item,
-                    index,
-                    state.activeCapIndex,
-                    "cap"
-                  )
-              ).join("")
-            : `
-              <div class="empty-card">
-                수모 추가해줘
-              </div>
-            `
+            renderVisibleCards(
+              state.caps,
+              state.activeCapIndex,
+              "cap"
+            )
           }
 
         </div>
@@ -129,21 +121,11 @@ export function renderApp(){
         <div class="coverflow">
 
           ${
-            state.swimsuits.length
-            ? state.swimsuits.map(
-                (item,index)=>
-                  renderCoverflowCard(
-                    item,
-                    index,
-                    state.activeSwimIndex,
-                    "swim"
-                  )
-              ).join("")
-            : `
-              <div class="empty-card">
-                수영복 추가해줘
-              </div>
-            `
+            renderVisibleCards(
+              state.swimsuits,
+              state.activeSwimIndex,
+              "swim"
+            )
           }
 
         </div>
@@ -199,6 +181,54 @@ export function renderApp(){
 
     </div>
   `;
+}
+
+// =========================
+// ONLY 5 VISIBLE
+// =========================
+function renderVisibleCards(
+  items,
+  activeIndex,
+  type
+){
+
+  if(!items.length){
+
+    return `
+      <div class="empty-card">
+        아이템 없음
+      </div>
+    `;
+  }
+
+  const start =
+    Math.max(
+      0,
+      activeIndex - 2
+    );
+
+  const end =
+    Math.min(
+      items.length,
+      activeIndex + 3
+    );
+
+  return items
+    .slice(start,end)
+    .map((item,i)=>{
+
+      const realIndex =
+        start + i;
+
+      return renderCoverflowCard(
+        item,
+        realIndex,
+        activeIndex,
+        type
+      );
+
+    })
+    .join("");
 }
 
 // =========================
@@ -260,11 +290,11 @@ function renderCoverflowCard(
   const opacity =
     Math.max(
       0.35,
-      1 - distance * 0.2
+      1 - distance * 0.18
     );
 
   const translateY =
-    distance * 12;
+    distance * 8;
 
   const zIndex =
     100 - distance;
