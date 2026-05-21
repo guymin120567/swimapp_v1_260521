@@ -84,7 +84,7 @@ body{
 }
 
 /* =========================
-   TITLE
+   APP TITLE
 ========================= */
 
 .app-title{
@@ -161,7 +161,7 @@ body{
 
   align-items:center;
 
-  gap:10px;
+  gap:14px;
 }
 
 .roulette-label{
@@ -172,12 +172,63 @@ body{
   color:#bfe9ff;
 }
 
-.roulette-slot .item-card{
+/* =========================
+   ROULETTE CARD
+========================= */
+
+.roulette-card{
+  width:100%;
+
+  display:flex;
+
+  flex-direction:column;
+
+  align-items:center;
+
+  gap:10px;
+}
+
+/* =========================
+   ROULETTE IMAGE
+========================= */
+
+.roulette-image-wrap{
   width:140px;
 
-  height:190px;
+  aspect-ratio:1 / 1;
 
-  margin-left:0;
+  overflow:hidden;
+
+  border-radius:24px;
+
+  background:
+    rgba(255,255,255,0.06);
+
+  border:
+    1px solid rgba(255,255,255,0.12);
+
+  backdrop-filter:blur(18px);
+
+  box-shadow:
+    0 18px 45px rgba(0,0,0,0.45);
+}
+
+/* =========================
+   ROULETTE NAME
+========================= */
+
+.roulette-name{
+  width:100%;
+
+  text-align:center;
+
+  font-size:14px;
+
+  font-weight:700;
+
+  color:white;
+
+  word-break:break-word;
 }
 
 /* =========================
@@ -245,13 +296,13 @@ body{
 }
 
 /* =========================
-   CARD
+   ITEM CARD
 ========================= */
 
 .item-card{
   width:160px;
 
-  height:210px;
+  aspect-ratio:1 / 1;
 
   flex-shrink:0;
 
@@ -368,10 +419,12 @@ body{
   align-items:center;
 
   justify-content:space-between;
+
+  gap:10px;
 }
 
 /* =========================
-   TITLE
+   CARD TITLE
 ========================= */
 
 .card-title{
@@ -389,7 +442,7 @@ body{
 }
 
 /* =========================
-   DELETE
+   DELETE BUTTON
 ========================= */
 
 .delete-btn{
@@ -407,10 +460,23 @@ body{
   color:white;
 
   cursor:pointer;
+
+  flex-shrink:0;
+
+  transition:
+    transform 0.15s ease,
+    background 0.15s ease;
+}
+
+.delete-btn:hover{
+  background:
+    rgba(56,189,248,0.6);
+
+  transform:scale(1.08);
 }
 
 /* =========================
-   EMPTY
+   EMPTY CARD
 ========================= */
 
 .empty-card{
@@ -433,7 +499,7 @@ body{
 }
 
 /* =========================
-   INPUT
+   INPUT AREA
 ========================= */
 
 .input-area{
@@ -443,6 +509,10 @@ body{
 
   gap:12px;
 }
+
+/* =========================
+   INPUT
+========================= */
 
 .input-area input,
 .input-area select{
@@ -496,16 +566,18 @@ body{
     gap:10px;
   }
 
-  .roulette-slot .item-card{
+  .roulette-image-wrap{
     width:120px;
-    height:170px;
+  }
+
+  .roulette-name{
+    font-size:13px;
   }
 
   .item-card{
-    width:140px;
-    height:190px;
+    width:130px;
 
-    margin-left:-34px;
+    margin-left:-30px;
   }
 
   .slider{
@@ -520,6 +592,7 @@ body{
 
   .spin-btn{
     height:52px;
+
     font-size:16px;
   }
 }
