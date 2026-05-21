@@ -14,15 +14,11 @@ import {
 } from "./db.js";
 
 // =========================
-// INIT CONTROLLER
+// INIT
 // =========================
 export function initController(){
 
   async function boot(){
-
-    console.log(
-      "APP BOOT START"
-    );
 
     bindGlobal();
 
@@ -45,10 +41,6 @@ export function initController(){
     renderApp();
 
     bindDrag();
-
-    console.log(
-      "APP BOOT SUCCESS"
-    );
   }
 
   // =========================
@@ -115,16 +107,10 @@ export function initController(){
     if(type === "cap"){
 
       state.caps.push(item);
-
-      state.activeCapIndex =
-        state.caps.length - 1;
     }
     else{
 
       state.swimsuits.push(item);
-
-      state.activeSwimIndex =
-        state.swimsuits.length - 1;
     }
 
     setState({
@@ -160,15 +146,6 @@ export function initController(){
           item =>
             item.id != id
         );
-
-      state.activeCapIndex =
-        Math.max(
-          0,
-          Math.min(
-            state.activeCapIndex,
-            state.caps.length - 1
-          )
-        );
     }
     else{
 
@@ -176,15 +153,6 @@ export function initController(){
         state.swimsuits.filter(
           item =>
             item.id != id
-        );
-
-      state.activeSwimIndex =
-        Math.max(
-          0,
-          Math.min(
-            state.activeSwimIndex,
-            state.swimsuits.length - 1
-          )
         );
     }
 
@@ -282,41 +250,57 @@ export function initController(){
   // =========================
   async function spinAll(){
 
-    const state =
-      getState();
+    const button =
+      document.querySelector(
+        ".spin-btn"
+      );
 
-    await animateSpin(
-      "cap",
-      state.caps
-    );
+    button.disabled = true;
 
-    await animateSpin(
-      "swim",
-      state.swimsuits
-    );
+    button.innerText =
+      "돌리는 중...";
 
-    await update();
+    await Promise.all([
+
+      animateRoulette(
+        "cap"
+      ),
+
+      animateRoulette(
+        "swim"
+      )
+    ]);
+
+    button.disabled = false;
+
+    button.innerText =
+      "오늘 뭐 입지?";
   }
 
   // =========================
-  // SPIN ANIMATION
+  // ROULETTE EFFECT
   // =========================
-  async function animateSpin(
-    type,
-    items
+  async function animateRoulette(
+    type
   ){
+
+    const state =
+      getState();
+
+    const items =
+      type === "cap"
+      ? state.caps
+      : state.swimsuits;
 
     if(!items.length){
 
       return;
     }
 
-    const state =
-      getState();
-
     const loops =
-      16 + Math.floor(
-        Math.random() * 8
+      18 +
+      Math.floor(
+        Math.random() * 10
       );
 
     for(
@@ -331,15 +315,18 @@ export function initController(){
           items.length
         );
 
+      const selected =
+        items[random];
+
       if(type === "cap"){
 
-        state.activeCapIndex =
-          random;
+        state.selectedCap =
+          selected;
       }
       else{
 
-        state.activeSwimIndex =
-          random;
+        state.selectedSwim =
+          selected;
       }
 
       setState({
@@ -351,7 +338,7 @@ export function initController(){
       bindDrag();
 
       await sleep(
-        40 + i * 8
+        50 + i * 12
       );
     }
 
@@ -361,26 +348,25 @@ export function initController(){
         items.length
       );
 
+    const finalItem =
+      items[finalIndex];
+
     if(type === "cap"){
 
-      state.activeCapIndex =
-        finalIndex;
-
       state.selectedCap =
-        items[finalIndex];
+        finalItem;
     }
     else{
 
-      state.activeSwimIndex =
-        finalIndex;
-
       state.selectedSwim =
-        items[finalIndex];
+        finalItem;
     }
 
     setState({
       ...state
     });
+
+    await update();
   }
 
   // =========================
