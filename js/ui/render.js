@@ -1,84 +1,351 @@
-<!DOCTYPE html>
-<html lang="ko">
+import {
+  getState
+} from "../state/state.js";
 
-<head>
+export function renderApp(){
 
-<meta charset="UTF-8" />
+  const app =
+    document.getElementById(
+      "app"
+    );
 
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-/>
+  const state =
+    getState();
 
-<!-- CACHE -->
-<meta
-  http-equiv="Cache-Control"
-  content="no-cache, no-store, must-revalidate"
-/>
+  app.innerHTML = `
 
-<meta
-  http-equiv="Pragma"
-  content="no-cache"
-/>
+    <div class="container">
 
-<meta
-  http-equiv="Expires"
-  content="0"
-/>
+      <!-- ROULETTE -->
 
-<!-- MOBILE -->
-<meta
-  name="mobile-web-app-capable"
-  content="yes"
-/>
+      <div class="block">
 
-<meta
-  name="apple-mobile-web-app-capable"
-  content="yes"
-/>
+        <div class="section-title">
+          🎰 룰렛
+        </div>
 
-<meta
-  name="apple-mobile-web-app-status-bar-style"
-  content="black-translucent"
-/>
+        <div class="roulette-wrap">
 
-<meta
-  name="theme-color"
-  content="#0f172a"
-/>
+          <div class="roulette-slot cap">
 
-<title>
-  Swim Roulette
-</title>
+            <div class="roulette-label">
+              🧢 수모
+            </div>
 
-<!-- CSS -->
-<link
-  rel="stylesheet"
-  href="./css/style.css?v=20260522"
-/>
+            ${
+              state.selectedCap
+              ? renderRouletteCard(
+                  state.selectedCap
+                )
+              : `
+                <div class="empty-card">
+                  수모 없음
+                </div>
+              `
+            }
 
-<!-- ICON -->
-<link
-  rel="icon"
-  href="./favicon.ico"
-/>
+          </div>
 
-<link
-  rel="apple-touch-icon"
-  href="./icon-192.png"
-/>
+          <div class="roulette-slot swim">
 
-</head>
+            <div class="roulette-label">
+              🩲 수영복
+            </div>
 
-<body>
+            ${
+              state.selectedSwim
+              ? renderRouletteCard(
+                  state.selectedSwim
+                )
+              : `
+                <div class="empty-card">
+                  수영복 없음
+                </div>
+              `
+            }
 
-<div id="app"></div>
+          </div>
 
-<!-- JS -->
-<script
-  type="module"
-  src="./js/app.js?v=20260522"
-></script>
+        </div>
 
-</body>
-</html>
+        <button
+          class="spin-btn"
+          onclick="window.app.spinAll()"
+        >
+          오늘 뭐 입지?
+        </button>
+
+      </div>
+
+      <!-- CAP -->
+
+      <div class="block">
+
+        <div class="section-title">
+          🧢 수모 (${state.caps.length})
+        </div>
+
+        <div
+          class="coverflow"
+          data-type="cap"
+        >
+
+          ${
+            renderVisibleCards(
+              state.caps,
+              state.activeCapIndex,
+              "cap"
+            )
+          }
+
+        </div>
+
+      </div>
+
+      <!-- SWIM -->
+
+      <div class="block">
+
+        <div class="section-title">
+          🩲 수영복 (${state.swimsuits.length})
+        </div>
+
+        <div
+          class="coverflow"
+          data-type="swim"
+        >
+
+          ${
+            renderVisibleCards(
+              state.swimsuits,
+              state.activeSwimIndex,
+              "swim"
+            )
+          }
+
+        </div>
+
+      </div>
+
+      <!-- INPUT -->
+
+      <div class="block">
+
+        <div class="section-title">
+          ➕ 추가하기
+        </div>
+
+        <div class="input-area">
+
+          <select id="itemType">
+
+            <option value="cap">
+              🧢 수모
+            </option>
+
+            <option value="swim">
+              🩲 수영복
+            </option>
+
+          </select>
+
+          <input
+            id="itemText"
+            type="text"
+            placeholder="이름 입력"
+          />
+
+          <input
+            id="itemImage"
+            type="file"
+            accept="image/*"
+          />
+
+          <button
+            class="spin-btn"
+            onclick="window.app.submitSelectedItem()"
+          >
+            추가
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+  `;
+}
+
+function renderRouletteCard(item){
+
+  return `
+    <div class="roulette-card">
+
+      <div class="roulette-image-wrap">
+
+        ${
+          item.image
+          ? `
+            <img
+              src="${item.image}"
+              class="card-image"
+            />
+          `
+          : `
+            <div class="card-placeholder">
+              🌊
+            </div>
+          `
+        }
+
+        <div class="ripple"></div>
+
+      </div>
+
+      <div class="roulette-name">
+        ${item.name}
+      </div>
+
+    </div>
+  `;
+}
+
+function renderVisibleCards(
+  items,
+  activeIndex,
+  type
+){
+
+  if(!items.length){
+
+    return `
+      <div class="empty-card">
+        아이템 없음
+      </div>
+    `;
+  }
+
+  const start =
+    Math.max(
+      0,
+      activeIndex - 2
+    );
+
+  const end =
+    Math.min(
+      items.length,
+      activeIndex + 3
+    );
+
+  return items
+    .slice(start,end)
+    .map((item,i)=>{
+
+      const realIndex =
+        start + i;
+
+      return renderCard(
+        item,
+        realIndex,
+        activeIndex,
+        type
+      );
+
+    })
+    .join("");
+}
+
+function renderCard(
+  item,
+  index,
+  activeIndex,
+  type
+){
+
+  const distance =
+    Math.abs(
+      index - activeIndex
+    );
+
+  const active =
+    distance === 0;
+
+  const scale =
+    Math.max(
+      0.72,
+      1 - distance * 0.12
+    );
+
+  const opacity =
+    Math.max(
+      0.35,
+      1 - distance * 0.18
+    );
+
+  return `
+    <div
+      class="
+        cover-card
+        ${active ? "active" : ""}
+      "
+      onclick="
+        window.app.setActiveIndex(
+          '${type}',
+          ${index}
+        )
+      "
+      style="
+        transform:
+          scale(${scale})
+          translateY(${distance*10}px);
+
+        opacity:${opacity};
+
+        z-index:${100-distance};
+      "
+    >
+
+      <div class="card-inner">
+
+        ${
+          item.image
+          ? `
+            <img
+              src="${item.image}"
+              class="card-image"
+            />
+          `
+          : `
+            <div class="card-placeholder">
+              🌊
+            </div>
+          `
+        }
+
+        <div class="card-overlay">
+
+          <div class="card-title">
+            ${item.name}
+          </div>
+
+          <button
+            class="delete-btn"
+            onclick="
+              event.stopPropagation();
+
+              window.app.removeItem(
+                '${type}',
+                '${item.id}'
+              )
+            "
+          >
+            ×
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+  `;
+}
