@@ -14,7 +14,9 @@ export const defaultState = {
 };
 
 let currentState =
-  structuredClone(defaultState);
+  structuredClone(
+    defaultState
+  );
 
 export function getState(){
 
