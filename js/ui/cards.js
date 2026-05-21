@@ -1,138 +1,48 @@
-let activeIndexMap = {
-  swimsuit: 0,
-  cap: 0
-};
+import {
+  loadImage
+} from "../../db/database.js";
 
-/* =========================
-   RENDER SWIM
-========================= */
+export async function renderCards(
+  list,
+  container
+){
 
-export function renderSwimList(state) {
+  container.innerHTML = "";
 
-  const root = document.getElementById("swimList");
-  if (!root) return;
+  for(const item of list){
 
-  const list = state.swimsuits;
+    const card =
+      document.createElement("div");
 
-  if (!list.length) {
-    root.innerHTML = `<div class="empty-card">등록된 수영복 없음</div>`;
-    return;
-  }
+    card.className = "card";
 
-  const active = activeIndexMap.swimsuit;
+    let imageHTML = "";
 
-  root.innerHTML = list
-    .map((item, i) =>
-      createCard(item, "swimsuit", i, active)
-    )
-    .join("");
-}
+    if(item.imageId){
 
-/* =========================
-   RENDER CAP
-========================= */
+      const image =
+        await loadImage(
+          item.imageId
+        );
 
-export function renderCapList(state) {
+      if(image){
 
-  const root = document.getElementById("capList");
-  if (!root) return;
+        imageHTML = `
+          <img
+            src="${image}"
+            class="thumb"
+          />
+        `;
+      }
+    }
 
-  const list = state.caps;
-
-  if (!list.length) {
-    root.innerHTML = `<div class="empty-card">등록된 수모 없음</div>`;
-    return;
-  }
-
-  const active = activeIndexMap.cap;
-
-  root.innerHTML = list
-    .map((item, i) =>
-      createCard(item, "cap", i, active)
-    )
-    .join("");
-}
-
-/* =========================
-   CARD (🌊 wave + transition)
-========================= */
-
-function createCard(item, type, index, activeIndex) {
-
-  const distance = index - activeIndex;
-  const abs = Math.abs(distance);
-
-  const scale = Math.max(1 - abs * 0.12, 0.72);
-  const opacity = Math.max(1 - abs * 0.15, 0.35);
-
-  // 🌊 시간 기반 물결
-  const time = Date.now() * 0.002;
-  const wave = Math.sin(time + distance * 0.8) * 6;
-
-  return `
-    <div
-      class="item-card wave-enter"
-      style="
-        transform:
-          translateY(${wave}px)
-          scale(${scale});
-        opacity: ${opacity};
-      "
-      onclick="window.app.selectCard('${type}', ${index})"
-    >
-      <div class="card-inner">
-
-        ${
-          item.img
-            ? `<img src="${item.img}" class="card-image"/>`
-            : `<div class="card-placeholder">${type === "swimsuit" ? "🩲" : "🧢"}</div>`
-        }
-
-        <div class="card-overlay">
-          <div class="card-title">${item.text}</div>
-
-          <button
-            class="delete-btn"
-            onclick="event.stopPropagation(); window.app.removeItem('${type}', ${item.id})"
-          >
-            ×
-          </button>
-        </div>
-
+    card.innerHTML = `
+      ${imageHTML}
+      <div class="name">
+        ${item.text}
       </div>
-    </div>
-  `;
-}
+    `;
 
-/* =========================
-   ACTIVE INDEX
-========================= */
-
-export function setActiveIndex(type, index) {
-  activeIndexMap[type] = index;
-}
-
-/* =========================
-   SELECT CARD
-========================= */
-
-export function selectCard(type, index) {
-  setActiveIndex(type, index);
-}
-
-/* =========================
-   WAVE CLEANUP (transition 자연화)
-========================= */
-
-export function runWaveCleanup() {
-
-  requestAnimationFrame(() => {
-
-    document.querySelectorAll(".wave-enter").forEach(el => {
-      setTimeout(() => {
-        el.classList.remove("wave-enter");
-      }, 450);
-    });
-
-  });
+    container.appendChild(card);
+  }
 }
