@@ -1,70 +1,140 @@
+export function renderApp(){
 
-import { renderPreview } from "./preview.js";
-import { renderSwimList, renderCapList } from "./cards.js";
-import { renderInputSection } from "./input.js";
+  const app =
+    document.getElementById(
+      "app"
+    );
 
-export function renderApp(state) {
+  app.innerHTML = `
 
-  const root = document.getElementById("app");
-  if (!root) return;
-
-  /* =========================
-     🔥 핵심: 완전 초기화
-  ========================= */
-  root.replaceChildren();
-
-  root.innerHTML = `
     <div class="container">
 
-      <section class="block header-block">
-        <div class="section-title">🧢 수모 🩲 수영복</div>
-      </section>
+      <!-- TOP -->
+      <div class="top-area">
 
-      <section class="block roulette-block">
+        <h1 class="app-title">
+          🐬 Swim Roulette
+        </h1>
 
-        <div class="section-title">
+        <button class="spin-btn">
           오늘 뭐 입지?
-        </div>
-
-        <div id="previewRoot" class="preview-box"></div>
-
-        <button class="spin-btn" onclick="window.app.spinAll()">
-          SPIN
         </button>
 
-      </section>
+      </div>
 
-      <section class="block">
-        <div class="section-title">🧢 수모</div>
-        <div id="capList" class="slider"></div>
-      </section>
+      <!-- INPUT -->
+      <div class="block">
 
-      <section class="block">
-        <div class="section-title">🩲 수영복</div>
-        <div id="swimList" class="slider"></div>
-      </section>
+        <div class="section-title">
+          추가하기
+        </div>
 
-      <section class="block">
-        <div class="section-title">아이템 추가</div>
-        <div id="inputRoot"></div>
-      </section>
+        <div class="input-area">
+
+          <select>
+
+            <option>
+              🩱 수영복
+            </option>
+
+            <option>
+              🧢 수모
+            </option>
+
+          </select>
+
+          <input
+            type="text"
+            placeholder="이름 입력"
+          />
+
+          <input
+            type="file"
+            accept="image/*"
+          />
+
+          <button class="spin-btn">
+            추가
+          </button>
+
+        </div>
+
+      </div>
+
+      <!-- SWIM -->
+      <div class="block">
+
+        <div class="section-title">
+          🩱 수영복
+        </div>
+
+        <div class="slider">
+
+          <div class="item-card active">
+
+            <div class="card-inner">
+
+              <div class="card-placeholder">
+                🩱
+              </div>
+
+              <div class="card-overlay">
+
+                <div class="card-title">
+                  Arena Carbon
+                </div>
+
+                <button class="delete-btn">
+                  ×
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- CAP -->
+      <div class="block">
+
+        <div class="section-title">
+          🧢 수모
+        </div>
+
+        <div class="slider">
+
+          <div class="item-card">
+
+            <div class="card-inner">
+
+              <div class="card-placeholder">
+                🧢
+              </div>
+
+              <div class="card-overlay">
+
+                <div class="card-title">
+                  Speedo
+                </div>
+
+                <button class="delete-btn">
+                  ×
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
 
     </div>
   `;
-
-  /* =========================
-     render pipeline
-  ========================= */
-
-  renderPreview(state);
-  renderCapList(state);
-  renderSwimList(state);
-  renderInputSection();
-
-  /* 🔥 Safari repaint 강제 */
-  requestAnimationFrame(() => {
-    root.style.display = "none";
-    root.offsetHeight;
-    root.style.display = "block";
-  });
 }
