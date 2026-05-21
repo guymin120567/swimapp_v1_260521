@@ -1,11 +1,17 @@
 import {
   getState,
-  setState
+  setState,
+  defaultState
 } from "../state/state.js";
 
 import {
   renderApp
 } from "../ui/render.js";
+
+import {
+  saveState,
+  loadState
+} from "./db.js";
 
 // =========================
 // INIT
@@ -16,11 +22,39 @@ export function initController(){
 
     bindGlobal();
 
+    const saved =
+      await loadState();
+
+    if(saved){
+
+      setState(saved);
+    }
+    else{
+
+      setState(
+        structuredClone(
+          defaultState
+        )
+      );
+    }
+
     renderApp();
   }
 
   // =========================
-  // ADD
+  // SAVE + RENDER
+  // =========================
+  async function update(){
+
+    await saveState(
+      getState()
+    );
+
+    renderApp();
+  }
+
+  // =========================
+  // ADD ITEM
   // =========================
   async function submitSelectedItem(){
 
@@ -93,13 +127,13 @@ export function initController(){
       "itemImage"
     ).value = "";
 
-    renderApp();
+    await update();
   }
 
   // =========================
   // REMOVE
   // =========================
-  function removeItem(
+  async function removeItem(
     type,
     id
   ){
@@ -119,6 +153,7 @@ export function initController(){
         state.activeCapIndex >=
         state.caps.length
       ){
+
         state.activeCapIndex =
           Math.max(
             0,
@@ -138,6 +173,7 @@ export function initController(){
         state.activeSwimIndex >=
         state.swimsuits.length
       ){
+
         state.activeSwimIndex =
           Math.max(
             0,
@@ -150,13 +186,13 @@ export function initController(){
       ...state
     });
 
-    renderApp();
+    await update();
   }
 
   // =========================
-  // ACTIVE CARD
+  // ACTIVE INDEX
   // =========================
-  function setActiveIndex(
+  async function setActiveIndex(
     type,
     index
   ){
@@ -179,52 +215,121 @@ export function initController(){
       ...state
     });
 
-    renderApp();
+    await update();
   }
 
   // =========================
-  // SPIN
+  // NEXT / PREV
   // =========================
-  function spinAll(){
+  async function slide(
+    type,
+    direction
+  ){
 
     const state =
       getState();
 
-    if(state.caps.length){
+    const items =
+      type === "cap"
+      ? state.caps
+      : state.swimsuits;
 
-      const randomIndex =
-        Math.floor(
-          Math.random() *
-          state.caps.length
-        );
+    if(!items.length){
 
-      state.activeCapIndex =
-        randomIndex;
-
-      state.selectedCap =
-        state.caps[randomIndex];
+      return;
     }
 
-    if(state.swimsuits.length){
+    if(type === "cap"){
 
-      const randomIndex =
-        Math.floor(
-          Math.random() *
-          state.swimsuits.length
-        );
+      state.activeCapIndex +=
+        direction;
 
-      state.activeSwimIndex =
-        randomIndex;
+      if(
+        state.activeCapIndex < 0
+      ){
+        state.activeCapIndex =
+          0;
+      }
 
-      state.selectedSwim =
-        state.swimsuits[randomIndex];
+      if(
+        state.activeCapIndex >
+        items.length - 1
+      ){
+        state.activeCapIndex =
+          items.length - 1;
+      }
+    }
+    else{
+
+      state.activeSwimIndex +=
+        direction;
+
+      if(
+        state.activeSwimIndex < 0
+      ){
+        state.activeSwimIndex =
+          0;
+      }
+
+      if(
+        state.activeSwimIndex >
+        items.length - 1
+      ){
+        state.activeSwimIndex =
+          items.length - 1;
+      }
     }
 
     setState({
       ...state
     });
 
-    renderApp();
+    await update();
+  }
+
+  // =========================
+  // SPIN
+  // =========================
+  async function spinAll(){
+
+    const state =
+      getState();
+
+    if(state.caps.length){
+
+      const random =
+        Math.floor(
+          Math.random() *
+          state.caps.length
+        );
+
+      state.activeCapIndex =
+        random;
+
+      state.selectedCap =
+        state.caps[random];
+    }
+
+    if(state.swimsuits.length){
+
+      const random =
+        Math.floor(
+          Math.random() *
+          state.swimsuits.length
+        );
+
+      state.activeSwimIndex =
+        random;
+
+      state.selectedSwim =
+        state.swimsuits[random];
+    }
+
+    setState({
+      ...state
+    });
+
+    await update();
   }
 
   // =========================
@@ -238,9 +343,11 @@ export function initController(){
 
       removeItem,
 
-      spinAll,
+      setActiveIndex,
 
-      setActiveIndex
+      slide,
+
+      spinAll
     };
   }
 
@@ -250,7 +357,7 @@ export function initController(){
 }
 
 // =========================
-// FILE
+// FILE -> BASE64
 // =========================
 function fileToBase64(file){
 
@@ -259,10 +366,10 @@ function fileToBase64(file){
     const reader =
       new FileReader();
 
-    reader.onload = ()=>{
-
-      resolve(reader.result);
-    };
+    reader.onload =
+      ()=>resolve(
+        reader.result
+      );
 
     reader.readAsDataURL(file);
   });
