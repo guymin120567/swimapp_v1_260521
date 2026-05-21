@@ -1,21 +1,21 @@
 export const defaultState = {
 
-  swimsuits: [],
-
   caps: [],
 
-  preview: null,
+  swimsuits: [],
 
-  spinning: false
+  selectedCap: null,
+
+  selectedSwim: null
 };
 
 let currentState =
   structuredClone(defaultState);
 
-export function getState() {
+export function getState(){
   return currentState;
 }
 
-export function setInternalState(next) {
+export function setState(next){
   currentState = next;
 }
