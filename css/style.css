@@ -57,7 +57,6 @@ body{
 #app{
   width:100%;
   min-height:100vh;
-  display:block;
 }
 
 /* =========================
@@ -115,9 +114,6 @@ body{
   font-weight:700;
 
   color:#bfe9ff;
-
-  text-shadow:
-    0 0 12px rgba(56,189,248,0.25);
 }
 
 /* =========================
@@ -129,17 +125,15 @@ body{
 
   gap:18px;
 
-  align-items:flex-start;
-
   justify-content:center;
+
+  align-items:flex-start;
 
   margin-bottom:18px;
 }
 
 .roulette-slot{
   flex:1;
-
-  min-width:0;
 
   display:flex;
 
@@ -163,8 +157,6 @@ body{
 ========================= */
 
 .roulette-card{
-  width:100%;
-
   display:flex;
 
   flex-direction:column;
@@ -173,10 +165,6 @@ body{
 
   gap:10px;
 }
-
-/* =========================
-   ROULETTE IMAGE
-========================= */
 
 .roulette-image-wrap{
   width:140px;
@@ -197,24 +185,20 @@ body{
 
   box-shadow:
     0 18px 45px rgba(0,0,0,0.45);
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
 }
 
-/* =========================
-   ROULETTE NAME
-========================= */
-
 .roulette-name{
-  width:100%;
-
   text-align:center;
 
   font-size:14px;
 
   font-weight:700;
-
-  color:white;
-
-  word-break:break-word;
 }
 
 /* =========================
@@ -244,17 +228,6 @@ body{
   font-weight:800;
 
   cursor:pointer;
-
-  box-shadow:
-    0 12px 30px rgba(3,105,161,0.35);
-
-  transition:
-    transform 0.15s ease,
-    opacity 0.15s ease;
-}
-
-.spin-btn:active{
-  transform:scale(0.97);
 }
 
 /* =========================
@@ -270,21 +243,11 @@ body{
 
   justify-content:center;
 
-  overflow-x:auto;
+  min-height:260px;
 
-  overflow-y:visible;
+  overflow:hidden;
 
-  padding:
-    42px
-    18px;
-
-  scroll-behavior:smooth;
-
-  -webkit-overflow-scrolling:touch;
-}
-
-.coverflow::-webkit-scrollbar{
-  display:none;
+  position:relative;
 }
 
 /* =========================
@@ -296,26 +259,19 @@ body{
 
   aspect-ratio:1 / 1;
 
+  position:relative;
+
   flex-shrink:0;
 
   margin-left:-42px;
 
-  position:relative;
-
-  cursor:pointer;
-
   transition:
     transform 0.28s ease,
-    opacity 0.28s ease,
-    filter 0.28s ease;
+    opacity 0.28s ease;
 }
 
 .cover-card:first-child{
   margin-left:0;
-}
-
-.cover-card:hover{
-  filter:brightness(1.08);
 }
 
 /* =========================
@@ -342,8 +298,13 @@ body{
   backdrop-filter:blur(18px);
 
   box-shadow:
-    0 18px 45px rgba(0,0,0,0.45),
-    inset 0 0 18px rgba(56,189,248,0.08);
+    0 18px 45px rgba(0,0,0,0.45);
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
 }
 
 /* =========================
@@ -356,6 +317,8 @@ body{
   height:100%;
 
   object-fit:cover;
+
+  object-position:center;
 
   display:block;
 }
@@ -416,15 +379,13 @@ body{
 }
 
 /* =========================
-   CARD TITLE
+   TITLE
 ========================= */
 
 .card-title{
   font-size:13px;
 
   font-weight:700;
-
-  color:white;
 
   overflow:hidden;
 
@@ -434,7 +395,7 @@ body{
 }
 
 /* =========================
-   DELETE BUTTON
+   DELETE
 ========================= */
 
 .delete-btn{
@@ -452,19 +413,6 @@ body{
   color:white;
 
   cursor:pointer;
-
-  flex-shrink:0;
-
-  transition:
-    transform 0.15s ease,
-    background 0.15s ease;
-}
-
-.delete-btn:hover{
-  background:
-    rgba(56,189,248,0.6);
-
-  transform:scale(1.08);
 }
 
 /* =========================
@@ -491,7 +439,7 @@ body{
 }
 
 /* =========================
-   INPUT AREA
+   INPUT
 ========================= */
 
 .input-area{
@@ -501,10 +449,6 @@ body{
 
   gap:12px;
 }
-
-/* =========================
-   INPUT
-========================= */
 
 .input-area input,
 .input-area select{
@@ -526,13 +470,6 @@ body{
   font-size:15px;
 
   outline:none;
-
-  backdrop-filter:blur(10px);
-}
-
-.input-area input::placeholder{
-  color:
-    rgba(255,255,255,0.5);
 }
 
 .input-area input[type="file"]{
@@ -560,20 +497,14 @@ body{
     width:118px;
   }
 
-  .roulette-name{
-    font-size:13px;
-  }
-
   .coverflow{
-    padding:
-      28px
-      4px;
+    min-height:210px;
   }
 
   .cover-card{
-    width:132px;
+    width:128px;
 
-    margin-left:-28px;
+    margin-left:-26px;
   }
 
   .card-title{
@@ -584,17 +515,5 @@ body{
     height:52px;
 
     font-size:16px;
-  }
-}
-
-/* =========================
-   SAFE AREA
-========================= */
-
-@supports(padding:max(0px)){
-
-  body{
-    padding-bottom:
-      env(safe-area-inset-bottom);
   }
 }
