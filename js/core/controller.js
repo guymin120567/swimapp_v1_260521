@@ -12,49 +12,32 @@ import {
 // =========================
 export function initController(){
 
-  // =========================
-  // BOOT
-  // =========================
   async function boot(){
-
-    console.log(
-      "APP BOOT START"
-    );
 
     bindGlobal();
 
     renderApp();
-
-    console.log(
-      "APP BOOT SUCCESS"
-    );
   }
 
   // =========================
-  // ADD ITEM
+  // ADD
   // =========================
   async function submitSelectedItem(){
 
-    const typeInput =
+    const type =
       document.getElementById(
         "itemType"
-      );
-
-    const textInput =
-      document.getElementById(
-        "itemText"
-      );
-
-    const fileInput =
-      document.getElementById(
-        "itemImage"
-      );
-
-    const type =
-      typeInput.value;
+      ).value;
 
     const text =
-      textInput.value.trim();
+      document.getElementById(
+        "itemText"
+      ).value.trim();
+
+    const file =
+      document.getElementById(
+        "itemImage"
+      ).files[0];
 
     if(!text){
 
@@ -63,14 +46,8 @@ export function initController(){
       return;
     }
 
-    const file =
-      fileInput.files[0];
-
     let image = null;
 
-    // =========================
-    // IMAGE
-    // =========================
     if(file){
 
       image =
@@ -89,41 +66,34 @@ export function initController(){
       image
     };
 
-    // =========================
-    // PUSH
-    // =========================
     if(type === "cap"){
 
       state.caps.push(item);
+
+      state.activeCapIndex =
+        state.caps.length - 1;
     }
     else{
 
       state.swimsuits.push(item);
+
+      state.activeSwimIndex =
+        state.swimsuits.length - 1;
     }
 
-    // =========================
-    // SAVE STATE
-    // =========================
     setState({
       ...state
     });
 
-    // =========================
-    // RESET
-    // =========================
-    textInput.value = "";
+    document.getElementById(
+      "itemText"
+    ).value = "";
 
-    fileInput.value = "";
+    document.getElementById(
+      "itemImage"
+    ).value = "";
 
-    // =========================
-    // RERENDER
-    // =========================
     renderApp();
-
-    console.log(
-      "ITEM ADDED",
-      item
-    );
   }
 
   // =========================
@@ -144,6 +114,17 @@ export function initController(){
           item =>
             item.id != id
         );
+
+      if(
+        state.activeCapIndex >=
+        state.caps.length
+      ){
+        state.activeCapIndex =
+          Math.max(
+            0,
+            state.caps.length - 1
+          );
+      }
     }
     else{
 
@@ -152,6 +133,17 @@ export function initController(){
           item =>
             item.id != id
         );
+
+      if(
+        state.activeSwimIndex >=
+        state.swimsuits.length
+      ){
+        state.activeSwimIndex =
+          Math.max(
+            0,
+            state.swimsuits.length - 1
+          );
+      }
     }
 
     setState({
@@ -162,35 +154,70 @@ export function initController(){
   }
 
   // =========================
-  // ROULETTE
+  // ACTIVE CARD
+  // =========================
+  function setActiveIndex(
+    type,
+    index
+  ){
+
+    const state =
+      getState();
+
+    if(type === "cap"){
+
+      state.activeCapIndex =
+        index;
+    }
+    else{
+
+      state.activeSwimIndex =
+        index;
+    }
+
+    setState({
+      ...state
+    });
+
+    renderApp();
+  }
+
+  // =========================
+  // SPIN
   // =========================
   function spinAll(){
 
     const state =
       getState();
 
-    // 랜덤 수모
     if(state.caps.length){
 
+      const randomIndex =
+        Math.floor(
+          Math.random() *
+          state.caps.length
+        );
+
+      state.activeCapIndex =
+        randomIndex;
+
       state.selectedCap =
-        state.caps[
-          Math.floor(
-            Math.random() *
-            state.caps.length
-          )
-        ];
+        state.caps[randomIndex];
     }
 
-    // 랜덤 수영복
     if(state.swimsuits.length){
 
+      const randomIndex =
+        Math.floor(
+          Math.random() *
+          state.swimsuits.length
+        );
+
+      state.activeSwimIndex =
+        randomIndex;
+
       state.selectedSwim =
-        state.swimsuits[
-          Math.floor(
-            Math.random() *
-            state.swimsuits.length
-          )
-        ];
+        state.swimsuits[randomIndex];
     }
 
     setState({
@@ -211,7 +238,9 @@ export function initController(){
 
       removeItem,
 
-      spinAll
+      spinAll,
+
+      setActiveIndex
     };
   }
 
@@ -221,7 +250,7 @@ export function initController(){
 }
 
 // =========================
-// FILE → BASE64
+// FILE
 // =========================
 function fileToBase64(file){
 
