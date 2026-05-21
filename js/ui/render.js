@@ -3,12 +3,14 @@ import {
 } from "../state/state.js";
 
 // =========================
-// MAIN RENDER
+// RENDER
 // =========================
 export function renderApp(){
 
   const app =
-    document.getElementById("app");
+    document.getElementById(
+      "app"
+    );
 
   const state =
     getState();
@@ -29,7 +31,6 @@ export function renderApp(){
 
         <div class="roulette-wrap">
 
-          <!-- CAP -->
           <div class="roulette-slot">
 
             <div class="roulette-label">
@@ -50,7 +51,6 @@ export function renderApp(){
 
           </div>
 
-          <!-- SWIM -->
           <div class="roulette-slot">
 
             <div class="roulette-label">
@@ -83,28 +83,28 @@ export function renderApp(){
       </div>
 
       <!-- =========================
-           CAP SECTION
+           CAP
       ========================== -->
 
       <div class="block">
 
         <div class="section-title">
-          🧢 수모
-          (${state.caps.length})
+          🧢 수모 (${state.caps.length})
         </div>
 
-        <div class="slider">
+        <div class="coverflow">
 
           ${
             state.caps.length
-            ? state.caps
-                .map(item =>
-                  renderListCard(
+            ? state.caps.map(
+                (item,index)=>
+                  renderCoverflowCard(
                     item,
+                    index,
+                    state.activeCapIndex,
                     "cap"
                   )
-                )
-                .join("")
+              ).join("")
             : `
               <div class="empty-card">
                 수모 추가해줘
@@ -117,28 +117,28 @@ export function renderApp(){
       </div>
 
       <!-- =========================
-           SWIM SECTION
+           SWIM
       ========================== -->
 
       <div class="block">
 
         <div class="section-title">
-          🩲 수영복
-          (${state.swimsuits.length})
+          🩲 수영복 (${state.swimsuits.length})
         </div>
 
-        <div class="slider">
+        <div class="coverflow">
 
           ${
             state.swimsuits.length
-            ? state.swimsuits
-                .map(item =>
-                  renderListCard(
+            ? state.swimsuits.map(
+                (item,index)=>
+                  renderCoverflowCard(
                     item,
+                    index,
+                    state.activeSwimIndex,
                     "swim"
                   )
-                )
-                .join("")
+              ).join("")
             : `
               <div class="empty-card">
                 수영복 추가해줘
@@ -237,15 +237,57 @@ function renderRouletteCard(item){
 }
 
 // =========================
-// LIST CARD
+// COVERFLOW CARD
 // =========================
-function renderListCard(
+function renderCoverflowCard(
   item,
+  index,
+  activeIndex,
   type
 ){
 
+  const distance =
+    Math.abs(
+      index - activeIndex
+    );
+
+  const scale =
+    Math.max(
+      0.72,
+      1 - distance * 0.12
+    );
+
+  const opacity =
+    Math.max(
+      0.35,
+      1 - distance * 0.2
+    );
+
+  const translateY =
+    distance * 12;
+
+  const zIndex =
+    100 - distance;
+
   return `
-    <div class="item-card">
+    <div
+      class="cover-card"
+      onclick="
+        window.app.setActiveIndex(
+          '${type}',
+          ${index}
+        )
+      "
+      style="
+        transform:
+          scale(${scale})
+          translateY(${translateY}px);
+
+        opacity:${opacity};
+
+        z-index:${zIndex};
+      "
+    >
 
       <div class="card-inner">
 
@@ -273,6 +315,8 @@ function renderListCard(
           <button
             class="delete-btn"
             onclick="
+              event.stopPropagation();
+
               window.app.removeItem(
                 '${type}',
                 '${item.id}'
