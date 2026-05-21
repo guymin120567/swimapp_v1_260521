@@ -1,483 +1,175 @@
 /* =========================
-   RESET
+   ROULETTE ACTIVE
 ========================= */
 
-*{
-  box-sizing:border-box;
-}
-
-body{
-  margin:0;
-
-  font-family:
-    system-ui,
-    -apple-system,
-    sans-serif;
-
-  color:white;
-
-  background:
-    radial-gradient(circle at 20% 10%, #7dd3fc 0%, transparent 35%),
-    radial-gradient(circle at 80% 20%, #38bdf8 0%, transparent 40%),
-    radial-gradient(circle at 50% 100%, #0ea5e9 0%, #06121f 70%);
-
-  background-attachment:fixed;
-
-  overflow-x:hidden;
-}
-
-/* =========================
-   CONTAINER
-========================= */
-
-.container{
-  max-width:920px;
-
-  margin:0 auto;
-
-  padding:18px 14px 80px;
-
-  display:flex;
-
-  flex-direction:column;
-
-  gap:22px;
-}
-
-/* =========================
-   BLOCK
-========================= */
-
-.block{
-  background:
-    rgba(255,255,255,0.04);
-
-  border:
-    1px solid rgba(255,255,255,0.08);
-
-  border-radius:24px;
-
-  padding:16px 12px;
-
-  backdrop-filter:blur(12px);
-
-  overflow:hidden;
-}
-
-/* =========================
-   TITLE
-========================= */
-
-.section-title{
-  font-size:18px;
-
-  font-weight:700;
-
-  color:#bfe9ff;
-
-  margin-bottom:16px;
-}
-
-/* =========================
-   ROULETTE
-========================= */
-
-.roulette-wrap{
-  display:flex;
-
-  gap:18px;
-
-  justify-content:center;
-
-  margin-bottom:20px;
-}
-
-.roulette-slot{
-  flex:1;
-
-  display:flex;
-
-  flex-direction:column;
-
-  align-items:center;
-
-  gap:12px;
-}
-
-.roulette-label{
-  font-weight:700;
-
-  color:#bfe9ff;
-}
-
-.roulette-card{
-
-  display:flex;
-
-  flex-direction:column;
-
-  align-items:center;
-
-  gap:10px;
-}
-
-.roulette-animate{
+body.roulette-active .roulette-image-wrap{
 
   animation:
-    rouletteBounce 0.45s ease;
+    rouletteShake 0.18s infinite;
 }
 
-.roulette-image-wrap{
+/* =========================
+   RIPPLE
+========================= */
 
-  width:150px;
+.ripple{
 
-  aspect-ratio:1/1;
+  position:absolute;
+
+  inset:0;
+
+  border-radius:inherit;
+
+  pointer-events:none;
 
   overflow:hidden;
+}
 
-  border-radius:26px;
+.ripple::after{
+
+  content:"";
+
+  position:absolute;
+
+  left:50%;
+  top:50%;
+
+  width:20px;
+  height:20px;
+
+  border-radius:50%;
 
   border:
-    2px solid rgba(56,189,248,0.5);
+    2px solid rgba(125,211,252,0.5);
 
-  background:
-    rgba(255,255,255,0.08);
+  transform:
+    translate(-50%,-50%);
 
-  box-shadow:
-    0 0 28px rgba(56,189,248,0.35),
-    0 18px 45px rgba(0,0,0,0.45);
+  opacity:0;
 }
 
-.roulette-name{
+body.roulette-active
+.ripple::after{
 
-  font-weight:800;
-
-  font-size:15px;
-
-  text-align:center;
+  animation:
+    rippleWave 1.2s infinite;
 }
 
 /* =========================
-   BUTTON
+   BURST
 ========================= */
 
-.spin-btn{
+.roulette-slot{
 
-  width:100%;
+  position:relative;
+}
 
-  height:56px;
+.roulette-slot::after{
 
-  border:none;
+  content:"";
 
-  border-radius:18px;
+  position:absolute;
+
+  inset:-20px;
+
+  border-radius:40px;
 
   background:
-    linear-gradient(
-      135deg,
-      #38bdf8,
-      #0284c7
+    radial-gradient(
+      circle,
+      rgba(56,189,248,0.35),
+      transparent 70%
     );
 
-  color:white;
+  opacity:0;
 
-  font-size:18px;
+  pointer-events:none;
+}
 
-  font-weight:800;
+.roulette-slot.burst::after{
 
-  cursor:pointer;
+  animation:
+    burstGlow 0.8s ease;
 }
 
 /* =========================
-   COVERFLOW
+   RESULT GLOW
 ========================= */
 
-.coverflow{
-
-  min-height:240px;
-
-  display:flex;
-
-  align-items:center;
-
-  justify-content:center;
-
-  overflow:hidden;
-
-  touch-action:pan-y;
-}
-
-/* =========================
-   CARD
-========================= */
-
-.cover-card{
-
-  width:170px;
-
-  aspect-ratio:1/1;
-
-  margin-left:-42px;
+.roulette-image-wrap{
 
   position:relative;
 
   transition:
-    transform 0.35s ease,
-    opacity 0.35s ease,
-    filter 0.35s ease;
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
-.cover-card:first-child{
-  margin-left:0;
-}
-
-.cover-card.active{
-
-  z-index:999;
-
-  filter:brightness(1.1);
-
-  animation:
-    glowPulse 2s infinite;
-}
-
-.cover-card:not(.active){
-
-  filter:
-    blur(0.4px)
-    brightness(0.88);
-}
-
-/* =========================
-   INNER
-========================= */
-
-.card-inner{
-
-  width:100%;
-  height:100%;
-
-  overflow:hidden;
-
-  position:relative;
-
-  border-radius:28px;
-
-  background:
-    rgba(255,255,255,0.06);
-
-  border:
-    1px solid rgba(255,255,255,0.12);
-
-  backdrop-filter:blur(18px);
+body.roulette-active
+.roulette-image-wrap{
 
   box-shadow:
-    0 18px 45px rgba(0,0,0,0.45);
-}
-
-/* =========================
-   IMAGE
-========================= */
-
-.card-image{
-
-  width:100%;
-  height:100%;
-
-  object-fit:cover;
-
-  object-position:center;
-}
-
-.card-placeholder{
-
-  width:100%;
-  height:100%;
-
-  display:flex;
-
-  align-items:center;
-
-  justify-content:center;
-
-  font-size:56px;
-}
-
-/* =========================
-   OVERLAY
-========================= */
-
-.card-overlay{
-
-  position:absolute;
-
-  left:0;
-  right:0;
-  bottom:0;
-
-  padding:12px;
-
-  background:
-    linear-gradient(
-      to top,
-      rgba(0,0,0,0.82),
-      transparent
-    );
-
-  display:flex;
-
-  justify-content:space-between;
-
-  align-items:center;
-}
-
-.card-title{
-
-  font-size:13px;
-
-  font-weight:700;
-
-  overflow:hidden;
-
-  text-overflow:ellipsis;
-
-  white-space:nowrap;
-}
-
-.delete-btn{
-
-  width:28px;
-  height:28px;
-
-  border:none;
-
-  border-radius:50%;
-
-  background:
-    rgba(255,255,255,0.16);
-
-  color:white;
-
-  cursor:pointer;
-}
-
-/* =========================
-   EMPTY
-========================= */
-
-.empty-card{
-
-  width:100%;
-
-  padding:28px;
-
-  text-align:center;
-
-  border-radius:18px;
-
-  background:
-    rgba(255,255,255,0.03);
-
-  border:
-    1px dashed rgba(255,255,255,0.2);
-}
-
-/* =========================
-   INPUT
-========================= */
-
-.input-area{
-
-  display:flex;
-
-  flex-direction:column;
-
-  gap:12px;
-}
-
-.input-area input,
-.input-area select{
-
-  height:52px;
-
-  border:none;
-
-  border-radius:14px;
-
-  padding:0 14px;
-
-  background:
-    rgba(255,255,255,0.08);
-
-  color:white;
+    0 0 35px rgba(56,189,248,0.5),
+    0 0 80px rgba(56,189,248,0.25);
 }
 
 /* =========================
    ANIMATION
 ========================= */
 
-@keyframes glowPulse{
+@keyframes rouletteShake{
 
   0%{
-    box-shadow:
-      0 0 0 rgba(56,189,248,0);
+    transform:
+      translateY(0px)
+      rotate(-1deg);
   }
 
   50%{
-    box-shadow:
-      0 0 30px rgba(56,189,248,0.5);
+    transform:
+      translateY(-4px)
+      rotate(1deg);
   }
 
   100%{
-    box-shadow:
-      0 0 0 rgba(56,189,248,0);
+    transform:
+      translateY(0px)
+      rotate(-1deg);
   }
 }
 
-@keyframes rouletteBounce{
+@keyframes rippleWave{
 
   0%{
-    transform:
-      scale(0.8)
-      rotate(-8deg);
 
-    opacity:0.2;
-  }
+    width:20px;
+    height:20px;
 
-  50%{
-    transform:
-      scale(1.08)
-      rotate(5deg);
+    opacity:0.8;
   }
 
   100%{
-    transform:
-      scale(1)
-      rotate(0deg);
 
+    width:240px;
+    height:240px;
+
+    opacity:0;
+  }
+}
+
+@keyframes burstGlow{
+
+  0%{
+    opacity:0;
+    transform:scale(0.7);
+  }
+
+  40%{
     opacity:1;
   }
-}
 
-/* =========================
-   MOBILE
-========================= */
-
-@media (max-width:480px){
-
-  .cover-card{
-
-    width:128px;
-
-    margin-left:-24px;
-  }
-
-  .roulette-image-wrap{
-
-    width:118px;
-  }
-
-  .coverflow{
-
-    min-height:210px;
+  100%{
+    opacity:0;
+    transform:scale(1.2);
   }
 }
