@@ -2,13 +2,21 @@ import {
   initController
 } from "./core/controller.js";
 
-window.addEventListener(
+document.addEventListener(
   "DOMContentLoaded",
   async ()=>{
 
-    const controller =
+    console.log(
+      "DOM LOADED"
+    );
+
+    const app =
       initController();
 
-    await controller.boot();
+    await app.boot();
+
+    console.log(
+      "APP READY"
+    );
   }
 );

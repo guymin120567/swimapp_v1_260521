@@ -39,10 +39,12 @@ export function initController(){
     }
 
     renderApp();
+
+    bindDrag();
   }
 
   // =========================
-  // SAVE + RENDER
+  // UPDATE
   // =========================
   async function update(){
 
@@ -51,10 +53,12 @@ export function initController(){
     );
 
     renderApp();
+
+    bindDrag();
   }
 
   // =========================
-  // ADD ITEM
+  // ADD
   // =========================
   async function submitSelectedItem(){
 
@@ -103,16 +107,10 @@ export function initController(){
     if(type === "cap"){
 
       state.caps.push(item);
-
-      state.activeCapIndex =
-        state.caps.length - 1;
     }
     else{
 
       state.swimsuits.push(item);
-
-      state.activeSwimIndex =
-        state.swimsuits.length - 1;
     }
 
     setState({
@@ -148,18 +146,6 @@ export function initController(){
           item =>
             item.id != id
         );
-
-      if(
-        state.activeCapIndex >=
-        state.caps.length
-      ){
-
-        state.activeCapIndex =
-          Math.max(
-            0,
-            state.caps.length - 1
-          );
-      }
     }
     else{
 
@@ -168,18 +154,6 @@ export function initController(){
           item =>
             item.id != id
         );
-
-      if(
-        state.activeSwimIndex >=
-        state.swimsuits.length
-      ){
-
-        state.activeSwimIndex =
-          Math.max(
-            0,
-            state.swimsuits.length - 1
-          );
-      }
     }
 
     setState({
@@ -190,7 +164,7 @@ export function initController(){
   }
 
   // =========================
-  // ACTIVE INDEX
+  // ACTIVE
   // =========================
   async function setActiveIndex(
     type,
@@ -215,11 +189,13 @@ export function initController(){
       ...state
     });
 
-    await update();
+    renderApp();
+
+    bindDrag();
   }
 
   // =========================
-  // NEXT / PREV
+  // SLIDE
   // =========================
   async function slide(
     type,
@@ -244,47 +220,33 @@ export function initController(){
       state.activeCapIndex +=
         direction;
 
-      if(
-        state.activeCapIndex < 0
-      ){
-        state.activeCapIndex =
-          0;
-      }
-
-      if(
-        state.activeCapIndex >
-        items.length - 1
-      ){
-        state.activeCapIndex =
-          items.length - 1;
-      }
+      state.activeCapIndex =
+        clamp(
+          state.activeCapIndex,
+          0,
+          items.length - 1
+        );
     }
     else{
 
       state.activeSwimIndex +=
         direction;
 
-      if(
-        state.activeSwimIndex < 0
-      ){
-        state.activeSwimIndex =
-          0;
-      }
-
-      if(
-        state.activeSwimIndex >
-        items.length - 1
-      ){
-        state.activeSwimIndex =
-          items.length - 1;
-      }
+      state.activeSwimIndex =
+        clamp(
+          state.activeSwimIndex,
+          0,
+          items.length - 1
+        );
     }
 
     setState({
       ...state
     });
 
-    await update();
+    renderApp();
+
+    bindDrag();
   }
 
   // =========================
@@ -292,37 +254,139 @@ export function initController(){
   // =========================
   async function spinAll(){
 
+    const button =
+      document.querySelector(
+        ".spin-btn"
+      );
+
+    button.disabled = true;
+
+    button.innerText =
+      "돌리는 중...";
+
+    document.body.classList.add(
+      "roulette-active"
+    );
+
+    await Promise.all([
+
+      animateRoulette(
+        "cap"
+      ),
+
+      animateRoulette(
+        "swim"
+      )
+    ]);
+
+    document.body.classList.remove(
+      "roulette-active"
+    );
+
+    button.disabled = false;
+
+    button.innerText =
+      "오늘 뭐 입지?";
+  }
+
+  // =========================
+  // ROULETTE
+  // =========================
+  async function animateRoulette(
+    type
+  ){
+
     const state =
       getState();
 
-    if(state.caps.length){
+    const items =
+      type === "cap"
+      ? state.caps
+      : state.swimsuits;
 
-      const random =
-        Math.floor(
-          Math.random() *
-          state.caps.length
-        );
+    if(!items.length){
 
-      state.activeCapIndex =
-        random;
-
-      state.selectedCap =
-        state.caps[random];
+      return;
     }
 
-    if(state.swimsuits.length){
+    const totalDuration =
+      2400 +
+      Math.random() * 600;
+
+    const start =
+      performance.now();
+
+    while(true){
+
+      const now =
+        performance.now();
+
+      const elapsed =
+        now - start;
+
+      if(
+        elapsed >= totalDuration
+      ){
+        break;
+      }
+
+      const progress =
+        elapsed /
+        totalDuration;
+
+      const delay =
+        40 +
+        progress * 140;
 
       const random =
         Math.floor(
           Math.random() *
-          state.swimsuits.length
+          items.length
         );
 
-      state.activeSwimIndex =
-        random;
+      const selected =
+        items[random];
+
+      if(type === "cap"){
+
+        state.selectedCap =
+          selected;
+      }
+      else{
+
+        state.selectedSwim =
+          selected;
+      }
+
+      setState({
+        ...state
+      });
+
+      renderApp();
+
+      bindDrag();
+
+      await sleep(delay);
+    }
+
+    const finalIndex =
+      Math.floor(
+        Math.random() *
+        items.length
+      );
+
+    const finalItem =
+      items[finalIndex];
+
+    if(type === "cap"){
+
+      state.selectedCap =
+        finalItem;
+    }
+    else{
 
       state.selectedSwim =
-        state.swimsuits[random];
+        finalItem;
     }
 
     setState({
@@ -330,6 +394,85 @@ export function initController(){
     });
 
     await update();
+
+    triggerBurst(type);
+  }
+
+  // =========================
+  // BURST
+  // =========================
+  function triggerBurst(type){
+
+    const target =
+      document.querySelector(
+        `.roulette-slot.${type}`
+      );
+
+    if(!target){
+
+      return;
+    }
+
+    target.classList.remove(
+      "burst"
+    );
+
+    void target.offsetWidth;
+
+    target.classList.add(
+      "burst"
+    );
+  }
+
+  // =========================
+  // DRAG
+  // =========================
+  function bindDrag(){
+
+    document
+      .querySelectorAll(
+        ".coverflow"
+      )
+      .forEach(flow=>{
+
+        let startX = 0;
+
+        flow.ontouchstart =
+          e=>{
+
+            startX =
+              e.touches[0].clientX;
+          };
+
+        flow.ontouchend =
+          e=>{
+
+            const endX =
+              e.changedTouches[0]
+                .clientX;
+
+            const diff =
+              startX - endX;
+
+            const type =
+              flow.dataset.type;
+
+            if(
+              Math.abs(diff) < 40
+            ){
+              return;
+            }
+
+            if(diff > 0){
+
+              slide(type,1);
+            }
+            else{
+
+              slide(type,-1);
+            }
+          };
+      });
   }
 
   // =========================
@@ -357,7 +500,7 @@ export function initController(){
 }
 
 // =========================
-// FILE -> BASE64
+// UTIL
 // =========================
 function fileToBase64(file){
 
@@ -373,4 +516,27 @@ function fileToBase64(file){
 
     reader.readAsDataURL(file);
   });
+}
+
+function sleep(ms){
+
+  return new Promise(
+    resolve=>
+      setTimeout(
+        resolve,
+        ms
+      )
+  );
+}
+
+function clamp(
+  value,
+  min,
+  max
+){
+
+  return Math.min(
+    Math.max(value,min),
+    max
+  );
 }

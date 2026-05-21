@@ -2,9 +2,6 @@ import {
   getState
 } from "../state/state.js";
 
-// =========================
-// MAIN RENDER
-// =========================
 export function renderApp(){
 
   const app =
@@ -19,9 +16,7 @@ export function renderApp(){
 
     <div class="container">
 
-      <!-- =========================
-           ROULETTE
-      ========================== -->
+      <!-- ROULETTE -->
 
       <div class="block">
 
@@ -31,8 +26,7 @@ export function renderApp(){
 
         <div class="roulette-wrap">
 
-          <!-- CAP -->
-          <div class="roulette-slot">
+          <div class="roulette-slot cap">
 
             <div class="roulette-label">
               🧢 수모
@@ -52,8 +46,7 @@ export function renderApp(){
 
           </div>
 
-          <!-- SWIM -->
-          <div class="roulette-slot">
+          <div class="roulette-slot swim">
 
             <div class="roulette-label">
               🩲 수영복
@@ -84,9 +77,7 @@ export function renderApp(){
 
       </div>
 
-      <!-- =========================
-           CAP
-      ========================== -->
+      <!-- CAP -->
 
       <div class="block">
 
@@ -94,7 +85,10 @@ export function renderApp(){
           🧢 수모 (${state.caps.length})
         </div>
 
-        <div class="coverflow">
+        <div
+          class="coverflow"
+          data-type="cap"
+        >
 
           ${
             renderVisibleCards(
@@ -108,9 +102,7 @@ export function renderApp(){
 
       </div>
 
-      <!-- =========================
-           SWIM
-      ========================== -->
+      <!-- SWIM -->
 
       <div class="block">
 
@@ -118,7 +110,10 @@ export function renderApp(){
           🩲 수영복 (${state.swimsuits.length})
         </div>
 
-        <div class="coverflow">
+        <div
+          class="coverflow"
+          data-type="swim"
+        >
 
           ${
             renderVisibleCards(
@@ -132,9 +127,7 @@ export function renderApp(){
 
       </div>
 
-      <!-- =========================
-           INPUT
-      ========================== -->
+      <!-- INPUT -->
 
       <div class="block">
 
@@ -183,9 +176,40 @@ export function renderApp(){
   `;
 }
 
-// =========================
-// VISIBLE CARDS
-// =========================
+function renderRouletteCard(item){
+
+  return `
+    <div class="roulette-card">
+
+      <div class="roulette-image-wrap">
+
+        ${
+          item.image
+          ? `
+            <img
+              src="${item.image}"
+              class="card-image"
+            />
+          `
+          : `
+            <div class="card-placeholder">
+              🌊
+            </div>
+          `
+        }
+
+        <div class="ripple"></div>
+
+      </div>
+
+      <div class="roulette-name">
+        ${item.name}
+      </div>
+
+    </div>
+  `;
+}
+
 function renderVisibleCards(
   items,
   activeIndex,
@@ -213,93 +237,25 @@ function renderVisibleCards(
       activeIndex + 3
     );
 
-  const visible =
-    items.slice(start,end);
-
-  return `
-
-    <button
-      class="nav-btn"
-      onclick="
-        window.app.slide(
-          '${type}',
-          -1
-        )
-      "
-    >
-      ‹
-    </button>
-
-    ${visible.map((item,i)=>{
+  return items
+    .slice(start,end)
+    .map((item,i)=>{
 
       const realIndex =
         start + i;
 
-      return renderCoverflowCard(
+      return renderCard(
         item,
         realIndex,
         activeIndex,
         type
       );
 
-    }).join("")}
-
-    <button
-      class="nav-btn"
-      onclick="
-        window.app.slide(
-          '${type}',
-          1
-        )
-      "
-    >
-      ›
-    </button>
-
-  `;
+    })
+    .join("");
 }
 
-// =========================
-// ROULETTE CARD
-// =========================
-function renderRouletteCard(
-  item
-){
-
-  return `
-    <div class="roulette-card">
-
-      <div class="roulette-image-wrap">
-
-        ${
-          item.image
-          ? `
-            <img
-              src="${item.image}"
-              class="card-image"
-            />
-          `
-          : `
-            <div class="card-placeholder">
-              🌊
-            </div>
-          `
-        }
-
-      </div>
-
-      <div class="roulette-name">
-        ${item.name}
-      </div>
-
-    </div>
-  `;
-}
-
-// =========================
-// COVERFLOW CARD
-// =========================
-function renderCoverflowCard(
+function renderCard(
   item,
   index,
   activeIndex,
@@ -310,6 +266,9 @@ function renderCoverflowCard(
     Math.abs(
       index - activeIndex
     );
+
+  const active =
+    distance === 0;
 
   const scale =
     Math.max(
@@ -323,15 +282,12 @@ function renderCoverflowCard(
       1 - distance * 0.18
     );
 
-  const translateY =
-    distance * 8;
-
-  const zIndex =
-    100 - distance;
-
   return `
     <div
-      class="cover-card"
+      class="
+        cover-card
+        ${active ? "active" : ""}
+      "
       onclick="
         window.app.setActiveIndex(
           '${type}',
@@ -341,11 +297,11 @@ function renderCoverflowCard(
       style="
         transform:
           scale(${scale})
-          translateY(${translateY}px);
+          translateY(${distance*10}px);
 
         opacity:${opacity};
 
-        z-index:${zIndex};
+        z-index:${100-distance};
       "
     >
 
