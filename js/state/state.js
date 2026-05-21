@@ -6,7 +6,11 @@ export const defaultState = {
 
   selectedCap: null,
 
-  selectedSwim: null
+  selectedSwim: null,
+
+  activeCapIndex: 0,
+
+  activeSwimIndex: 0
 };
 
 let currentState =
