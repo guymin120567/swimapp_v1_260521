@@ -1,150 +1,134 @@
-import { renderApp } from "../ui/render.js";
-import { renderPreview } from "../ui/preview.js";
 import {
-  renderSwimList,
-  renderCapList,
-  runWaveCleanup,
-  setActiveIndex
-} from "../ui/cards.js";
+  saveState,
+  loadState,
+  saveImage,
+  loadImage,
+  deleteImage
+} from "../../db/database.js";
 
-import { triggerHighlight } from "../ui/effects.js";
-import { renderInputSection } from "../ui/input.js";
+import {
+  compressImage
+} from "../utils/image.js";
 
-import { loadDB, saveDB } from "../../db/database.js";
-import { defaultState, getState, setInternalState } from "../state/state.js";
-import { fileToBase64 } from "../utils/image.js";
-import { startRoulette } from "./roulette.js";
+import {
+  defaultState,
+  getState,
+  setInternalState
+} from "../state/state.js";
 
-export function initController() {
+// =========================
+// ADD ITEM
+// =========================
+async function addItem(){
 
-  async function boot() {
+  const textInput =
+    document.getElementById(
+      "itemText"
+    );
 
-    const saved = await loadDB();
+  const fileInput =
+    document.getElementById(
+      "itemImage"
+    );
 
-    const mergedState = {
-      ...structuredClone(defaultState),
-      ...(saved || {})
-    };
+  const typeInput =
+    document.getElementById(
+      "itemType"
+    );
 
-    setInternalState(mergedState);
+  const text =
+    textInput.value.trim();
 
-    renderApp(getState());
-    bindGlobal();
-
-    console.log("APP BOOT SUCCESS");
+  if(!text){
+    return;
   }
 
-  async function updateState(patch) {
+  const file =
+    fileInput.files[0];
 
-    const next = {
-      ...getState(),
-      ...patch
-    };
+  let imageId = null;
 
-    setInternalState(next);
+  // =========================
+  // SAVE IMAGE
+  // =========================
+  if(file){
 
-    await saveDB(next);
+    imageId =
+      "img_" + Date.now();
 
-    renderPreview(next);
-    renderSwimList(next);
-    renderCapList(next);
+    const compressed =
+      await compressImage(file);
 
-    runWaveCleanup();
+    await saveImage(
+      imageId,
+      compressed
+    );
   }
 
-  async function addByCategory(type, text, img) {
+  const item = {
+    id: Date.now(),
+    text,
+    imageId
+  };
 
-    const state = getState();
+  const state = getState();
 
-    const item = {
-      id: Date.now(),
-      text,
-      img
-    };
+  if(typeInput.value === "swimsuit"){
 
-    if (type === "swimsuit") {
-      await updateState({
-        swimsuits: [...state.swimsuits, item]
-      });
-    }
+    state.swimsuits.push(item);
+  }
+  else{
 
-    if (type === "cap") {
-      await updateState({
-        caps: [...state.caps, item]
-      });
-    }
+    state.caps.push(item);
   }
 
-  async function removeItem(type, id) {
+  await saveState(state);
 
-    const state = getState();
+  render();
+}
 
-    if (type === "swimsuit") {
-      await updateState({
-        swimsuits: state.swimsuits.filter(i => i.id !== id)
-      });
-    }
+// =========================
+// REMOVE ITEM
+// =========================
+async function removeItem(
+  type,
+  id
+){
 
-    if (type === "cap") {
-      await updateState({
-        caps: state.caps.filter(i => i.id !== id)
-      });
-    }
+  const state = getState();
+
+  const list =
+    type === "swimsuit"
+    ? state.swimsuits
+    : state.caps;
+
+  const target =
+    list.find(
+      item => item.id === id
+    );
+
+  if(
+    target &&
+    target.imageId
+  ){
+    await deleteImage(
+      target.imageId
+    );
   }
 
-  async function addItemFromUI(type) {
+  const filtered =
+    list.filter(
+      item => item.id !== id
+    );
 
-    const textInput = document.getElementById("itemText");
-    const fileInput = document.getElementById("itemImage");
-
-    const text = textInput?.value?.trim();
-    if (!text) return;
-
-    const file = fileInput?.files?.[0];
-
-    let img = null;
-    if (file) img = await fileToBase64(file);
-
-    await addByCategory(type, text, img);
-
-    textInput.value = "";
-    fileInput.value = "";
+  if(type === "swimsuit"){
+    state.swimsuits = filtered;
+  }
+  else{
+    state.caps = filtered;
   }
 
-  async function submitSelectedItem() {
+  await saveState(state);
 
-    const typeSelect = document.getElementById("itemType");
-    const selectedType = typeSelect?.value || "swimsuit";
-
-    await addItemFromUI(selectedType);
-  }
-
-  function spinAll() {
-
-    startRoulette({
-      state: getState(),
-      updateState,
-      triggerHighlight
-    });
-  }
-
-  function selectCard(type, index) {
-    setActiveIndex(type, index);
-    renderSwimList(getState());
-    renderCapList(getState());
-  }
-
-  function bindGlobal() {
-
-    window.app = {
-      spinAll,
-      removeItem,
-      addItemFromUI,
-      submitSelectedItem,
-      getState,
-      selectCard
-    };
-  }
-
-  return { boot };
+  render();
 }
