@@ -13,9 +13,11 @@ let currentState =
   structuredClone(defaultState);
 
 export function getState(){
+
   return currentState;
 }
 
 export function setState(next){
+
   currentState = next;
 }
