@@ -1,123 +1,292 @@
-
 /* =========================
-   BASE
+   RESET
 ========================= */
 
-body {
-  margin: 0;
-  font-family: system-ui, -apple-system, sans-serif;
+*{
+  box-sizing:border-box;
+}
 
-  color: white;
+html,
+body{
+  width:100%;
+  min-height:100%;
+}
 
-  /* 🌊 더 깊은 물 느낌 */
+/* =========================
+   BODY
+========================= */
+
+body{
+  margin:0;
+
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+
+  color:white;
+
   background:
-    radial-gradient(circle at 20% 10%, #7dd3fc 0%, transparent 35%),
-    radial-gradient(circle at 80% 20%, #38bdf8 0%, transparent 40%),
-    radial-gradient(circle at 50% 100%, #0ea5e9 0%, #06121f 70%);
+    radial-gradient(
+      circle at 20% 10%,
+      #7dd3fc 0%,
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 80% 20%,
+      #38bdf8 0%,
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 50% 100%,
+      #0ea5e9 0%,
+      #06121f 70%
+    );
 
-  overflow-x: hidden;
+  background-attachment: fixed;
+
+  overflow-x:hidden;
+
+  -webkit-font-smoothing:antialiased;
 }
 
 /* =========================
-   LAYOUT
+   ROOT APP
 ========================= */
 
-.container {
-  padding: 20px 14px 60px;
-  display: flex;
-  flex-direction: column;
-  gap: 26px;
+#app{
+  width:100%;
+
+  min-height:100vh;
+
+  display:block;
+
+  opacity:1;
+
+  visibility:visible;
 }
 
 /* =========================
-   SECTION BLOCK
+   MAIN CONTAINER
 ========================= */
 
-.block {
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.08);
+.container{
+  width:100%;
 
-  border-radius: 20px;
+  max-width:900px;
 
-  padding: 16px 12px;
+  margin:0 auto;
 
-  backdrop-filter: blur(10px);
+  padding:
+    20px
+    14px
+    80px;
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:26px;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.top-area{
+  display:flex;
+
+  flex-direction:column;
+
+  gap:18px;
 }
 
 /* =========================
    TITLE
 ========================= */
 
-.section-title {
-  font-size: 18px;
-  font-weight: 700;
+.app-title{
+  margin:0;
 
-  color: #bfe9ff;
+  font-size:32px;
 
-  margin-bottom: 10px;
+  font-weight:800;
 
-  text-shadow: 0 0 12px rgba(56,189,248,0.25);
+  letter-spacing:-0.5px;
+
+  color:#ffffff;
+
+  text-shadow:
+    0 0 18px rgba(56,189,248,0.35);
 }
 
 /* =========================
-   SLIDER (핵심 UX)
+   BUTTON
 ========================= */
 
-.slider {
-  display: flex;
-  align-items: center;
+.spin-btn{
+  width:100%;
 
-  overflow-x: auto;
+  height:58px;
 
-  padding: 40px 10px;
+  border:none;
 
-  scroll-behavior: smooth;
+  border-radius:18px;
 
-  justify-content: center;
+  background:
+    linear-gradient(
+      135deg,
+      #38bdf8,
+      #0284c7
+    );
+
+  color:white;
+
+  font-size:18px;
+
+  font-weight:800;
+
+  cursor:pointer;
+
+  box-shadow:
+    0 12px 30px rgba(3,105,161,0.35);
+
+  transition:
+    transform 0.15s ease,
+    opacity 0.15s ease;
 }
 
-.slider::-webkit-scrollbar {
-  display: none;
+.spin-btn:active{
+  transform:scale(0.97);
 }
 
 /* =========================
-   CARD (glass upgrade)
+   SECTION BLOCK
 ========================= */
 
-.item-card {
-  width: 160px;
-  height: 210px;
+.block{
+  background:
+    rgba(255,255,255,0.04);
 
-  flex-shrink: 0;
+  border:
+    1px solid rgba(255,255,255,0.08);
 
-  position: relative;
+  border-radius:24px;
 
-  margin-left: -48px;
+  padding:16px 12px;
 
-  transition: transform 0.25s ease, opacity 0.25s ease;
-}
+  backdrop-filter:blur(12px);
 
-.item-card:first-child {
-  margin-left: 0;
+  overflow:hidden;
 }
 
 /* =========================
-   CARD INNER (더 고급 glass)
+   SECTION TITLE
 ========================= */
 
-.card-inner {
-  width: 100%;
-  height: 100%;
+.section-title{
+  margin:0 0 14px;
 
-  border-radius: 26px;
+  font-size:18px;
 
-  background: rgba(255,255,255,0.06);
+  font-weight:700;
 
-  backdrop-filter: blur(18px);
+  color:#bfe9ff;
 
-  border: 1px solid rgba(255,255,255,0.12);
+  text-shadow:
+    0 0 12px rgba(56,189,248,0.25);
+}
 
-  overflow: hidden;
+/* =========================
+   SLIDER
+========================= */
+
+.slider{
+  width:100%;
+
+  display:flex;
+
+  align-items:center;
+
+  overflow-x:auto;
+
+  overflow-y:visible;
+
+  padding:
+    36px
+    14px;
+
+  scroll-behavior:smooth;
+
+  justify-content:flex-start;
+
+  -webkit-overflow-scrolling:touch;
+}
+
+.slider::-webkit-scrollbar{
+  display:none;
+}
+
+/* =========================
+   CARD
+========================= */
+
+.item-card{
+  width:160px;
+
+  height:210px;
+
+  flex-shrink:0;
+
+  position:relative;
+
+  margin-left:-42px;
+
+  transition:
+    transform 0.25s ease,
+    opacity 0.25s ease;
+
+  z-index:1;
+}
+
+.item-card:first-child{
+  margin-left:0;
+}
+
+/* =========================
+   ACTIVE CARD
+========================= */
+
+.item-card.active{
+  transform:
+    scale(1.12)
+    translateY(-8px);
+
+  z-index:999;
+}
+
+/* =========================
+   CARD INNER
+========================= */
+
+.card-inner{
+  width:100%;
+
+  height:100%;
+
+  position:relative;
+
+  border-radius:26px;
+
+  overflow:hidden;
+
+  background:
+    rgba(255,255,255,0.06);
+
+  border:
+    1px solid rgba(255,255,255,0.12);
+
+  backdrop-filter:blur(18px);
 
   box-shadow:
     0 18px 45px rgba(0,0,0,0.45),
@@ -128,135 +297,207 @@ body {
    IMAGE
 ========================= */
 
-.card-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.card-image{
+  width:100%;
+
+  height:100%;
+
+  object-fit:cover;
+
+  display:block;
 }
 
 /* =========================
    PLACEHOLDER
 ========================= */
 
-.card-placeholder {
-  width: 100%;
-  height: 100%;
+.card-placeholder{
+  width:100%;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  height:100%;
 
-  font-size: 56px;
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  font-size:56px;
 
   background:
-    radial-gradient(circle at top, rgba(56,189,248,0.35), transparent 60%),
+    radial-gradient(
+      circle at top,
+      rgba(56,189,248,0.35),
+      transparent 60%
+    ),
     rgba(3,105,161,0.25);
 }
 
 /* =========================
-   OVERLAY (더 부드럽게)
+   OVERLAY
 ========================= */
 
-.card-overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+.card-overlay{
+  position:absolute;
 
-  padding: 12px;
+  left:0;
+  right:0;
+  bottom:0;
 
-  background: linear-gradient(
-    to top,
-    rgba(0,0,0,0.78),
-    transparent
-  );
+  padding:12px;
 
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  background:
+    linear-gradient(
+      to top,
+      rgba(0,0,0,0.82),
+      transparent
+    );
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  gap:10px;
 }
 
-.card-title {
-  font-size: 13px;
-  font-weight: 600;
+/* =========================
+   TITLE
+========================= */
 
-  color: #ffffff;
+.card-title{
+  font-size:13px;
 
-  opacity: 0.95;
+  font-weight:700;
+
+  color:white;
+
+  overflow:hidden;
+
+  text-overflow:ellipsis;
+
+  white-space:nowrap;
 }
 
 /* =========================
    DELETE BUTTON
 ========================= */
 
-.delete-btn {
-  width: 28px;
-  height: 28px;
+.delete-btn{
+  width:28px;
 
-  border-radius: 50%;
-  border: none;
+  height:28px;
 
-  background: rgba(255,255,255,0.14);
+  border:none;
 
-  color: white;
+  border-radius:50%;
 
-  cursor: pointer;
+  flex-shrink:0;
 
-  transition: 0.2s;
+  background:
+    rgba(255,255,255,0.14);
+
+  color:white;
+
+  cursor:pointer;
+
+  transition:
+    transform 0.15s ease,
+    background 0.15s ease;
 }
 
-.delete-btn:hover {
-  background: rgba(56,189,248,0.6);
-  transform: scale(1.1);
-}
+.delete-btn:hover{
+  background:
+    rgba(56,189,248,0.6);
 
-/* =========================
-   ACTIVE CARD
-========================= */
-
-.item-card.active {
-  transform: scale(1.14);
-  z-index: 999;
-}
-
-/* =========================
-   BUTTON
-========================= */
-
-.spin-btn {
-  background: linear-gradient(135deg, #38bdf8, #0284c7);
-
-  border: none;
-
-  padding: 14px 18px;
-
-  border-radius: 14px;
-
-  color: white;
-
-  font-weight: 700;
-
-  box-shadow: 0 12px 30px rgba(3,105,161,0.35);
-}
-
-.spin-btn:active {
-  transform: scale(0.96);
+  transform:scale(1.08);
 }
 
 /* =========================
-   EMPTY
+   EMPTY CARD
 ========================= */
 
-.empty-card {
-  padding: 28px;
+.empty-card{
+  width:100%;
 
-  text-align: center;
+  padding:32px 18px;
 
-  color: rgba(255,255,255,0.6);
+  text-align:center;
 
-  border: 1px dashed rgba(255,255,255,0.2);
+  border-radius:18px;
 
-  border-radius: 16px;
+  border:
+    1px dashed rgba(255,255,255,0.18);
 
-  background: rgba(255,255,255,0.02);
+  background:
+    rgba(255,255,255,0.03);
+
+  color:
+    rgba(255,255,255,0.65);
+}
+
+/* =========================
+   INPUT AREA
+========================= */
+
+.input-area{
+  display:flex;
+
+  flex-direction:column;
+
+  gap:12px;
+}
+
+/* =========================
+   INPUT
+========================= */
+
+.input-area input,
+.input-area select{
+  width:100%;
+
+  height:52px;
+
+  border:none;
+
+  border-radius:14px;
+
+  padding:0 14px;
+
+  background:
+    rgba(255,255,255,0.08);
+
+  color:white;
+
+  font-size:15px;
+
+  outline:none;
+
+  backdrop-filter:blur(10px);
+}
+
+.input-area input::placeholder{
+  color:
+    rgba(255,255,255,0.5);
+}
+
+/* =========================
+   FILE INPUT
+========================= */
+
+.input-area input[type="file"]{
+  padding:12px;
+}
+
+/* =========================
+   MOBILE SAFE AREA
+========================= */
+
+@supports(padding:max(0px)){
+
+  body{
+    padding-bottom:
+      env(safe-area-inset-bottom);
+  }
 }
