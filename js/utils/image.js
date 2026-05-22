@@ -1,6 +1,3 @@
-// =========================
-// COMPRESS IMAGE
-// =========================
 export async function compressImage(file){
 
   return new Promise((resolve)=>{
@@ -50,9 +47,6 @@ export async function compressImage(file){
 
         const ctx =
           canvas.getContext("2d");
-
-        ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = "high";
 
         ctx.drawImage(
           img,
