@@ -127,42 +127,47 @@ export function initController(){
 
     await update();
   }
+// =========================
+// REMOVE
+// =========================
+async function removeItem(
+  type,
+  id
+){
 
-  // =========================
-  // REMOVE
-  // =========================
-  async function removeItem(
-    type,
-    id
-  ){
+  const ok = confirm(
+    "정말 삭제할까요?"
+  );
 
-    const state =
-      getState();
+  if(!ok) return;
 
-    if(type === "cap"){
+  const state =
+    getState();
 
-      state.caps =
-        state.caps.filter(
-          item =>
-            item.id != id
-        );
-    }
-    else{
+  if(type === "cap"){
 
-      state.swimsuits =
-        state.swimsuits.filter(
-          item =>
-            item.id != id
-        );
-    }
+    state.caps =
+      state.caps.filter(
+        item =>
+          item.id != id
+      );
+  }
+  else{
 
-    setState({
-      ...state
-    });
-
-    await update();
+    state.swimsuits =
+      state.swimsuits.filter(
+        item =>
+          item.id != id
+      );
   }
 
+  setState({
+    ...state
+  });
+
+  await update();
+}
+  
   // =========================
   // ACTIVE
   // =========================
