@@ -5,8 +5,16 @@ import {
 } from "../state/state.js";
 
 import {
+  addCap,
+  addSwim,
+  removeCap,
+  removeSwim,
+  setActiveCap,
+  setActiveSwim
+} from "../state/actions.js";
+
+import {
   renderApp,
-  renderRoulette,
   renderLists
 } from "../ui/render.js";
 
@@ -23,6 +31,17 @@ import {
   compressImage
 } from "../utils/image.js";
 
+import {
+  spinAll
+} from "../features/roulette/roulette.js";
+
+import {
+  bindDrag
+} from "../features/coverflow/drag.js";
+
+// =========================
+// INIT
+// =========================
 export function initController(){
 
   async function boot(){
@@ -55,11 +74,12 @@ export function initController(){
   }
 
   // =========================
-  // STATE NORMALIZE
+  // NORMALIZE
   // =========================
   function normalizeState(){
 
-    const state = getState();
+    const state =
+      getState();
 
     setState({
 
@@ -96,7 +116,7 @@ export function initController(){
   }
 
   // =========================
-  // ADD ITEM
+  // ADD
   // =========================
   async function submitSelectedItem(){
 
@@ -130,9 +150,6 @@ export function initController(){
         await compressImage(file);
     }
 
-    const state =
-      getState();
-
     const item = {
 
       id: Date.now(),
@@ -144,27 +161,11 @@ export function initController(){
 
     if(type === "cap"){
 
-      setState({
-
-        ...state,
-
-        caps:[
-          ...state.caps,
-          item
-        ]
-      });
+      addCap(item);
     }
     else{
 
-      setState({
-
-        ...state,
-
-        swimsuits:[
-          ...state.swimsuits,
-          item
-        ]
-      });
+      addSwim(item);
     }
 
     document.getElementById(
@@ -192,32 +193,13 @@ export function initController(){
 
     if(!ok) return;
 
-    const state =
-      getState();
-
     if(type === "cap"){
 
-      setState({
-
-        ...state,
-
-        caps:
-          state.caps.filter(
-            item => item.id !== id
-          )
-      });
+      removeCap(id);
     }
     else{
 
-      setState({
-
-        ...state,
-
-        swimsuits:
-          state.swimsuits.filter(
-            item => item.id !== id
-          )
-      });
+      removeSwim(id);
     }
 
     renderLists();
@@ -235,240 +217,16 @@ export function initController(){
     index
   ){
 
-    const state =
-      getState();
-
     if(type === "cap"){
 
-      setState({
-
-        ...state,
-
-        activeCapIndex:index
-      });
+      setActiveCap(index);
     }
     else{
 
-      setState({
-
-        ...state,
-
-        activeSwimIndex:index
-      });
+      setActiveSwim(index);
     }
 
     renderLists();
-  }
-
-  // =========================
-  // SPIN
-  // =========================
-  async function spinAll(){
-
-    await Promise.all([
-
-      animateRoulette("cap"),
-
-      animateRoulette("swim")
-    ]);
-  }
-
-  // =========================
-  // RAF ANIMATION
-  // =========================
-  async function animateRoulette(type){
-
-    const state =
-      getState();
-
-    const items =
-      type === "cap"
-      ? state.caps
-      : state.swimsuits;
-
-    if(!items.length) return;
-
-    return new Promise(resolve=>{
-
-      let frame = 0;
-
-      let lastTime = 0;
-
-      function loop(time){
-
-        if(time - lastTime > 70 + frame * 12){
-
-          const randomIndex =
-            Math.floor(
-              Math.random() *
-              items.length
-            );
-
-          const selected =
-            items[randomIndex];
-
-          if(type === "cap"){
-
-            state.selectedCap =
-              selected;
-          }
-          else{
-
-            state.selectedSwim =
-              selected;
-          }
-
-          setState({
-            ...state
-          });
-
-          renderRoulette();
-
-          frame++;
-
-          lastTime = time;
-        }
-
-        if(frame < 14){
-
-          requestAnimationFrame(
-            loop
-          );
-        }
-        else{
-
-          saveState(
-            getState()
-          );
-
-          resolve();
-        }
-      }
-
-      requestAnimationFrame(
-        loop
-      );
-    });
-  }
-
-  // =========================
-  // DRAG
-  // =========================
-  function bindDrag(){
-
-    let currentFlow = null;
-
-    let startX = 0;
-
-    let lastX = 0;
-
-    let velocity = 0;
-
-    document.addEventListener(
-      "pointerdown",
-      e=>{
-
-        const flow =
-          e.target.closest(
-            ".coverflow"
-          );
-
-        if(!flow) return;
-
-        currentFlow = flow;
-
-        startX = e.clientX;
-
-        lastX = e.clientX;
-
-        velocity = 0;
-      }
-    );
-
-    document.addEventListener(
-      "pointermove",
-      e=>{
-
-        if(!currentFlow) return;
-
-        velocity =
-          e.clientX - lastX;
-
-        lastX =
-          e.clientX;
-      }
-    );
-
-    document.addEventListener(
-      "pointerup",
-      ()=>{
-
-        if(!currentFlow) return;
-
-        const diff =
-          startX - lastX;
-
-        const type =
-          currentFlow.id === "capList"
-          ? "cap"
-          : "swim";
-
-        const state =
-          getState();
-
-        if(
-          Math.abs(diff) < 40 &&
-          Math.abs(velocity) < 3
-        ){
-
-          currentFlow = null;
-
-          return;
-        }
-
-        const direction =
-          diff > 0 || velocity < -2
-          ? 1
-          : -1;
-
-        if(type === "cap"){
-
-          let next =
-            state.activeCapIndex +
-            direction;
-
-          next = clamp(
-            next,
-            0,
-            state.caps.length - 1
-          );
-
-          setActiveIndex(
-            type,
-            next
-          );
-        }
-        else{
-
-          let next =
-            state.activeSwimIndex +
-            direction;
-
-          next = clamp(
-            next,
-            0,
-            state.swimsuits.length - 1
-          );
-
-          setActiveIndex(
-            type,
-            next
-          );
-        }
-
-        currentFlow = null;
-      }
-    );
   }
 
   // =========================
@@ -531,12 +289,4 @@ export function initController(){
   return {
     boot
   };
-}
-
-function clamp(value,min,max){
-
-  return Math.min(
-    Math.max(value,min),
-    max
-  );
 }
