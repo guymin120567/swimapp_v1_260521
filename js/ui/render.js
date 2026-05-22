@@ -67,9 +67,9 @@ export function renderApp() {
         </div>
 
         <button
-          class="spin-btn"
-          onclick="window.app.spinAll()"
-        >
+  class="spin-btn"
+  data-action="spin"
+>
           오늘 뭐 입지?
         </button>
 
@@ -147,11 +147,9 @@ export function renderApp() {
           />
 
           <button
-            class="spin-btn"
-            onclick="window.app.submitSelectedItem()"
-          >
-            추가
-          </button>
+  class="spin-btn"
+  data-action="add"
+>
 
         </div>
 
