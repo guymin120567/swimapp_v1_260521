@@ -19,7 +19,8 @@ import {
 // =========================
 export function renderLists(){
 
-  const state = getState();
+  const state =
+    getState();
 
   document.getElementById(
     "capTitle"
@@ -44,10 +45,12 @@ export function renderLists(){
     state.activeSwimIndex,
     "swim"
   );
+
+  autoCenterActive();
 }
 
 // =========================
-// UPDATE LIST
+// UPDATE
 // =========================
 function updateList(
   target,
@@ -82,60 +85,72 @@ function renderVisibleCards(
     `;
   }
 
-  if(items.length <= MAX_VISIBLE_CARDS){
+  // =========================
+  // SMALL LIST
+  // =========================
+  if(items.length < 5){
 
     return items
       .map((item,index)=>{
+
+        const distance =
+          index - activeIndex;
 
         return renderCard(
           item,
           index,
           activeIndex,
-          type
+          type,
+          distance
         );
       })
       .join("");
   }
 
-  let start =
-    activeIndex - 2;
+  // =========================
+  // LOOP
+  // =========================
+  const total =
+    items.length;
 
-  let end =
-    activeIndex + 2;
+  const visible = [];
 
-  if(start < 0){
+  for(let i=-2;i<=2;i++){
 
-    end += Math.abs(start);
+    let index =
+      activeIndex + i;
 
-    start = 0;
+    if(index < 0){
+
+      index =
+        total + index;
+    }
+
+    if(index >= total){
+
+      index =
+        index - total;
+    }
+
+    visible.push({
+
+      item:items[index],
+
+      realIndex:index,
+
+      distance:i
+    });
   }
 
-  if(end >= items.length){
-
-    const diff =
-      end - items.length + 1;
-
-    start -= diff;
-
-    end =
-      items.length - 1;
-  }
-
-  start =
-    Math.max(0,start);
-
-  return items
-    .slice(start,end + 1)
-    .map((item,i)=>{
-
-      const realIndex =
-        start + i;
+  return visible
+    .map(data=>{
 
       return renderCard(
-        item,
-        realIndex,
+        data.item,
+        data.realIndex,
         activeIndex,
-        type
+        type,
+        data.distance
       );
     })
     .join("");
@@ -148,11 +163,12 @@ function renderCard(
   item,
   index,
   activeIndex,
-  type
+  type,
+  distance
 ){
 
-  const distance =
-    Math.abs(index - activeIndex);
+  const abs =
+    Math.abs(distance);
 
   const active =
     distance === 0;
@@ -160,29 +176,42 @@ function renderCard(
   const scale =
     Math.max(
       CARD_MIN_SCALE,
-      1 - distance * CARD_SCALE_STEP
+      1 - abs * CARD_SCALE_STEP
     );
 
   const opacity =
     Math.max(
       CARD_MIN_OPACITY,
-      1 - distance * CARD_OPACITY_STEP
+      1 - abs * CARD_OPACITY_STEP
     );
+
+  const rotate =
+    distance * -16;
+
+  const offset =
+    distance * -34;
+
+  const brightness =
+    1 - abs * .12;
 
   return `
     <div
       class="cover-card ${active ? "active" : ""}"
       data-type="${type}"
       data-index="${index}"
+
       style="
         transform:
-          perspective(1000px)
-          rotateY(${index < activeIndex ? 18 : -18}deg)
-          translateY(${distance * 12}px)
+          translateX(${offset}px)
+          rotateY(${rotate}deg)
           scale(${scale});
 
         opacity:${opacity};
-        z-index:${100-distance};
+
+        filter:
+          brightness(${brightness});
+
+        z-index:${100-abs};
       "
     >
 
@@ -224,4 +253,29 @@ function renderCard(
 
     </div>
   `;
+}
+
+// =========================
+// CENTER
+// =========================
+function autoCenterActive(){
+
+  requestAnimationFrame(()=>{
+
+    document
+      .querySelectorAll(
+        ".cover-card.active"
+      )
+      .forEach(card=>{
+
+        card.scrollIntoView({
+
+          behavior:"smooth",
+
+          inline:"center",
+
+          block:"nearest"
+        });
+      });
+  });
 }

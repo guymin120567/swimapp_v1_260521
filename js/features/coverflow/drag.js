@@ -16,32 +16,44 @@ import {
 // =========================
 export function bindDrag(){
 
-  let currentFlow = null;
+  let dragging = false;
+
+  let currentType = null;
 
   let startX = 0;
 
-  let lastX = 0;
+  let currentIndex = 0;
 
-  let velocity = 0;
+  let moved = false;
 
   document.addEventListener(
     "pointerdown",
     e=>{
 
-      const flow =
+      const card =
         e.target.closest(
-          ".coverflow"
+          ".cover-card"
         );
 
-      if(!flow) return;
+      if(!card) return;
 
-      currentFlow = flow;
+      dragging = true;
 
-      startX = e.clientX;
+      moved = false;
 
-      lastX = e.clientX;
+      currentType =
+        card.dataset.type;
 
-      velocity = 0;
+      startX =
+        e.clientX;
+
+      const state =
+        getState();
+
+      currentIndex =
+        currentType === "cap"
+        ? state.activeCapIndex
+        : state.activeSwimIndex;
     }
   );
 
@@ -49,13 +61,34 @@ export function bindDrag(){
     "pointermove",
     e=>{
 
-      if(!currentFlow) return;
+      if(!dragging) return;
 
-      velocity =
-        e.clientX - lastX;
+      const diff =
+        e.clientX - startX;
 
-      lastX =
-        e.clientX;
+      if(Math.abs(diff) > 12){
+
+        moved = true;
+      }
+
+      const threshold = 58;
+
+      if(Math.abs(diff) > threshold){
+
+        if(diff < 0){
+
+          currentIndex++;
+        }
+        else{
+
+          currentIndex--;
+        }
+
+        updateIndex();
+
+        startX =
+          e.clientX;
+      }
     }
   );
 
@@ -63,74 +96,90 @@ export function bindDrag(){
     "pointerup",
     ()=>{
 
-      if(!currentFlow) return;
+      dragging = false;
 
-      const diff =
-        startX - lastX;
+      moved = false;
+    }
+  );
 
-      const type =
-        currentFlow.id === "capList"
-        ? "cap"
-        : "swim";
+  function updateIndex(){
 
-      const state =
-        getState();
+    const state =
+      getState();
 
-      if(
-        Math.abs(diff) < 40 &&
-        Math.abs(velocity) < 3
-      ){
+    if(currentType === "cap"){
 
-        currentFlow = null;
-
-        return;
-      }
-
-      const direction =
-        diff > 0 || velocity < -2
-        ? 1
-        : -1;
-
-      if(type === "cap"){
-
-        let next =
-          state.activeCapIndex +
-          direction;
-
-        next = clamp(
-          next,
+      currentIndex =
+        clamp(
+          currentIndex,
           0,
           state.caps.length - 1
         );
 
-        setActiveCap(next);
-      }
-      else{
+      setActiveCap(
+        currentIndex
+      );
+    }
+    else{
 
-        let next =
-          state.activeSwimIndex +
-          direction;
-
-        next = clamp(
-          next,
+      currentIndex =
+        clamp(
+          currentIndex,
           0,
           state.swimsuits.length - 1
         );
 
-        setActiveSwim(next);
-      }
-
-      renderLists();
-
-      currentFlow = null;
+      setActiveSwim(
+        currentIndex
+      );
     }
-  );
+
+    renderLists();
+
+    scrollActiveIntoView(
+      currentType,
+      currentIndex
+    );
+  }
+}
+
+// =========================
+// SCROLL
+// =========================
+function scrollActiveIntoView(
+  type,
+  index
+){
+
+  requestAnimationFrame(()=>{
+
+    const card =
+      document.querySelector(
+        `.cover-card[data-type="${type}"][data-index="${index}"]`
+      );
+
+    if(card){
+
+      card.scrollIntoView({
+
+        behavior:"smooth",
+
+        inline:"center",
+
+        block:"nearest"
+      });
+    }
+  });
 }
 
 // =========================
 // UTIL
 // =========================
-function clamp(value,min,max){
+function clamp(
+  value,
+  min,
+  max
+){
 
   return Math.min(
     Math.max(value,min),
