@@ -8,33 +8,33 @@ export function renderLayout(){
 
   <div class="container">
 
-    <div class="block">
+    <!-- =====================
+         ROULETTE
+    ====================== -->
 
-      <div class="section-title">
-        🎰 룰렛
-      </div>
+    <div class="roulette-wrap">
 
-      <div class="roulette-wrap">
+      <div class="roulette-slot">
 
-        <div class="roulette-slot">
+        <div class="roulette-label">
+          🧢 수모
+        </div>
 
-          <div class="roulette-label">
-            🧢 수모
+        <div class="roulette-card">
+
+          <img
+            id="capResultImage"
+            class="card-image"
+          />
+
+          <div
+            id="capResultPlaceholder"
+            class="card-placeholder"
+          >
+            🌊
           </div>
 
-          <div class="roulette-card">
-
-            <img
-              id="capResultImage"
-              class="card-image"
-            />
-
-            <div
-              id="capResultPlaceholder"
-              class="card-placeholder"
-            >
-              🌊
-            </div>
+          <div class="card-overlay">
 
             <div
               id="capResultName"
@@ -47,25 +47,29 @@ export function renderLayout(){
 
         </div>
 
-        <div class="roulette-slot">
+      </div>
 
-          <div class="roulette-label">
-            🩲 수영복
+      <div class="roulette-slot">
+
+        <div class="roulette-label">
+          🩲 수영복
+        </div>
+
+        <div class="roulette-card">
+
+          <img
+            id="swimResultImage"
+            class="card-image"
+          />
+
+          <div
+            id="swimResultPlaceholder"
+            class="card-placeholder"
+          >
+            🌊
           </div>
 
-          <div class="roulette-card">
-
-            <img
-              id="swimResultImage"
-              class="card-image"
-            />
-
-            <div
-              id="swimResultPlaceholder"
-              class="card-placeholder"
-            >
-              🌊
-            </div>
+          <div class="card-overlay">
 
             <div
               id="swimResultName"
@@ -80,6 +84,14 @@ export function renderLayout(){
 
       </div>
 
+    </div>
+
+    <!-- =====================
+         SPIN BUTTON
+    ====================== -->
+
+    <div class="spin-row">
+
       <button
         class="spin-btn"
         data-action="spin"
@@ -88,6 +100,10 @@ export function renderLayout(){
       </button>
 
     </div>
+
+    <!-- =====================
+         CAP LIST
+    ====================== -->
 
     <div class="block">
 
@@ -103,6 +119,10 @@ export function renderLayout(){
 
     </div>
 
+    <!-- =====================
+         SWIM LIST
+    ====================== -->
+
     <div class="block">
 
       <div
@@ -116,6 +136,10 @@ export function renderLayout(){
       ></div>
 
     </div>
+
+    <!-- =====================
+         ADD
+    ====================== -->
 
     <div class="block">
 
