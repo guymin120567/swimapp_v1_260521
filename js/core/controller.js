@@ -49,7 +49,38 @@ export function initController(){
       );
     }
 
+    normalizeState();
+
     renderApp();
+  }
+
+  // =========================
+  // STATE NORMALIZE
+  // =========================
+  function normalizeState(){
+
+    const state = getState();
+
+    setState({
+
+      caps:
+        state.caps || [],
+
+      swimsuits:
+        state.swimsuits || [],
+
+      selectedCap:
+        state.selectedCap || null,
+
+      selectedSwim:
+        state.selectedSwim || null,
+
+      activeCapIndex:
+        state.activeCapIndex || 0,
+
+      activeSwimIndex:
+        state.activeSwimIndex || 0
+    });
   }
 
   // =========================
@@ -99,7 +130,8 @@ export function initController(){
         await compressImage(file);
     }
 
-    const state = getState();
+    const state =
+      getState();
 
     const item = {
 
@@ -113,6 +145,7 @@ export function initController(){
     if(type === "cap"){
 
       setState({
+
         ...state,
 
         caps:[
@@ -124,6 +157,7 @@ export function initController(){
     else{
 
       setState({
+
         ...state,
 
         swimsuits:[
@@ -158,11 +192,13 @@ export function initController(){
 
     if(!ok) return;
 
-    const state = getState();
+    const state =
+      getState();
 
     if(type === "cap"){
 
       setState({
+
         ...state,
 
         caps:
@@ -174,6 +210,7 @@ export function initController(){
     else{
 
       setState({
+
         ...state,
 
         swimsuits:
@@ -183,7 +220,11 @@ export function initController(){
       });
     }
 
-    await update();
+    renderLists();
+
+    await saveState(
+      getState()
+    );
   }
 
   // =========================
@@ -194,11 +235,13 @@ export function initController(){
     index
   ){
 
-    const state = getState();
+    const state =
+      getState();
 
     if(type === "cap"){
 
       setState({
+
         ...state,
 
         activeCapIndex:index
@@ -207,6 +250,7 @@ export function initController(){
     else{
 
       setState({
+
         ...state,
 
         activeSwimIndex:index
@@ -230,11 +274,12 @@ export function initController(){
   }
 
   // =========================
-  // ANIMATION
+  // RAF ANIMATION
   // =========================
   async function animateRoulette(type){
 
-    const state = getState();
+    const state =
+      getState();
 
     const items =
       type === "cap"
@@ -243,42 +288,67 @@ export function initController(){
 
     if(!items.length) return;
 
-    for(let i=0;i<14;i++){
+    return new Promise(resolve=>{
 
-      const randomIndex =
-        Math.floor(
-          Math.random() *
-          items.length
-        );
+      let frame = 0;
 
-      const selected =
-        items[randomIndex];
+      let lastTime = 0;
 
-      if(type === "cap"){
+      function loop(time){
 
-        state.selectedCap =
-          selected;
+        if(time - lastTime > 70 + frame * 12){
+
+          const randomIndex =
+            Math.floor(
+              Math.random() *
+              items.length
+            );
+
+          const selected =
+            items[randomIndex];
+
+          if(type === "cap"){
+
+            state.selectedCap =
+              selected;
+          }
+          else{
+
+            state.selectedSwim =
+              selected;
+          }
+
+          setState({
+            ...state
+          });
+
+          renderRoulette();
+
+          frame++;
+
+          lastTime = time;
+        }
+
+        if(frame < 14){
+
+          requestAnimationFrame(
+            loop
+          );
+        }
+        else{
+
+          saveState(
+            getState()
+          );
+
+          resolve();
+        }
       }
-      else{
 
-        state.selectedSwim =
-          selected;
-      }
-
-      setState({
-        ...state
-      });
-
-      renderRoulette();
-
-      await sleep(
-        70 + i * 15
+      requestAnimationFrame(
+        loop
       );
-    }
-
-    await saveState(
-      getState()
-    );
+    });
   }
 
   // =========================
@@ -287,6 +357,12 @@ export function initController(){
   function bindDrag(){
 
     let currentFlow = null;
+
+    let startX = 0;
+
+    let lastX = 0;
+
+    let velocity = 0;
 
     document.addEventListener(
       "pointerdown",
@@ -301,44 +377,65 @@ export function initController(){
 
         currentFlow = flow;
 
-        currentFlow.dataset.startX =
+        startX = e.clientX;
+
+        lastX = e.clientX;
+
+        velocity = 0;
+      }
+    );
+
+    document.addEventListener(
+      "pointermove",
+      e=>{
+
+        if(!currentFlow) return;
+
+        velocity =
+          e.clientX - lastX;
+
+        lastX =
           e.clientX;
       }
     );
 
     document.addEventListener(
       "pointerup",
-      e=>{
+      ()=>{
 
         if(!currentFlow) return;
 
-        const startX = Number(
-          currentFlow.dataset.startX || 0
-        );
-
         const diff =
-          startX - e.clientX;
+          startX - lastX;
 
         const type =
           currentFlow.id === "capList"
           ? "cap"
           : "swim";
 
-        const state = getState();
+        const state =
+          getState();
 
         if(
-          Math.abs(diff) < 40
+          Math.abs(diff) < 40 &&
+          Math.abs(velocity) < 3
         ){
+
           currentFlow = null;
+
           return;
         }
+
+        const direction =
+          diff > 0 || velocity < -2
+          ? 1
+          : -1;
 
         if(type === "cap"){
 
           let next =
-            state.activeCapIndex;
-
-          next += diff > 0 ? 1 : -1;
+            state.activeCapIndex +
+            direction;
 
           next = clamp(
             next,
@@ -354,9 +451,8 @@ export function initController(){
         else{
 
           let next =
-            state.activeSwimIndex;
-
-          next += diff > 0 ? 1 : -1;
+            state.activeSwimIndex +
+            direction;
 
           next = clamp(
             next,
@@ -435,17 +531,6 @@ export function initController(){
   return {
     boot
   };
-}
-
-// =========================
-// UTIL
-// =========================
-function sleep(ms){
-
-  return new Promise(resolve=>{
-
-    setTimeout(resolve,ms);
-  });
 }
 
 function clamp(value,min,max){
