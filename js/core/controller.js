@@ -46,16 +46,19 @@ export function initController(){
   // =========================
   // UPDATE
   // =========================
-  async function update(){
+  async function update({
+  save = true
+} = {}){
+
+  if(save){
 
     await saveState(
       getState()
     );
-
-    renderApp();
-
-    bindDrag();
   }
+
+  renderApp();
+}
 
   // =========================
   // ADD
@@ -172,87 +175,72 @@ async function removeItem(
   // ACTIVE
   // =========================
   async function setActiveIndex(
-    type,
-    index
-  ){
+  type,
+  index
+){
 
-    const state =
-      getState();
+  const state = getState();
 
-    if(type === "cap"){
+  if(type === "cap"){
 
-      state.activeCapIndex =
-        index;
-    }
-    else{
-
-      state.activeSwimIndex =
-        index;
-    }
-
-    setState({
-      ...state
-    });
-
-    renderApp();
-
-    bindDrag();
+    state.activeCapIndex = index;
   }
+  else{
+
+    state.activeSwimIndex = index;
+  }
+
+  setState({
+    ...state
+  });
+
+  renderApp();
+}
 
   // =========================
   // SLIDE
   // =========================
   async function slide(
-    type,
-    direction
-  ){
+  type,
+  direction
+){
 
-    const state =
-      getState();
+  const state = getState();
 
-    const items =
-      type === "cap"
-      ? state.caps
-      : state.swimsuits;
+  const items =
+    type === "cap"
+    ? state.caps
+    : state.swimsuits;
 
-    if(!items.length){
+  if(!items.length) return;
 
-      return;
-    }
+  if(type === "cap"){
 
-    if(type === "cap"){
+    state.activeCapIndex += direction;
 
-      state.activeCapIndex +=
-        direction;
-
-      state.activeCapIndex =
-        clamp(
-          state.activeCapIndex,
-          0,
-          items.length - 1
-        );
-    }
-    else{
-
-      state.activeSwimIndex +=
-        direction;
-
-      state.activeSwimIndex =
-        clamp(
-          state.activeSwimIndex,
-          0,
-          items.length - 1
-        );
-    }
-
-    setState({
-      ...state
-    });
-
-    renderApp();
-
-    bindDrag();
+    state.activeCapIndex = clamp(
+      state.activeCapIndex,
+      0,
+      items.length - 1
+    );
   }
+  else{
+
+    state.activeSwimIndex += direction;
+
+    state.activeSwimIndex = clamp(
+      state.activeSwimIndex,
+      0,
+      items.length - 1
+    );
+  }
+
+  setState({
+    ...state
+  });
+
+  renderApp();
+}
 
   // =========================
   // SPIN
