@@ -9,7 +9,13 @@ export const dom = {
 
   capList:null,
 
-  swimList:null
+  swimList:null,
+
+  capResultImage:null,
+  capResultName:null,
+
+  swimResultImage:null,
+  swimResultName:null
 };
 
 // =========================
