@@ -26,16 +26,35 @@ import {
 // =========================
 export async function spinAll(){
 
+  const button =
+    document.querySelector(
+      ".spin-btn"
+    );
+
+  button.disabled = true;
+
+  button.innerText =
+    "돌리는 중...";
+
   await Promise.all([
 
     animateRoulette("cap"),
 
     animateRoulette("swim")
   ]);
+
+  triggerWinnerPulse();
+
+  createConfetti();
+
+  button.disabled = false;
+
+  button.innerText =
+    "오늘 뭐 입지?";
 }
 
 // =========================
-// ANIMATION
+// ROULETTE
 // =========================
 export async function animateRoulette(type){
 
@@ -57,11 +76,12 @@ export async function animateRoulette(type){
 
     function loop(time){
 
-      if(
-        time - lastTime >
+      const delay =
         SPIN_BASE_DELAY +
-        frame * SPIN_DELAY_STEP
-      ){
+        Math.pow(frame,1.35) *
+        SPIN_DELAY_STEP;
+
+      if(time - lastTime > delay){
 
         const randomIndex =
           Math.floor(
@@ -86,6 +106,8 @@ export async function animateRoulette(type){
         }
 
         renderRoulette();
+
+        triggerShuffle(type);
 
         frame++;
 
@@ -112,4 +134,89 @@ export async function animateRoulette(type){
       loop
     );
   });
+}
+
+// =========================
+// SHUFFLE
+// =========================
+function triggerShuffle(type){
+
+  const target =
+    document.querySelector(
+      type === "cap"
+      ? ".roulette-slot:first-child .roulette-card"
+      : ".roulette-slot:last-child .roulette-card"
+    );
+
+  if(!target) return;
+
+  target.classList.remove(
+    "shuffle"
+  );
+
+  void target.offsetWidth;
+
+  target.classList.add(
+    "shuffle"
+  );
+}
+
+// =========================
+// WINNER
+// =========================
+function triggerWinnerPulse(){
+
+  const cards =
+    document.querySelectorAll(
+      ".roulette-card"
+    );
+
+  cards.forEach(card=>{
+
+    card.classList.remove(
+      "winner"
+    );
+
+    void card.offsetWidth;
+
+    card.classList.add(
+      "winner"
+    );
+  });
+}
+
+// =========================
+// CONFETTI
+// =========================
+function createConfetti(){
+
+  for(let i=0;i<28;i++){
+
+    const confetti =
+      document.createElement(
+        "div"
+      );
+
+    confetti.className =
+      "confetti";
+
+    confetti.style.left =
+      Math.random() * 100 + "%";
+
+    confetti.style.animationDelay =
+      Math.random() * .4 + "s";
+
+    confetti.style.transform =
+      `rotate(${Math.random()*360}deg)`;
+
+    document.body.appendChild(
+      confetti
+    );
+
+    setTimeout(()=>{
+
+      confetti.remove();
+
+    },2200);
+  }
 }
