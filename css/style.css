@@ -159,7 +159,6 @@ body{
 
   display:flex;
   align-items:center;
-  justify-content:flex-start;
 
   overflow-x:auto;
   overflow-y:hidden;
@@ -167,36 +166,40 @@ body{
   gap:0;
 
   padding:
-    10px 24px 24px;
+    14px 34px 34px;
 
-  scroll-snap-type:x mandatory;
+  scroll-behavior:smooth;
 
   -webkit-overflow-scrolling:touch;
 
   scrollbar-width:none;
+
+  perspective:1400px;
 }
 
 .coverflow::-webkit-scrollbar{
   display:none;
 }
 
+.coverflow.dragging{
+  cursor:grabbing;
+}
+
 .cover-card{
   flex:0 0 auto;
 
-  margin-left:-38px;
+  margin-left:-34px;
 
   transition:
     transform .34s cubic-bezier(.2,.8,.2,1),
-    opacity .34s ease,
-    filter .34s ease;
-
-  scroll-snap-align:center;
-
-  cursor:pointer;
+    opacity .28s ease,
+    filter .28s ease;
 
   will-change:
     transform,
     opacity;
+
+  cursor:grab;
 }
 
 .cover-card:first-child{
@@ -216,18 +219,19 @@ body{
 
   overflow:hidden;
 
-  border-radius:26px;
+  border-radius:28px;
 
-  background:var(--card);
+  background:white;
 
-  box-shadow:var(--shadow);
+  box-shadow:
+    0 14px 34px rgba(120,170,210,.16);
 
   border:
-    1px solid rgba(255,255,255,.8);
+    1px solid rgba(255,255,255,.92);
 
   transition:
-    transform .28s ease,
-    box-shadow .28s ease;
+    transform .32s ease,
+    box-shadow .32s ease;
 }
 
 /* =========================
@@ -237,11 +241,11 @@ body{
 .cover-card.active .card-inner{
 
   transform:
-    translateY(-8px)
-    scale(1.03);
+    translateY(-10px)
+    scale(1.12);
 
   box-shadow:
-    0 18px 40px rgba(120,180,220,.26);
+    0 24px 48px rgba(120,170,220,.28);
 }
 
 /* =========================
