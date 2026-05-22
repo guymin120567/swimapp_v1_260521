@@ -7,7 +7,8 @@ export async function compressImage(file){
 
     reader.onload = (event)=>{
 
-      const img = new Image();
+      const img =
+        new Image();
 
       img.onload = ()=>{
 
@@ -18,8 +19,11 @@ export async function compressImage(file){
 
         const MAX_SIZE = 600;
 
-        let width = img.width;
-        let height = img.height;
+        let width =
+          img.width;
+
+        let height =
+          img.height;
 
         if(width > height){
 
@@ -28,7 +32,8 @@ export async function compressImage(file){
             height *=
               MAX_SIZE / width;
 
-            width = MAX_SIZE;
+            width =
+              MAX_SIZE;
           }
         }
         else{
@@ -38,19 +43,25 @@ export async function compressImage(file){
             width *=
               MAX_SIZE / height;
 
-            height = MAX_SIZE;
+            height =
+              MAX_SIZE;
           }
         }
 
-        canvas.width = width;
-        canvas.height = height;
+        canvas.width =
+          width;
+
+        canvas.height =
+          height;
 
         const ctx =
           canvas.getContext("2d");
 
-        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingEnabled =
+          true;
 
-        ctx.imageSmoothingQuality = "high";
+        ctx.imageSmoothingQuality =
+          "high";
 
         ctx.drawImage(
           img,
