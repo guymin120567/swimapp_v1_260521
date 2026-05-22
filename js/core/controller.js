@@ -5,13 +5,39 @@ import {
 } from "../state/state.js";
 
 import {
-  renderApp
+  addCap,
+  addSwim,
+  removeCap,
+  removeSwim,
+  setActiveCap,
+  setActiveSwim
+} from "../state/actions.js";
+
+import {
+  renderApp,
+  renderLists
 } from "../ui/render.js";
+
+import {
+  initDOM
+} from "../ui/dom.js";
 
 import {
   saveState,
   loadState
 } from "./db.js";
+
+import {
+  compressImage
+} from "../utils/image.js";
+
+import {
+  spinAll
+} from "../features/roulette/roulette.js";
+
+import {
+  bindDrag
+} from "../features/coverflow/drag.js";
 
 // =========================
 // INIT
@@ -20,7 +46,11 @@ export function initController(){
 
   async function boot(){
 
+    initDOM();
+
     bindGlobal();
+
+    bindDrag();
 
     const saved =
       await loadState();
@@ -38,9 +68,39 @@ export function initController(){
       );
     }
 
-    renderApp();
+    normalizeState();
 
-    bindDrag();
+    renderApp();
+  }
+
+  // =========================
+  // NORMALIZE
+  // =========================
+  function normalizeState(){
+
+    const state =
+      getState();
+
+    setState({
+
+      caps:
+        state.caps || [],
+
+      swimsuits:
+        state.swimsuits || [],
+
+      selectedCap:
+        state.selectedCap || null,
+
+      selectedSwim:
+        state.selectedSwim || null,
+
+      activeCapIndex:
+        state.activeCapIndex || 0,
+
+      activeSwimIndex:
+        state.activeSwimIndex || 0
+    });
   }
 
   // =========================
@@ -53,8 +113,6 @@ export function initController(){
     );
 
     renderApp();
-
-    bindDrag();
   }
 
   // =========================
@@ -89,33 +147,26 @@ export function initController(){
     if(file){
 
       image =
-        await fileToBase64(file);
+        await compressImage(file);
     }
-
-    const state =
-      getState();
 
     const item = {
 
       id: Date.now(),
 
-      name: text,
+      name:text,
 
       image
     };
 
     if(type === "cap"){
 
-      state.caps.push(item);
+      addCap(item);
     }
     else{
 
-      state.swimsuits.push(item);
+      addSwim(item);
     }
-
-    setState({
-      ...state
-    });
 
     document.getElementById(
       "itemText"
@@ -127,421 +178,115 @@ export function initController(){
 
     await update();
   }
-// =========================
-// REMOVE
-// =========================
-async function removeItem(
-  type,
-  id
-){
 
-  const ok = confirm(
-    "정말 삭제할까요?"
-  );
+  // =========================
+  // REMOVE
+  // =========================
+  async function removeItem(
+    type,
+    id
+  ){
 
-  if(!ok) return;
+    const ok = confirm(
+      "정말 삭제할까요?"
+    );
 
-  const state =
-    getState();
+    if(!ok) return;
 
-  if(type === "cap"){
+    if(type === "cap"){
 
-    state.caps =
-      state.caps.filter(
-        item =>
-          item.id != id
-      );
-  }
-  else{
+      removeCap(id);
+    }
+    else{
 
-    state.swimsuits =
-      state.swimsuits.filter(
-        item =>
-          item.id != id
-      );
+      removeSwim(id);
+    }
+
+    renderLists();
+
+    await saveState(
+      getState()
+    );
   }
 
-  setState({
-    ...state
-  });
-
-  await update();
-}
-  
   // =========================
   // ACTIVE
   // =========================
-  async function setActiveIndex(
+  function setActiveIndex(
     type,
     index
   ){
 
-    const state =
-      getState();
-
     if(type === "cap"){
 
-      state.activeCapIndex =
-        index;
+      setActiveCap(index);
     }
     else{
 
-      state.activeSwimIndex =
-        index;
+      setActiveSwim(index);
     }
 
-    setState({
-      ...state
-    });
-
-    renderApp();
-
-    bindDrag();
+    renderLists();
   }
 
   // =========================
-  // SLIDE
-  // =========================
-  async function slide(
-    type,
-    direction
-  ){
-
-    const state =
-      getState();
-
-    const items =
-      type === "cap"
-      ? state.caps
-      : state.swimsuits;
-
-    if(!items.length){
-
-      return;
-    }
-
-    if(type === "cap"){
-
-      state.activeCapIndex +=
-        direction;
-
-      state.activeCapIndex =
-        clamp(
-          state.activeCapIndex,
-          0,
-          items.length - 1
-        );
-    }
-    else{
-
-      state.activeSwimIndex +=
-        direction;
-
-      state.activeSwimIndex =
-        clamp(
-          state.activeSwimIndex,
-          0,
-          items.length - 1
-        );
-    }
-
-    setState({
-      ...state
-    });
-
-    renderApp();
-
-    bindDrag();
-  }
-
-  // =========================
-  // SPIN
-  // =========================
-  async function spinAll(){
-
-    const button =
-      document.querySelector(
-        ".spin-btn"
-      );
-
-    button.disabled = true;
-
-    button.innerText =
-      "돌리는 중...";
-
-    document.body.classList.add(
-      "roulette-active"
-    );
-
-    await Promise.all([
-
-      animateRoulette(
-        "cap"
-      ),
-
-      animateRoulette(
-        "swim"
-      )
-    ]);
-
-    document.body.classList.remove(
-      "roulette-active"
-    );
-
-    button.disabled = false;
-
-    button.innerText =
-      "오늘 뭐 입지?";
-  }
-
-  // =========================
-  // ROULETTE
-  // =========================
-  async function animateRoulette(
-    type
-  ){
-
-    const state =
-      getState();
-
-    const items =
-      type === "cap"
-      ? state.caps
-      : state.swimsuits;
-
-    if(!items.length){
-
-      return;
-    }
-
-    const totalDuration =
-      2400 +
-      Math.random() * 600;
-
-    const start =
-      performance.now();
-
-    while(true){
-
-      const now =
-        performance.now();
-
-      const elapsed =
-        now - start;
-
-      if(
-        elapsed >= totalDuration
-      ){
-        break;
-      }
-
-      const progress =
-        elapsed /
-        totalDuration;
-
-      const delay =
-        40 +
-        progress * 140;
-
-      const random =
-        Math.floor(
-          Math.random() *
-          items.length
-        );
-
-      const selected =
-        items[random];
-
-      if(type === "cap"){
-
-        state.selectedCap =
-          selected;
-      }
-      else{
-
-        state.selectedSwim =
-          selected;
-      }
-
-      setState({
-        ...state
-      });
-
-      renderApp();
-
-      bindDrag();
-
-      await sleep(delay);
-    }
-
-    const finalIndex =
-      Math.floor(
-        Math.random() *
-        items.length
-      );
-
-    const finalItem =
-      items[finalIndex];
-
-    if(type === "cap"){
-
-      state.selectedCap =
-        finalItem;
-    }
-    else{
-
-      state.selectedSwim =
-        finalItem;
-    }
-
-    setState({
-      ...state
-    });
-
-    await update();
-
-    triggerBurst(type);
-  }
-
-  // =========================
-  // BURST
-  // =========================
-  function triggerBurst(type){
-
-    const target =
-      document.querySelector(
-        `.roulette-slot.${type}`
-      );
-
-    if(!target){
-
-      return;
-    }
-
-    target.classList.remove(
-      "burst"
-    );
-
-    void target.offsetWidth;
-
-    target.classList.add(
-      "burst"
-    );
-  }
-
-  // =========================
-  // DRAG
-  // =========================
-  function bindDrag(){
-
-    document
-      .querySelectorAll(
-        ".coverflow"
-      )
-      .forEach(flow=>{
-
-        let startX = 0;
-
-        flow.ontouchstart =
-          e=>{
-
-            startX =
-              e.touches[0].clientX;
-          };
-
-        flow.ontouchend =
-          e=>{
-
-            const endX =
-              e.changedTouches[0]
-                .clientX;
-
-            const diff =
-              startX - endX;
-
-            const type =
-              flow.dataset.type;
-
-            if(
-              Math.abs(diff) < 40
-            ){
-              return;
-            }
-
-            if(diff > 0){
-
-              slide(type,1);
-            }
-            else{
-
-              slide(type,-1);
-            }
-          };
-      });
-  }
-
-  // =========================
-  // GLOBAL
+  // EVENTS
   // =========================
   function bindGlobal(){
 
-    window.app = {
+    document.addEventListener(
+      "click",
+      async e=>{
 
-      submitSelectedItem,
+        const action =
+          e.target.dataset.action;
 
-      removeItem,
+        if(action === "spin"){
 
-      setActiveIndex,
+          await spinAll();
+        }
 
-      slide,
+        if(action === "add"){
 
-      spinAll
-    };
+          await submitSelectedItem();
+        }
+
+        const removeBtn =
+          e.target.closest(
+            ".delete-btn"
+          );
+
+        if(removeBtn){
+
+          e.stopPropagation();
+
+          await removeItem(
+            removeBtn.dataset.type,
+            Number(
+              removeBtn.dataset.id
+            )
+          );
+        }
+
+        const card =
+          e.target.closest(
+            ".cover-card"
+          );
+
+        if(card){
+
+          setActiveIndex(
+            card.dataset.type,
+            Number(
+              card.dataset.index
+            )
+          );
+        }
+      }
+    );
   }
 
   return {
     boot
   };
-}
-
-// =========================
-// UTIL
-// =========================
-function fileToBase64(file){
-
-  return new Promise(resolve=>{
-
-    const reader =
-      new FileReader();
-
-    reader.onload =
-      ()=>resolve(
-        reader.result
-      );
-
-    reader.readAsDataURL(file);
-  });
-}
-
-function sleep(ms){
-
-  return new Promise(
-    resolve=>
-      setTimeout(
-        resolve,
-        ms
-      )
-  );
-}
-
-function clamp(
-  value,
-  min,
-  max
-){
-
-  return Math.min(
-    Math.max(value,min),
-    max
-  );
 }

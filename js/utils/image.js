@@ -1,39 +1,67 @@
-// =========================
-// COMPRESS IMAGE
-// =========================
 export async function compressImage(file){
 
   return new Promise((resolve)=>{
 
-    const reader = new FileReader();
+    const reader =
+      new FileReader();
 
     reader.onload = (event)=>{
 
-      const img = new Image();
+      const img =
+        new Image();
 
       img.onload = ()=>{
 
         const canvas =
-          document.createElement("canvas");
+          document.createElement(
+            "canvas"
+          );
 
-        const MAX_WIDTH = 320;
+        const MAX_SIZE = 600;
 
-        let width = img.width;
-        let height = img.height;
+        let width =
+          img.width;
 
-        if(width > MAX_WIDTH){
+        let height =
+          img.height;
 
-          height =
-            height * (MAX_WIDTH / width);
+        if(width > height){
 
-          width = MAX_WIDTH;
+          if(width > MAX_SIZE){
+
+            height *=
+              MAX_SIZE / width;
+
+            width =
+              MAX_SIZE;
+          }
+        }
+        else{
+
+          if(height > MAX_SIZE){
+
+            width *=
+              MAX_SIZE / height;
+
+            height =
+              MAX_SIZE;
+          }
         }
 
-        canvas.width = width;
-        canvas.height = height;
+        canvas.width =
+          width;
+
+        canvas.height =
+          height;
 
         const ctx =
           canvas.getContext("2d");
+
+        ctx.imageSmoothingEnabled =
+          true;
+
+        ctx.imageSmoothingQuality =
+          "high";
 
         ctx.drawImage(
           img,
@@ -43,16 +71,17 @@ export async function compressImage(file){
           height
         );
 
-        const compressed =
+        const result =
           canvas.toDataURL(
-            "image/jpeg",
+            "image/webp",
             0.72
           );
 
-        resolve(compressed);
+        resolve(result);
       };
 
-      img.src = event.target.result;
+      img.src =
+        event.target.result;
     };
 
     reader.readAsDataURL(file);

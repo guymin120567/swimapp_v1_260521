@@ -1,5 +1,20 @@
+:root{
+  --bg1:#dff6ff;
+  --bg2:#c7ecff;
+
+  --card:#ffffff;
+
+  --text:#24435b;
+
+  --accent:#7dd3fc;
+  --accent2:#93c5fd;
+
+  --shadow:
+    0 12px 30px rgba(80,140,180,.16);
+}
+
 /* =========================
-   RESET
+   BASE
 ========================= */
 
 *{
@@ -8,72 +23,40 @@
 
 body{
   margin:0;
-
-  font-family:
-    system-ui,
-    -apple-system,
-    sans-serif;
-
-  color:white;
+  padding:0;
 
   background:
-    radial-gradient(circle at 20% 10%, #7dd3fc 0%, transparent 35%),
-    radial-gradient(circle at 80% 20%, #38bdf8 0%, transparent 40%),
-    radial-gradient(circle at 50% 100%, #0ea5e9 0%, #06121f 70%);
+    linear-gradient(
+      to bottom,
+      var(--bg1),
+      var(--bg2)
+    );
 
-  background-attachment:fixed;
+  color:var(--text);
 
-  overflow-x:hidden;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
 }
 
-/* =========================
-   CONTAINER
-========================= */
-
 .container{
-  max-width:920px;
+  width:100%;
+  max-width:760px;
 
   margin:0 auto;
 
-  padding:18px 14px 80px;
-
-  display:flex;
-
-  flex-direction:column;
-
-  gap:22px;
+  padding:
+    22px 16px 120px;
 }
-
-/* =========================
-   BLOCK
-========================= */
 
 .block{
-  background:
-    rgba(255,255,255,0.04);
-
-  border:
-    1px solid rgba(255,255,255,0.08);
-
-  border-radius:24px;
-
-  padding:16px 12px;
-
-  backdrop-filter:blur(12px);
-
-  overflow:hidden;
+  margin-bottom:34px;
 }
 
-/* =========================
-   TITLE
-========================= */
-
 .section-title{
-  font-size:18px;
-
-  font-weight:700;
-
-  color:#bfe9ff;
+  font-size:22px;
+  font-weight:800;
 
   margin-bottom:16px;
 }
@@ -83,199 +66,88 @@ body{
 ========================= */
 
 .roulette-wrap{
-  display:flex;
+  display:grid;
+
+  grid-template-columns:
+    1fr 1fr;
 
   gap:18px;
 
-  justify-content:center;
-
-  margin-bottom:20px;
+  margin-bottom:22px;
 }
 
 .roulette-slot{
-  flex:1;
-
-  position:relative;
-
   display:flex;
-
   flex-direction:column;
-
-  align-items:center;
-
-  gap:12px;
-}
-
-.roulette-label{
-  font-weight:700;
-
-  color:#bfe9ff;
-}
-
-.roulette-card{
-  display:flex;
-
-  flex-direction:column;
-
   align-items:center;
 
   gap:10px;
 }
 
-.roulette-image-wrap{
+.roulette-label{
+  font-size:18px;
+  font-weight:800;
+}
+
+.roulette-card{
+  width:100%;
+
+  max-width:220px;
+
+  aspect-ratio:1 / 1;
+
+  overflow:hidden;
+
+  border-radius:28px;
+
   position:relative;
 
-  width:150px;
+  background:var(--card);
 
-  aspect-ratio:1/1;
-
-  overflow:hidden;
-
-  border-radius:26px;
+  box-shadow:var(--shadow);
 
   border:
-    2px solid rgba(56,189,248,0.5);
-
-  background:
-    rgba(255,255,255,0.08);
-
-  box-shadow:
-    0 0 28px rgba(56,189,248,0.35),
-    0 18px 45px rgba(0,0,0,0.45);
-
-  transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease;
+    1px solid rgba(255,255,255,.7);
 }
 
-.roulette-name{
-  font-weight:800;
-
-  font-size:15px;
-
-  text-align:center;
+.spin-row{
+  margin-bottom:34px;
 }
-
-/* =========================
-   SPIN EFFECT
-========================= */
-
-body.roulette-active
-.roulette-image-wrap{
-
-  animation:
-    rouletteShake 0.18s infinite;
-
-  box-shadow:
-    0 0 35px rgba(56,189,248,0.5),
-    0 0 80px rgba(56,189,248,0.25);
-}
-
-/* =========================
-   RIPPLE
-========================= */
-
-.ripple{
-  position:absolute;
-
-  inset:0;
-
-  border-radius:inherit;
-
-  overflow:hidden;
-
-  pointer-events:none;
-}
-
-.ripple::after{
-
-  content:"";
-
-  position:absolute;
-
-  left:50%;
-  top:50%;
-
-  width:20px;
-  height:20px;
-
-  border-radius:50%;
-
-  border:
-    2px solid rgba(125,211,252,0.5);
-
-  transform:
-    translate(-50%,-50%);
-
-  opacity:0;
-}
-
-body.roulette-active
-.ripple::after{
-
-  animation:
-    rippleWave 1.2s infinite;
-}
-
-/* =========================
-   BURST
-========================= */
-
-.roulette-slot::after{
-
-  content:"";
-
-  position:absolute;
-
-  inset:-20px;
-
-  border-radius:40px;
-
-  background:
-    radial-gradient(
-      circle,
-      rgba(56,189,248,0.35),
-      transparent 70%
-    );
-
-  opacity:0;
-
-  pointer-events:none;
-}
-
-.roulette-slot.burst::after{
-
-  animation:
-    burstGlow 0.8s ease;
-}
-
-/* =========================
-   BUTTON
-========================= */
 
 .spin-btn{
   width:100%;
 
-  height:56px;
+  height:58px;
 
   border:none;
-
-  border-radius:18px;
+  border-radius:22px;
 
   background:
     linear-gradient(
       135deg,
-      #38bdf8,
-      #0284c7
+      var(--accent),
+      var(--accent2)
     );
 
-  color:white;
+  color:#174569;
 
-  font-size:18px;
-
+  font-size:17px;
   font-weight:800;
 
   cursor:pointer;
+
+  box-shadow:
+    0 10px 24px rgba(125,211,252,.28);
+
+  transition:
+    transform .2s ease,
+    opacity .2s ease;
+}
+
+.spin-btn:hover{
+  transform:translateY(-2px);
+
+  opacity:.94;
 }
 
 /* =========================
@@ -283,36 +155,48 @@ body.roulette-active
 ========================= */
 
 .coverflow{
-  min-height:240px;
-
-  display:flex;
-
-  align-items:center;
-
-  justify-content:center;
-
-  overflow:hidden;
-
-  touch-action:pan-y;
-}
-
-/* =========================
-   CARD
-========================= */
-
-.cover-card{
-  width:170px;
-
-  aspect-ratio:1/1;
-
-  margin-left:-42px;
-
   position:relative;
 
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+
+  overflow-x:auto;
+  overflow-y:hidden;
+
+  gap:0;
+
+  padding:
+    10px 24px 24px;
+
+  scroll-snap-type:x mandatory;
+
+  -webkit-overflow-scrolling:touch;
+
+  scrollbar-width:none;
+}
+
+.coverflow::-webkit-scrollbar{
+  display:none;
+}
+
+.cover-card{
+  flex:0 0 auto;
+
+  margin-left:-38px;
+
   transition:
-    transform 0.35s ease,
-    opacity 0.35s ease,
-    filter 0.35s ease;
+    transform .34s cubic-bezier(.2,.8,.2,1),
+    opacity .34s ease,
+    filter .34s ease;
+
+  scroll-snap-align:center;
+
+  cursor:pointer;
+
+  will-change:
+    transform,
+    opacity;
 }
 
 .cover-card:first-child{
@@ -320,46 +204,44 @@ body.roulette-active
 }
 
 .cover-card.active{
-
-  z-index:999;
-
-  filter:brightness(1.1);
-
-  animation:
-    glowPulse 2s infinite;
+  z-index:999 !important;
 }
-
-.cover-card:not(.active){
-
-  filter:
-    blur(0.4px)
-    brightness(0.88);
-}
-
-/* =========================
-   INNER
-========================= */
 
 .card-inner{
-  width:100%;
-  height:100%;
+  position:relative;
+
+  width:170px;
+
+  aspect-ratio:1 / 1;
 
   overflow:hidden;
 
-  position:relative;
+  border-radius:26px;
 
-  border-radius:28px;
+  background:var(--card);
 
-  background:
-    rgba(255,255,255,0.06);
+  box-shadow:var(--shadow);
 
   border:
-    1px solid rgba(255,255,255,0.12);
+    1px solid rgba(255,255,255,.8);
 
-  backdrop-filter:blur(18px);
+  transition:
+    transform .28s ease,
+    box-shadow .28s ease;
+}
+
+/* =========================
+   ACTIVE
+========================= */
+
+.cover-card.active .card-inner{
+
+  transform:
+    translateY(-8px)
+    scale(1.03);
 
   box-shadow:
-    0 18px 45px rgba(0,0,0,0.45);
+    0 18px 40px rgba(120,180,220,.26);
 }
 
 /* =========================
@@ -372,22 +254,29 @@ body.roulette-active
 
   object-fit:cover;
 
-  object-position:center;
-
   display:block;
 }
+
+/* =========================
+   PLACEHOLDER
+========================= */
 
 .card-placeholder{
   width:100%;
   height:100%;
 
   display:flex;
-
   align-items:center;
-
   justify-content:center;
 
-  font-size:56px;
+  font-size:52px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #e0f2fe,
+      #bae6fd
+    );
 }
 
 /* =========================
@@ -401,68 +290,66 @@ body.roulette-active
   right:0;
   bottom:0;
 
-  padding:12px;
+  padding:14px;
 
   background:
     linear-gradient(
-      to top,
-      rgba(0,0,0,0.82),
-      transparent
+      transparent,
+      rgba(20,50,80,.78)
     );
-
-  display:flex;
-
-  justify-content:space-between;
-
-  align-items:center;
 }
 
-.card-title{
-  font-size:13px;
-
+.card-title,
+.roulette-name{
+  font-size:15px;
   font-weight:700;
-
-  overflow:hidden;
-
-  text-overflow:ellipsis;
-
-  white-space:nowrap;
-}
-
-.delete-btn{
-  width:28px;
-  height:28px;
-
-  border:none;
-
-  border-radius:50%;
-
-  background:
-    rgba(255,255,255,0.16);
 
   color:white;
 
-  cursor:pointer;
+  text-align:center;
+
+  text-shadow:
+    0 2px 10px rgba(0,0,0,.2);
+
+  word-break:break-word;
 }
 
 /* =========================
-   EMPTY
+   DELETE
 ========================= */
 
-.empty-card{
-  width:100%;
+.delete-btn{
+  position:absolute;
 
-  padding:28px;
+  top:10px;
+  right:10px;
 
-  text-align:center;
+  width:30px;
+  height:30px;
 
-  border-radius:18px;
+  border:none;
+  border-radius:50%;
 
   background:
-    rgba(255,255,255,0.03);
+    rgba(255,255,255,.82);
 
-  border:
-    1px dashed rgba(255,255,255,0.2);
+  color:#174569;
+
+  font-size:18px;
+  font-weight:700;
+
+  cursor:pointer;
+
+  transition:
+    transform .18s ease,
+    background .18s ease;
+}
+
+.delete-btn:hover{
+
+  transform:scale(1.08);
+
+  background:#ffffff;
 }
 
 /* =========================
@@ -471,7 +358,6 @@ body.roulette-active
 
 .input-area{
   display:flex;
-
   flex-direction:column;
 
   gap:12px;
@@ -479,114 +365,54 @@ body.roulette-active
 
 .input-area input,
 .input-area select{
-  height:52px;
+
+  height:50px;
 
   border:none;
-
-  border-radius:14px;
+  border-radius:18px;
 
   padding:0 14px;
 
   background:
-    rgba(255,255,255,0.08);
+    rgba(255,255,255,.72);
 
-  color:white;
+  color:var(--text);
+
+  font-size:15px;
+
+  box-shadow:
+    0 6px 18px rgba(80,140,180,.08);
 }
 
 /* =========================
-   ANIMATION
+   EMPTY
 ========================= */
 
-@keyframes glowPulse{
+.empty-card{
+  opacity:.5;
 
-  0%{
-    box-shadow:
-      0 0 0 rgba(56,189,248,0);
-  }
-
-  50%{
-    box-shadow:
-      0 0 30px rgba(56,189,248,0.5);
-  }
-
-  100%{
-    box-shadow:
-      0 0 0 rgba(56,189,248,0);
-  }
-}
-
-@keyframes rouletteShake{
-
-  0%{
-    transform:
-      translateY(0px)
-      rotate(-1deg);
-  }
-
-  50%{
-    transform:
-      translateY(-4px)
-      rotate(1deg);
-  }
-
-  100%{
-    transform:
-      translateY(0px)
-      rotate(-1deg);
-  }
-}
-
-@keyframes rippleWave{
-
-  0%{
-    width:20px;
-    height:20px;
-
-    opacity:0.8;
-  }
-
-  100%{
-    width:240px;
-    height:240px;
-
-    opacity:0;
-  }
-}
-
-@keyframes burstGlow{
-
-  0%{
-    opacity:0;
-    transform:scale(0.7);
-  }
-
-  40%{
-    opacity:1;
-  }
-
-  100%{
-    opacity:0;
-    transform:scale(1.2);
-  }
+  padding:20px 0;
 }
 
 /* =========================
    MOBILE
 ========================= */
 
-@media (max-width:480px){
+@media(max-width:640px){
 
-  .cover-card{
-    width:128px;
+  .roulette-wrap{
 
-    margin-left:-24px;
+    grid-template-columns:
+      1fr 1fr;
+
+    gap:12px;
   }
 
-  .roulette-image-wrap{
-    width:118px;
+  .card-inner{
+    width:145px;
   }
 
-  .coverflow{
-    min-height:210px;
+  .roulette-card{
+    max-width:none;
   }
 }
