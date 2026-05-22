@@ -1,161 +1,54 @@
 import {
-  getState
-} from "../state/state.js";
+    .map((item,i)=>{
 
-let renderScheduled = false;
-
-export function renderApp(){
-
-  if(renderScheduled) return;
-
-  renderScheduled = true;
-
-  requestAnimationFrame(()=>{
-
-    renderScheduled = false;
-
-    const app =
-      document.getElementById(
-        "app"
-      );
-
-    const state =
-      getState();
-
-    app.innerHTML = `
-
-    <div class="container">
-
-      <div class="block">
-
-        <div class="section-title">
-          🎰 룰렛
-        </div>
-
-        <button
-          class="spin-btn"
-          data-action="spin"
-        >
-          오늘 뭐 입지?
-        </button>
-
-      </div>
-
-      <div class="block">
-
-        <div class="section-title">
-          🧢 수모 (${state.caps.length})
-        </div>
-
-        <div class="coverflow">
-
-          ${
-            renderVisibleCards(
-              state.caps,
-              "cap"
-            )
-          }
-
-        </div>
-
-      </div>
-
-      <div class="block">
-
-        <div class="section-title">
-          🩲 수영복 (${state.swimsuits.length})
-        </div>
-
-        <div class="coverflow">
-
-          ${
-            renderVisibleCards(
-              state.swimsuits,
-              "swim"
-            )
-          }
-
-        </div>
-
-      </div>
-
-      <div class="block">
-
-        <div class="section-title">
-          ➕ 추가하기
-        </div>
-
-        <div class="input-area">
-
-          <select id="itemType">
-            <option value="cap">🧢 수모</option>
-            <option value="swim">🩲 수영복</option>
-          </select>
-
-          <input
-            id="itemText"
-            type="text"
-            placeholder="이름 입력"
-          />
-
-          <input
-            id="itemImage"
-            type="file"
-            accept="image/*"
-          />
-
-          <button
-            class="spin-btn"
-            data-action="add"
-          >
-            추가
-          </button>
-
-        </div>
-
-      </div>
-
-    </div>
-
-    `;
-  });
-}
-
-function renderVisibleCards(
-  items,
-  type
-){
-
-  if(!items.length){
-
-    return `
-      <div class="empty-card">
-        아이템 없음
-      </div>
-    `;
-  }
-
-  return items
-    .map((item,index)=>{
+      const realIndex =
+        start + i;
 
       return renderCard(
         item,
-        index,
+        realIndex,
+        activeIndex,
         type
       );
     })
     .join("");
 }
 
+// =========================
+// CARD
+// =========================
 function renderCard(
   item,
   index,
+  activeIndex,
   type
 ){
 
+  const distance =
+    Math.abs(index - activeIndex);
+
+  const active =
+    distance === 0;
+
+  const scale =
+    Math.max(0.72,1 - distance * 0.12);
+
+  const opacity =
+    Math.max(0.35,1 - distance * 0.18);
+
   return `
     <div
-      class="cover-card"
+      class="cover-card ${active ? "active" : ""}"
+      data-type="${type}"
+      data-index="${index}"
+      style="
+        transform:
+          scale(${scale})
+          translateY(${distance * 10}px);
+
+        opacity:${opacity};
+        z-index:${100-distance};
+      "
     >
 
       <div class="card-inner">
