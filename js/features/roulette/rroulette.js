@@ -1,94 +1,108 @@
 import {
-  renderPreview
-} from "../ui/preview.js";
+  getState
+} from "../../state/state.js";
 
-export function startRoulette({
-  state,
-  updateState,
-  triggerHighlight
-}) {
+import {
+  setSelectedCap,
+  setSelectedSwim
+} from "../../state/actions.js";
 
-  if (state.spinning) return;
+import {
+  renderRoulette
+} from "../../ui/render.js";
 
-  if (
-    !state.swimsuits.length ||
-    !state.caps.length
-  ) {
-    return;
-  }
+import {
+  saveState
+} from "../../core/db.js";
 
-  const swimsuitTarget =
-    state.swimsuits[
-      Math.floor(
-        Math.random() *
-        state.swimsuits.length
-      )
-    ];
+// =========================
+// SPIN ALL
+// =========================
+export async function spinAll(){
 
-  const capTarget =
-    state.caps[
-      Math.floor(
-        Math.random() *
-        state.caps.length
-      )
-    ];
+  await Promise.all([
 
-  let index = 0;
+    animateRoulette("cap"),
 
-  let speed = 0.25;
+    animateRoulette("swim")
+  ]);
+}
 
-  const minSpeed = 0.02;
+// =========================
+// ANIMATION
+// =========================
+export async function animateRoulette(type){
 
-  const deceleration = 0.003;
+  const state =
+    getState();
 
-  updateState({
-    spinning: true
-  });
+  const items =
+    type === "cap"
+    ? state.caps
+    : state.swimsuits;
 
-  function loop() {
+  if(!items.length) return;
 
-    index += speed;
+  return new Promise(resolve=>{
 
-    const swimsuitIndex =
-      Math.floor(index) %
-      state.swimsuits.length;
+    let frame = 0;
 
-    const capIndex =
-      Math.floor(index) %
-      state.caps.length;
+    let lastTime = 0;
 
-    renderPreview({
-      ...state,
+    function loop(time){
 
-      preview: {
-        swimsuit:
-          state.swimsuits[swimsuitIndex],
+      if(
+        time - lastTime >
+        70 + frame * 12
+      ){
 
-        cap:
-          state.caps[capIndex]
-      }
-    });
+        const randomIndex =
+          Math.floor(
+            Math.random() *
+            items.length
+          );
 
-    speed -= deceleration;
+        const selected =
+          items[randomIndex];
 
-    if (speed <= minSpeed) {
+        if(type === "cap"){
 
-      updateState({
-        spinning: false,
-
-        preview: {
-          swimsuit: swimsuitTarget,
-          cap: capTarget
+          setSelectedCap(
+            selected
+          );
         }
-      });
+        else{
 
-      triggerHighlight();
+          setSelectedSwim(
+            selected
+          );
+        }
 
-      return;
+        renderRoulette();
+
+        frame++;
+
+        lastTime = time;
+      }
+
+      if(frame < 14){
+
+        requestAnimationFrame(
+          loop
+        );
+      }
+      else{
+
+        saveState(
+          getState()
+        );
+
+        resolve();
+      }
     }
 
-    requestAnimationFrame(loop);
-  }
-
-  requestAnimationFrame(loop);
+    requestAnimationFrame(
+      loop
+    );
+  });
 }
