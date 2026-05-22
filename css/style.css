@@ -247,32 +247,6 @@ body{
   box-shadow:
     0 24px 48px rgba(120,170,220,.28);
 }
-/* =========================
-   ACTIVE
-========================= */
-
-.cover-card.active .card-inner{
-
-  transform:
-    translateY(-6px)
-    scale(1.04);
-
-  box-shadow:
-    0 20px 42px rgba(120,170,220,.24);
-}
-/* =========================
-   ACTIVE
-========================= */
-
-.cover-card.active .card-inner{
-
-  transform:
-    translateY(-8px)
-    scale(1.03);
-
-  box-shadow:
-    0 18px 40px rgba(120,180,220,.26);
-}
 
 /* =========================
    IMAGE
