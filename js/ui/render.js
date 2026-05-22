@@ -226,7 +226,7 @@ function renderLayout(){
 }
 
 // =========================
-// ROULETTE DIRECT UPDATE
+// ROULETTE
 // =========================
 export function renderRoulette(){
 
@@ -267,12 +267,14 @@ function updateRouletteCard(
 
   if(!item){
 
-    image.style.display = "none";
+    image.style.display =
+      "none";
 
     placeholder.style.display =
       "flex";
 
-    name.innerText = "없음";
+    name.innerText =
+      "없음";
 
     return;
   }
@@ -334,7 +336,7 @@ export function renderLists(){
 }
 
 // =========================
-// LIST UPDATE
+// UPDATE LIST
 // =========================
 function updateList(
   target,
@@ -352,7 +354,7 @@ function updateList(
 }
 
 // =========================
-// VISIBLE CARDS
+// ALWAYS SHOW 5
 // =========================
 function renderVisibleCards(
   items,
@@ -369,17 +371,50 @@ function renderVisibleCards(
     `;
   }
 
-  const start =
-    Math.max(0,activeIndex - 2);
+  if(items.length <= 5){
 
-  const end =
-    Math.min(
-      items.length,
-      activeIndex + 3
-    );
+    return items
+      .map((item,index)=>{
+
+        return renderCard(
+          item,
+          index,
+          activeIndex,
+          type
+        );
+      })
+      .join("");
+  }
+
+  let start =
+    activeIndex - 2;
+
+  let end =
+    activeIndex + 2;
+
+  if(start < 0){
+
+    end += Math.abs(start);
+
+    start = 0;
+  }
+
+  if(end >= items.length){
+
+    const diff =
+      end - items.length + 1;
+
+    start -= diff;
+
+    end =
+      items.length - 1;
+  }
+
+  start =
+    Math.max(0,start);
 
   return items
-    .slice(start,end)
+    .slice(start,end + 1)
     .map((item,i)=>{
 
       const realIndex =
