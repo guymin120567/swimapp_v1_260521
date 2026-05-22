@@ -1,18 +1,20 @@
-import {
-  getState
-} from "../state/state.js";
+import { getState } from "../state/state.js";
 
-export function renderApp(){
+let renderScheduled = false;
 
-  const app =
-    document.getElementById(
-      "app"
-    );
+export function renderApp() {
+  // 1️⃣ 렌더 폭주 방지
+  if (renderScheduled) return;
 
-  const state =
-    getState();
+  renderScheduled = true;
 
-  app.innerHTML = `
+  requestAnimationFrame(() => {
+    renderScheduled = false;
+
+    const app = document.getElementById("app");
+    const state = getState();
+
+    app.innerHTML = `
 
     <div class="container">
 
@@ -34,9 +36,7 @@ export function renderApp(){
 
             ${
               state.selectedCap
-              ? renderRouletteCard(
-                  state.selectedCap
-                )
+              ? renderRouletteCard(state.selectedCap)
               : `
                 <div class="empty-card">
                   수모 없음
@@ -54,9 +54,7 @@ export function renderApp(){
 
             ${
               state.selectedSwim
-              ? renderRouletteCard(
-                  state.selectedSwim
-                )
+              ? renderRouletteCard(state.selectedSwim)
               : `
                 <div class="empty-card">
                   수영복 없음
@@ -85,10 +83,7 @@ export function renderApp(){
           🧢 수모 (${state.caps.length})
         </div>
 
-        <div
-          class="coverflow"
-          data-type="cap"
-        >
+        <div class="coverflow" data-type="cap">
 
           ${
             renderVisibleCards(
@@ -110,10 +105,7 @@ export function renderApp(){
           🩲 수영복 (${state.swimsuits.length})
         </div>
 
-        <div
-          class="coverflow"
-          data-type="swim"
-        >
+        <div class="coverflow" data-type="swim">
 
           ${
             renderVisibleCards(
@@ -138,15 +130,8 @@ export function renderApp(){
         <div class="input-area">
 
           <select id="itemType">
-
-            <option value="cap">
-              🧢 수모
-            </option>
-
-            <option value="swim">
-              🩲 수영복
-            </option>
-
+            <option value="cap">🧢 수모</option>
+            <option value="swim">🩲 수영복</option>
           </select>
 
           <input
@@ -173,11 +158,12 @@ export function renderApp(){
       </div>
 
     </div>
-  `;
+
+    `;
+  });
 }
 
-function renderRouletteCard(item){
-
+function renderRouletteCard(item) {
   return `
     <div class="roulette-card">
 
@@ -186,10 +172,7 @@ function renderRouletteCard(item){
         ${
           item.image
           ? `
-            <img
-              src="${item.image}"
-              class="card-image"
-            />
+            <img src="${item.image}" class="card-image" />
           `
           : `
             <div class="card-placeholder">
@@ -210,14 +193,8 @@ function renderRouletteCard(item){
   `;
 }
 
-function renderVisibleCards(
-  items,
-  activeIndex,
-  type
-){
-
-  if(!items.length){
-
+function renderVisibleCards(items, activeIndex, type) {
+  if (!items.length) {
     return `
       <div class="empty-card">
         아이템 없음
@@ -225,24 +202,13 @@ function renderVisibleCards(
     `;
   }
 
-  const start =
-    Math.max(
-      0,
-      activeIndex - 2
-    );
-
-  const end =
-    Math.min(
-      items.length,
-      activeIndex + 3
-    );
+  const start = Math.max(0, activeIndex - 2);
+  const end = Math.min(items.length, activeIndex + 3);
 
   return items
-    .slice(start,end)
-    .map((item,i)=>{
-
-      const realIndex =
-        start + i;
+    .slice(start, end)
+    .map((item, i) => {
+      const realIndex = start + i;
 
       return renderCard(
         item,
@@ -250,58 +216,26 @@ function renderVisibleCards(
         activeIndex,
         type
       );
-
     })
     .join("");
 }
 
-function renderCard(
-  item,
-  index,
-  activeIndex,
-  type
-){
+function renderCard(item, index, activeIndex, type) {
+  const distance = Math.abs(index - activeIndex);
 
-  const distance =
-    Math.abs(
-      index - activeIndex
-    );
+  const active = distance === 0;
 
-  const active =
-    distance === 0;
-
-  const scale =
-    Math.max(
-      0.72,
-      1 - distance * 0.12
-    );
-
-  const opacity =
-    Math.max(
-      0.35,
-      1 - distance * 0.18
-    );
+  const scale = Math.max(0.72, 1 - distance * 0.12);
+  const opacity = Math.max(0.35, 1 - distance * 0.18);
 
   return `
     <div
-      class="
-        cover-card
-        ${active ? "active" : ""}
-      "
-      onclick="
-        window.app.setActiveIndex(
-          '${type}',
-          ${index}
-        )
-      "
+      class="cover-card ${active ? "active" : ""}"
+      onclick="window.app.setActiveIndex('${type}', ${index})"
       style="
-        transform:
-          scale(${scale})
-          translateY(${distance*10}px);
-
-        opacity:${opacity};
-
-        z-index:${100-distance};
+        transform: scale(${scale}) translateY(${distance * 10}px);
+        opacity: ${opacity};
+        z-index: ${100 - distance};
       "
     >
 
@@ -310,10 +244,7 @@ function renderCard(
         ${
           item.image
           ? `
-            <img
-              src="${item.image}"
-              class="card-image"
-            />
+            <img src="${item.image}" class="card-image" />
           `
           : `
             <div class="card-placeholder">
@@ -332,11 +263,7 @@ function renderCard(
             class="delete-btn"
             onclick="
               event.stopPropagation();
-
-              window.app.removeItem(
-                '${type}',
-                '${item.id}'
-              )
+              window.app.removeItem('${type}', '${item.id}')
             "
           >
             ×
