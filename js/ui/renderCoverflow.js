@@ -176,8 +176,10 @@ function renderCard(
       data-index="${index}"
       style="
         transform:
-          scale(${scale})
-          translateY(${distance * 10}px);
+          perspective(1000px)
+          rotateY(${index < activeIndex ? 18 : -18}deg)
+          translateY(${distance * 12}px)
+          scale(${scale});
 
         opacity:${opacity};
         z-index:${100-distance};
