@@ -7,22 +7,31 @@ import {
   setActiveSwim
 } from "../../state/actions.js";
 
-import {
-  renderLists
-} from "../../ui/render.js";
-
 // =========================
-// DRAG
+// DRAG CAROUSEL
 // =========================
 export function bindDrag(){
 
-  let dragging = false;
+  bindCarousel("cap");
 
-  let currentType = null;
+  bindCarousel("swim");
+}
+
+// =========================
+// BIND
+// =========================
+function bindCarousel(type){
+
+  const targetId =
+    type === "cap"
+    ? "capList"
+    : "swimList";
+
+  let dragging = false;
 
   let startX = 0;
 
-  let currentIndex = 0;
+  let startScroll = 0;
 
   let moved = false;
 
@@ -30,30 +39,26 @@ export function bindDrag(){
     "pointerdown",
     e=>{
 
-      const card =
+      const wrap =
         e.target.closest(
-          ".cover-card"
+          `#${targetId}`
         );
 
-      if(!card) return;
+      if(!wrap) return;
 
       dragging = true;
 
       moved = false;
 
-      currentType =
-        card.dataset.type;
-
       startX =
         e.clientX;
 
-      const state =
-        getState();
+      startScroll =
+        wrap.scrollLeft;
 
-      currentIndex =
-        currentType === "cap"
-        ? state.activeCapIndex
-        : state.activeSwimIndex;
+      wrap.classList.add(
+        "dragging"
+      );
     }
   );
 
@@ -63,32 +68,23 @@ export function bindDrag(){
 
       if(!dragging) return;
 
-      const diff =
+      const wrap =
+        document.getElementById(
+          targetId
+        );
+
+      if(!wrap) return;
+
+      const delta =
         e.clientX - startX;
 
-      if(Math.abs(diff) > 12){
+      if(Math.abs(delta) > 4){
 
         moved = true;
       }
 
-      const threshold = 58;
-
-      if(Math.abs(diff) > threshold){
-
-        if(diff < 0){
-
-          currentIndex++;
-        }
-        else{
-
-          currentIndex--;
-        }
-
-        updateIndex();
-
-        startX =
-          e.clientX;
-      }
+      wrap.scrollLeft =
+        startScroll - delta;
     }
   );
 
@@ -96,93 +92,123 @@ export function bindDrag(){
     "pointerup",
     ()=>{
 
+      if(!dragging) return;
+
       dragging = false;
 
-      moved = false;
+      const wrap =
+        document.getElementById(
+          targetId
+        );
+
+      if(!wrap) return;
+
+      wrap.classList.remove(
+        "dragging"
+      );
+
+      snapToClosest(
+        wrap,
+        type
+      );
     }
   );
-
-  function updateIndex(){
-
-    const state =
-      getState();
-
-    if(currentType === "cap"){
-
-      currentIndex =
-        clamp(
-          currentIndex,
-          0,
-          state.caps.length - 1
-        );
-
-      setActiveCap(
-        currentIndex
-      );
-    }
-    else{
-
-      currentIndex =
-        clamp(
-          currentIndex,
-          0,
-          state.swimsuits.length - 1
-        );
-
-      setActiveSwim(
-        currentIndex
-      );
-    }
-
-    renderLists();
-
-    scrollActiveIntoView(
-      currentType,
-      currentIndex
-    );
-  }
 }
 
 // =========================
-// SCROLL
+// SNAP
 // =========================
-function scrollActiveIntoView(
-  type,
+function snapToClosest(
+  wrap,
+  type
+){
+
+  const cards =
+    [
+      ...wrap.querySelectorAll(
+        ".cover-card"
+      )
+    ];
+
+  if(!cards.length) return;
+
+  const wrapCenter =
+    wrap.scrollLeft +
+    wrap.clientWidth / 2;
+
+  let closestIndex = 0;
+
+  let closestDistance =
+    Infinity;
+
+  cards.forEach((card,index)=>{
+
+    const cardCenter =
+      card.offsetLeft +
+      card.clientWidth / 2;
+
+    const distance =
+      Math.abs(
+        wrapCenter - cardCenter
+      );
+
+    if(distance < closestDistance){
+
+      closestDistance =
+        distance;
+
+      closestIndex =
+        Number(
+          card.dataset.index
+        );
+    }
+  });
+
+  if(type === "cap"){
+
+    setActiveCap(
+      closestIndex
+    );
+  }
+  else{
+
+    setActiveSwim(
+      closestIndex
+    );
+  }
+
+  centerCard(
+    wrap,
+    closestIndex
+  );
+}
+
+// =========================
+// CENTER
+// =========================
+function centerCard(
+  wrap,
   index
 ){
 
-  requestAnimationFrame(()=>{
+  const target =
+    wrap.querySelector(
+      `.cover-card[data-index="${index}"]`
+    );
 
-    const card =
-      document.querySelector(
-        `.cover-card[data-type="${type}"][data-index="${index}"]`
-      );
+  if(!target) return;
 
-    if(card){
+  const left =
+    target.offsetLeft -
+    (
+      wrap.clientWidth / 2 -
+      target.clientWidth / 2
+    );
 
-      card.scrollIntoView({
+  wrap.scrollTo({
 
-        behavior:"smooth",
+    left,
 
-        inline:"center",
-
-        block:"nearest"
-      });
-    }
+    behavior:"smooth"
   });
-}
-
-// =========================
-// UTIL
-// =========================
-function clamp(
-  value,
-  min,
-  max
-){
-
-  return Math.min(
-    Math.max(value,min),
-    max
-  );
 }
