@@ -416,3 +416,110 @@ body{
     max-width:none;
   }
 }
+
+/* =========================
+   SHUFFLE
+========================= */
+
+.shuffle{
+
+  animation:
+    shuffleAnim .24s ease;
+}
+
+@keyframes shuffleAnim{
+
+  0%{
+    transform:
+      rotate(-2deg)
+      scale(.97);
+  }
+
+  50%{
+    transform:
+      rotate(2deg)
+      scale(1.03);
+  }
+
+  100%{
+    transform:
+      rotate(0deg)
+      scale(1);
+  }
+}
+
+/* =========================
+   WINNER
+========================= */
+
+.winner{
+
+  animation:
+    winnerPulse .9s ease;
+}
+
+@keyframes winnerPulse{
+
+  0%{
+    transform:scale(1);
+  }
+
+  40%{
+    transform:scale(1.06);
+  }
+
+  100%{
+    transform:scale(1);
+  }
+}
+
+/* =========================
+   CONFETTI
+========================= */
+
+.confetti{
+
+  position:fixed;
+
+  top:-20px;
+
+  width:12px;
+  height:18px;
+
+  border-radius:4px;
+
+  pointer-events:none;
+
+  z-index:9999;
+
+  background:
+    linear-gradient(
+      135deg,
+      #7dd3fc,
+      #93c5fd
+    );
+
+  animation:
+    confettiFall 2s linear forwards;
+}
+
+@keyframes confettiFall{
+
+  0%{
+
+    transform:
+      translateY(0)
+      rotate(0deg);
+
+    opacity:1;
+  }
+
+  100%{
+
+    transform:
+      translateY(110vh)
+      rotate(720deg);
+
+    opacity:0;
+  }
+}
