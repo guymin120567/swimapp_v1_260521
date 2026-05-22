@@ -424,21 +424,21 @@ body{
 .shuffle{
 
   animation:
-    shuffleAnim .24s ease;
+    shuffleAnim .22s ease;
 }
 
 @keyframes shuffleAnim{
 
   0%{
     transform:
-      rotate(-2deg)
-      scale(.97);
+      rotate(-0.8deg)
+      scale(.992);
   }
 
   50%{
     transform:
-      rotate(2deg)
-      scale(1.03);
+      rotate(0.8deg)
+      scale(1.012);
   }
 
   100%{
@@ -477,6 +477,10 @@ body{
    CONFETTI
 ========================= */
 
+/* =========================
+   CONFETTI
+========================= */
+
 .confetti{
 
   position:fixed;
@@ -492,15 +496,11 @@ body{
 
   z-index:9999;
 
-  background:
-    linear-gradient(
-      135deg,
-      #7dd3fc,
-      #93c5fd
-    );
+  box-shadow:
+    0 0 12px rgba(192,132,252,.35);
 
   animation:
-    confettiFall 2s linear forwards;
+    confettiFall 2.2s linear forwards;
 }
 
 @keyframes confettiFall{
