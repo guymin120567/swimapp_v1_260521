@@ -51,7 +51,71 @@ function renderLayout(){
         🎰 룰렛
       </div>
 
-      <div id="rouletteArea"></div>
+      <div class="roulette-wrap">
+
+        <div class="roulette-slot">
+
+          <div class="roulette-label">
+            🧢 수모
+          </div>
+
+          <div class="roulette-card">
+
+            <img
+              id="capResultImage"
+              class="card-image"
+            />
+
+            <div
+              id="capResultPlaceholder"
+              class="card-placeholder"
+            >
+              🌊
+            </div>
+
+            <div
+              id="capResultName"
+              class="roulette-name"
+            >
+              없음
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="roulette-slot">
+
+          <div class="roulette-label">
+            🩲 수영복
+          </div>
+
+          <div class="roulette-card">
+
+            <img
+              id="swimResultImage"
+              class="card-image"
+            />
+
+            <div
+              id="swimResultPlaceholder"
+              class="card-placeholder"
+            >
+              🌊
+            </div>
+
+            <div
+              id="swimResultName"
+              class="roulette-name"
+            >
+              없음
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
 
       <button
         class="spin-btn"
@@ -130,11 +194,6 @@ function renderLayout(){
 
   `;
 
-  dom.roulette =
-    document.getElementById(
-      "rouletteArea"
-    );
-
   dom.capList =
     document.getElementById(
       "capList"
@@ -144,49 +203,102 @@ function renderLayout(){
     document.getElementById(
       "swimList"
     );
+
+  dom.capResultImage =
+    document.getElementById(
+      "capResultImage"
+    );
+
+  dom.capResultName =
+    document.getElementById(
+      "capResultName"
+    );
+
+  dom.swimResultImage =
+    document.getElementById(
+      "swimResultImage"
+    );
+
+  dom.swimResultName =
+    document.getElementById(
+      "swimResultName"
+    );
 }
 
 // =========================
-// ROULETTE
+// ROULETTE DIRECT UPDATE
 // =========================
 export function renderRoulette(){
 
   const state = getState();
 
-  dom.roulette.innerHTML = `
+  updateRouletteCard(
+    "cap",
+    state.selectedCap
+  );
 
-    <div class="roulette-wrap">
+  updateRouletteCard(
+    "swim",
+    state.selectedSwim
+  );
+}
 
-      <div class="roulette-slot cap">
+function updateRouletteCard(
+  type,
+  item
+){
 
-        <div class="roulette-label">
-          🧢 수모
-        </div>
+  const image =
+    type === "cap"
+    ? dom.capResultImage
+    : dom.swimResultImage;
 
-        ${
-          renderRouletteCard(
-            state.selectedCap
-          )
-        }
+  const name =
+    type === "cap"
+    ? dom.capResultName
+    : dom.swimResultName;
 
-      </div>
+  const placeholder =
+    document.getElementById(
+      type === "cap"
+      ? "capResultPlaceholder"
+      : "swimResultPlaceholder"
+    );
 
-      <div class="roulette-slot swim">
+  if(!item){
 
-        <div class="roulette-label">
-          🩲 수영복
-        </div>
+    image.style.display = "none";
 
-        ${
-          renderRouletteCard(
-            state.selectedSwim
-          )
-        }
+    placeholder.style.display =
+      "flex";
 
-      </div>
+    name.innerText = "없음";
 
-    </div>
-  `;
+    return;
+  }
+
+  name.innerText =
+    item.name;
+
+  if(item.image){
+
+    image.src =
+      item.image;
+
+    image.style.display =
+      "block";
+
+    placeholder.style.display =
+      "none";
+  }
+  else{
+
+    image.style.display =
+      "none";
+
+    placeholder.style.display =
+      "flex";
+  }
 }
 
 // =========================
@@ -206,59 +318,37 @@ export function renderLists(){
   ).innerText =
     `🩲 수영복 (${state.swimsuits.length})`;
 
-  dom.capList.innerHTML =
-    renderVisibleCards(
-      state.caps,
-      state.activeCapIndex,
-      "cap"
-    );
+  updateList(
+    dom.capList,
+    state.caps,
+    state.activeCapIndex,
+    "cap"
+  );
 
-  dom.swimList.innerHTML =
-    renderVisibleCards(
-      state.swimsuits,
-      state.activeSwimIndex,
-      "swim"
-    );
+  updateList(
+    dom.swimList,
+    state.swimsuits,
+    state.activeSwimIndex,
+    "swim"
+  );
 }
 
 // =========================
-// ROULETTE CARD
+// LIST UPDATE
 // =========================
-function renderRouletteCard(item){
+function updateList(
+  target,
+  items,
+  activeIndex,
+  type
+){
 
-  if(!item){
-
-    return `
-      <div class="empty-card">
-        없음
-      </div>
-    `;
-  }
-
-  return `
-    <div class="roulette-card">
-
-      ${
-        item.image
-        ? `
-          <img
-            src="${item.image}"
-            class="card-image"
-          />
-        `
-        : `
-          <div class="card-placeholder">
-            🌊
-          </div>
-        `
-      }
-
-      <div class="roulette-name">
-        ${item.name}
-      </div>
-
-    </div>
-  `;
+  target.innerHTML =
+    renderVisibleCards(
+      items,
+      activeIndex,
+      type
+    );
 }
 
 // =========================
@@ -350,6 +440,7 @@ function renderCard(
             <img
               src="${item.image}"
               class="card-image"
+              loading="lazy"
             />
           `
           : `
