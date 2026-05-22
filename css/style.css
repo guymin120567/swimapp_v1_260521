@@ -163,10 +163,10 @@ body{
   overflow-x:auto;
   overflow-y:hidden;
 
-  gap:18px;
+  gap:0;
 
   padding:
-    10px 24px 28px;
+    14px 34px 34px;
 
   scroll-behavior:smooth;
 
@@ -174,7 +174,7 @@ body{
 
   scrollbar-width:none;
 
-  perspective:1200px;
+  perspective:1400px;
 }
 
 .coverflow::-webkit-scrollbar{
@@ -188,8 +188,10 @@ body{
 .cover-card{
   flex:0 0 auto;
 
+  margin-left:-34px;
+
   transition:
-    transform .28s ease,
+    transform .34s cubic-bezier(.2,.8,.2,1),
     opacity .28s ease,
     filter .28s ease;
 
@@ -198,6 +200,10 @@ body{
     opacity;
 
   cursor:grab;
+}
+
+.cover-card:first-child{
+  margin-left:0;
 }
 
 .cover-card.active{
@@ -213,21 +219,34 @@ body{
 
   overflow:hidden;
 
-  border-radius:26px;
+  border-radius:28px;
 
   background:white;
 
   box-shadow:
-    0 12px 30px rgba(120,170,210,.18);
+    0 14px 34px rgba(120,170,210,.16);
 
   border:
-    1px solid rgba(255,255,255,.9);
+    1px solid rgba(255,255,255,.92);
 
   transition:
-    transform .28s ease,
-    box-shadow .28s ease;
+    transform .32s ease,
+    box-shadow .32s ease;
 }
 
+/* =========================
+   ACTIVE
+========================= */
+
+.cover-card.active .card-inner{
+
+  transform:
+    translateY(-10px)
+    scale(1.12);
+
+  box-shadow:
+    0 24px 48px rgba(120,170,220,.28);
+}
 /* =========================
    ACTIVE
 ========================= */
