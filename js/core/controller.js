@@ -473,25 +473,45 @@ async function removeItem(
   // =========================
   function bindGlobal(){
 
-    window.app = {
+  const app =
+    document.getElementById(
+      "app"
+    );
 
-      submitSelectedItem,
+  app.addEventListener(
+    "click",
+    async (e)=>{
 
-      removeItem,
+      const action =
+        e.target.dataset.action;
 
-      setActiveIndex,
+      if(action === "spin"){
 
-      slide,
+        await spinAll();
+      }
 
-      spinAll
-    };
-  }
+      if(action === "add"){
 
-  return {
-    boot
-  };
+        await submitSelectedItem();
+      }
+
+      const removeBtn =
+        e.target.closest(
+          ".remove-btn"
+        );
+
+      if(removeBtn){
+
+        await removeItem(
+          removeBtn.dataset.type,
+          Number(
+            removeBtn.dataset.id
+          )
+        );
+      }
+    }
+  );
 }
-
 // =========================
 // UTIL
 // =========================
