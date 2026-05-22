@@ -190,7 +190,16 @@ function triggerWinnerPulse(){
 // =========================
 function createConfetti(){
 
-  for(let i=0;i<28;i++){
+  const colors = [
+
+    "#c084fc",
+    "#a855f7",
+    "#d8b4fe",
+    "#9333ea",
+    "#e9d5ff"
+  ];
+
+  for(let i=0;i<34;i++){
 
     const confetti =
       document.createElement(
@@ -204,10 +213,21 @@ function createConfetti(){
       Math.random() * 100 + "%";
 
     confetti.style.animationDelay =
-      Math.random() * .4 + "s";
+      Math.random() * .35 + "s";
 
     confetti.style.transform =
       `rotate(${Math.random()*360}deg)`;
+
+    confetti.style.background =
+      colors[
+        Math.floor(
+          Math.random() *
+          colors.length
+        )
+      ];
+
+    confetti.style.opacity =
+      .85 + Math.random() * .15;
 
     document.body.appendChild(
       confetti
@@ -217,6 +237,6 @@ function createConfetti(){
 
       confetti.remove();
 
-    },2200);
+    },2400);
   }
 }
