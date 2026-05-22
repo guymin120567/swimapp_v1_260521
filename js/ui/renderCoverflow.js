@@ -22,7 +22,7 @@ export function renderLists(){
   document.getElementById(
     "swimTitle"
   ).innerText =
-    `🩲 수영복 (${state.swimsuits.length})`;
+    `🩳 수영복 (${state.swimsuits.length})`;
 
   updateList(
     dom.capList,
@@ -78,36 +78,70 @@ function updateList(
     items
       .map((item,index)=>{
 
+        const rawDistance =
+          index - activeIndex;
+
         const distance =
-          Math.abs(
-            index - activeIndex
-          );
+          Math.abs(rawDistance);
 
         const active =
           index === activeIndex;
 
-        const scale =
-          active
-          ? 1
-          : Math.max(
-              .82,
-              1 - distance * .08
-            );
+        // =========================
+        // SCALE
+        // =========================
+        let scale = 1;
 
-        const opacity =
-          active
-          ? 1
-          : Math.max(
-              .55,
-              1 - distance * .14
-            );
+        if(distance === 1){
 
-        const rotate =
-          active
-          ? 0
-          : index < activeIndex
-            ? 10
-            : -10;
+          scale = .88;
+        }
+        else if(distance >= 2){
+
+          scale = .74;
+        }
+
+        // =========================
+        // OPACITY
+        // =========================
+        let opacity = 1;
+
+        if(distance === 1){
+
+          opacity = .82;
+        }
+        else if(distance >= 2){
+
+          opacity = .52;
+        }
+
+        // =========================
+        // ROTATE
+        // =========================
+        let rotate = 0;
+
+        if(rawDistance < 0){
+
+          rotate = 16;
+        }
+        else if(rawDistance > 0){
+
+          rotate = -16;
+        }
+
+        // =========================
+        // OFFSET
+        // =========================
+        let offset = 0;
+
+        if(rawDistance < 0){
+
+          offset = distance * 18;
+        }
+        else if(rawDistance > 0){
+
+          offset = distance * -18;
+        }
 
         return `
           <div
@@ -117,12 +151,16 @@ function updateList(
 
             style="
               transform:
+                translateX(${offset}px)
                 scale(${scale})
                 rotateY(${rotate}deg);
 
               opacity:${opacity};
 
               z-index:${100-distance};
+
+              filter:
+                brightness(${1 - distance * .08});
             "
           >
 
