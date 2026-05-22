@@ -15,6 +15,12 @@ import {
   saveState
 } from "../../core/db.js";
 
+import {
+  SPIN_TOTAL_FRAME,
+  SPIN_BASE_DELAY,
+  SPIN_DELAY_STEP
+} from "../../constants/animation.js";
+
 // =========================
 // SPIN ALL
 // =========================
@@ -53,7 +59,8 @@ export async function animateRoulette(type){
 
       if(
         time - lastTime >
-        70 + frame * 12
+        SPIN_BASE_DELAY +
+        frame * SPIN_DELAY_STEP
       ){
 
         const randomIndex =
@@ -85,7 +92,7 @@ export async function animateRoulette(type){
         lastTime = time;
       }
 
-      if(frame < 14){
+      if(frame < SPIN_TOTAL_FRAME){
 
         requestAnimationFrame(
           loop
