@@ -159,48 +159,45 @@ body{
 
   display:flex;
   align-items:center;
-  justify-content:flex-start;
 
   overflow-x:auto;
   overflow-y:hidden;
 
-  gap:0;
+  gap:18px;
 
   padding:
-    10px 24px 24px;
+    10px 24px 28px;
 
-  scroll-snap-type:x mandatory;
+  scroll-behavior:smooth;
 
   -webkit-overflow-scrolling:touch;
 
   scrollbar-width:none;
+
+  perspective:1200px;
 }
 
 .coverflow::-webkit-scrollbar{
   display:none;
 }
 
+.coverflow.dragging{
+  cursor:grabbing;
+}
+
 .cover-card{
   flex:0 0 auto;
 
-  margin-left:-38px;
-
   transition:
-    transform .34s cubic-bezier(.2,.8,.2,1),
-    opacity .34s ease,
-    filter .34s ease;
-
-  scroll-snap-align:center;
-
-  cursor:pointer;
+    transform .28s ease,
+    opacity .28s ease,
+    filter .28s ease;
 
   will-change:
     transform,
     opacity;
-}
 
-.cover-card:first-child{
-  margin-left:0;
+  cursor:grab;
 }
 
 .cover-card.active{
@@ -218,18 +215,32 @@ body{
 
   border-radius:26px;
 
-  background:var(--card);
+  background:white;
 
-  box-shadow:var(--shadow);
+  box-shadow:
+    0 12px 30px rgba(120,170,210,.18);
 
   border:
-    1px solid rgba(255,255,255,.8);
+    1px solid rgba(255,255,255,.9);
 
   transition:
     transform .28s ease,
     box-shadow .28s ease;
 }
 
+/* =========================
+   ACTIVE
+========================= */
+
+.cover-card.active .card-inner{
+
+  transform:
+    translateY(-6px)
+    scale(1.04);
+
+  box-shadow:
+    0 20px 42px rgba(120,170,220,.24);
+}
 /* =========================
    ACTIVE
 ========================= */
