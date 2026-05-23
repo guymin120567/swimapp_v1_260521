@@ -11,14 +11,17 @@ export function renderLists(){
   const state =
     getState();
 
-  document.getElementById(
-    "capTitle"
-  ).innerText =
+  if(
+    !dom.capTitle ||
+    !dom.swimTitle
+  ){
+    return;
+  }
+
+  dom.capTitle.innerText =
     `🧢 수모 (${state.data.caps.length})`;
 
-  document.getElementById(
-    "swimTitle"
-  ).innerText =
+  dom.swimTitle.innerText =
     `🩳 수영복 (${state.data.swimsuits.length})`;
 
   updateList(
