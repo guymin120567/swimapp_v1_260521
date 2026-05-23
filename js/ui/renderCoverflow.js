@@ -31,16 +31,14 @@ export function renderLists(){
     dom.capList,
     state.data.caps,
     state.ui.activeCapIndex,
-    "cap",
-    state.selection.capId
+    "cap"
   );
 
   updateList(
     dom.swimList,
     state.data.swimsuits,
     state.ui.activeSwimIndex,
-    "swim",
-    state.selection.swimId
+    "swim"
   );
 
   requestAnimationFrame(()=>{
@@ -64,8 +62,7 @@ function updateList(
   target,
   items,
   activeIndex,
-  type,
-  selectedId
+  type
 ){
 
   if(!items.length){
@@ -93,51 +90,68 @@ function updateList(
         const active =
           index === activeIndex;
 
-        const selected =
-          item.id === selectedId;
-
+        // =========================
+        // SCALE
+        // =========================
         let scale = 1;
 
         if(distance === 1){
 
-          scale = .88;
+          scale = .86;
         }
-        else if(distance >= 2){
+        else if(distance === 2){
 
-          scale = .74;
+          scale = .72;
+        }
+        else if(distance >= 3){
+
+          scale = .58;
         }
 
+        // =========================
+        // OPACITY
+        // =========================
         let opacity = 1;
 
         if(distance === 1){
 
           opacity = .82;
         }
-        else if(distance >= 2){
+        else if(distance === 2){
 
-          opacity = .52;
+          opacity = .55;
+        }
+        else if(distance >= 3){
+
+          opacity = .28;
         }
 
+        // =========================
+        // ROTATE
+        // =========================
         let rotate = 0;
 
         if(rawDistance < 0){
 
-          rotate = 16;
+          rotate = 22;
         }
         else if(rawDistance > 0){
 
-          rotate = -16;
+          rotate = -22;
         }
 
+        // =========================
+        // OFFSET
+        // =========================
         let offset = 0;
 
         if(rawDistance < 0){
 
-          offset = distance * 18;
+          offset = distance * 26;
         }
         else if(rawDistance > 0){
 
-          offset = distance * -18;
+          offset = distance * -26;
         }
 
         return `
@@ -145,7 +159,6 @@ function updateList(
             class="
               cover-card
               ${active ? "active" : ""}
-              ${selected ? "selected" : ""}
             "
 
             data-type="${type}"
@@ -208,6 +221,9 @@ function updateList(
       .join("");
 }
 
+// =========================
+// CENTER
+// =========================
 function centerActive(
   wrap,
   activeIndex
