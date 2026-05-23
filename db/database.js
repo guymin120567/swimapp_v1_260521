@@ -1,169 +1,180 @@
 const DB_NAME =
-  "swimRouletteDB";
+  "swimDB";
 
-const DB_VERSION = 3;
-
-const STATE_STORE =
+const STORE_NAME =
   "stateStore";
 
-const STATE_KEY =
-  "main_state";
-
-let dbInstance = null;
+const DB_VERSION = 1;
 
 // =========================
-// OPEN DB
+// OPEN
 // =========================
-async function openDB(){
+export function openDatabase(){
 
-  if(dbInstance){
+  return new Promise((resolve,reject)=>{
 
-    return dbInstance;
-  }
+    const request =
+      indexedDB.open(
+        DB_NAME,
+        DB_VERSION
+      );
 
-  return new Promise(
-    (resolve,reject)=>{
+    request.onupgradeneeded =
+      ()=>{
 
-      const request =
-        indexedDB.open(
-          DB_NAME,
-          DB_VERSION
-        );
+        const db =
+          request.result;
 
-      request.onupgradeneeded =
-        event=>{
+        if(
+          !db.objectStoreNames.contains(
+            STORE_NAME
+          )
+        ){
 
-          const db =
-            event.target.result;
-
-          if(
-            !db.objectStoreNames.contains(
-              STATE_STORE
-            )
-          ){
-
-            db.createObjectStore(
-              STATE_STORE
-            );
-          }
-
-          if(
-            db.objectStoreNames.contains(
-              "appState"
-            )
-          ){
-
-            db.deleteObjectStore(
-              "appState"
-            );
-          }
-
-          if(
-            db.objectStoreNames.contains(
-              "imageStore"
-            )
-          ){
-
-            db.deleteObjectStore(
-              "imageStore"
-            );
-          }
-        };
-
-      request.onsuccess =
-        ()=>{
-
-          dbInstance =
-            request.result;
-
-          resolve(
-            dbInstance
+          db.createObjectStore(
+            STORE_NAME
           );
-        };
+        }
+      };
 
-      request.onerror =
-        ()=>reject(
+    request.onsuccess =
+      ()=>{
+
+        resolve(
+          request.result
+        );
+      };
+
+    request.onerror =
+      ()=>{
+
+        reject(
           request.error
         );
-    }
-  );
+      };
+  });
 }
 
 // =========================
-// SAVE STATE
+// SAVE
 // =========================
 export async function saveState(state){
 
   const db =
-    await openDB();
+    await openDatabase();
 
-  return new Promise(
-    (resolve,reject)=>{
+  return new Promise((resolve,reject)=>{
 
-      const tx =
-        db.transaction(
-          STATE_STORE,
-          "readwrite"
-        );
+    const tx =
+      db.transaction(
+        STORE_NAME,
+        "readwrite"
+      );
 
-      const store =
-        tx.objectStore(
-          STATE_STORE
-        );
+    const store =
+      tx.objectStore(
+        STORE_NAME
+      );
 
-      const request =
-        store.put(
-          state,
-          STATE_KEY
-        );
+    store.put(
+      state,
+      "appState"
+    );
 
-      request.onsuccess =
-        ()=>resolve(true);
+    tx.oncomplete =
+      ()=>resolve();
 
-      request.onerror =
-        ()=>reject(
-          request.error
-        );
-    }
-  );
+    tx.onerror =
+      ()=>reject(
+        tx.error
+      );
+  });
 }
 
 // =========================
-// LOAD STATE
+// LOAD
 // =========================
 export async function loadState(){
 
   const db =
-    await openDB();
+    await openDatabase();
 
-  return new Promise(
-    (resolve,reject)=>{
+  return new Promise((resolve,reject)=>{
 
-      const tx =
-        db.transaction(
-          STATE_STORE,
-          "readonly"
+    const tx =
+      db.transaction(
+        STORE_NAME,
+        "readonly"
+      );
+
+    const store =
+      tx.objectStore(
+        STORE_NAME
+      );
+
+    const request =
+      store.get(
+        "appState"
+      );
+
+    request.onsuccess =
+      ()=>{
+
+        const loaded =
+          request.result;
+
+        // =========================
+        // EMPTY
+        // =========================
+        if(!loaded){
+
+          resolve(null);
+
+          return;
+        }
+
+        // =========================
+        // OLD STATE MIGRATION
+        // capId/swimId
+        // =========================
+        if(
+          loaded.selection?.capId !==
+          undefined
+        ){
+
+          const cap =
+            loaded.data?.caps?.find(
+              item =>
+                item.id ===
+                loaded.selection.capId
+            ) || null;
+
+          const swim =
+            loaded.data?.swimsuits?.find(
+              item =>
+                item.id ===
+                loaded.selection.swimId
+            ) || null;
+
+          loaded.selection = {
+
+            cap,
+
+            swim
+          };
+        }
+
+        resolve(
+          loaded
         );
+      };
 
-      const store =
-        tx.objectStore(
-          STATE_STORE
-        );
+    request.onerror =
+      ()=>{
 
-      const request =
-        store.get(
-          STATE_KEY
-        );
-
-      request.onsuccess =
-        ()=>resolve(
-          request.result || null
-        );
-
-      request.onerror =
-        ()=>reject(
+        reject(
           request.error
         );
-    }
-  );
+      };
+  });
 }
