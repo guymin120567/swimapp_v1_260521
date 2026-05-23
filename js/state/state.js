@@ -1,43 +1,42 @@
+// state.js
+
 export const defaultState = {
-
-  data:{
-
-    caps:[],
-
-    swimsuits:[]
+  data: {
+    caps: [],
+    swimsuits: []
   },
 
-  // =========================
-  // SELECTED OBJECT
-  // =========================
-  selection:{
-
-    cap:null,
-
-    swim:null
+  selection: {
+    cap: null,
+    swim: null
   },
 
-  ui:{
-
-    activeCapIndex:0,
-
-    activeSwimIndex:0,
-
-    isSpinning:false
+  ui: {
+    activeCapIndex: 0,
+    activeSwimIndex: 0,
+    isSpinning: false
   }
 };
 
-let currentState =
-  structuredClone(
-    defaultState
-  );
+let currentState = structuredClone(defaultState);
 
-export function getState(){
-
+// =========================
+// GET
+// =========================
+export function getState() {
   return currentState;
 }
 
-export function setState(next){
+// =========================
+// SET (전체 교체)
+// =========================
+export function setState(nextState) {
+  currentState = structuredClone(nextState);
+}
 
-  currentState = next;
+// =========================
+// RESET
+// =========================
+export function resetState() {
+  currentState = structuredClone(defaultState);
 }
