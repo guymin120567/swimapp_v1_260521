@@ -1,16 +1,26 @@
 import {
-  dom
+  dom,
+  cacheDOM
 } from "./dom.js";
 
+// =========================
+// LAYOUT
+// =========================
 export function renderLayout(){
+
+  // =========================
+  // 이미 생성됨
+  // =========================
+  if(dom.initialized){
+
+    cacheDOM();
+
+    return;
+  }
 
   dom.app.innerHTML = `
 
   <div class="container">
-
-    <!-- =====================
-         ROULETTE
-    ====================== -->
 
     <div class="roulette-wrap">
 
@@ -86,10 +96,6 @@ export function renderLayout(){
 
     </div>
 
-    <!-- =====================
-         SPIN BUTTON
-    ====================== -->
-
     <div class="spin-row">
 
       <button
@@ -101,45 +107,37 @@ export function renderLayout(){
 
     </div>
 
-    <!-- =====================
-         CAP LIST
-    ====================== -->
-
     <div class="block">
 
       <div
         class="section-title"
         id="capTitle"
-      ></div>
+      >
+      </div>
 
       <div
         class="coverflow"
         id="capList"
-      ></div>
+      >
+      </div>
 
     </div>
-
-    <!-- =====================
-         SWIM LIST
-    ====================== -->
 
     <div class="block">
 
       <div
         class="section-title"
         id="swimTitle"
-      ></div>
+      >
+      </div>
 
       <div
         class="coverflow"
         id="swimList"
-      ></div>
+      >
+      </div>
 
     </div>
-
-    <!-- =====================
-         ADD
-    ====================== -->
 
     <div class="block">
 
@@ -150,8 +148,15 @@ export function renderLayout(){
       <div class="input-area">
 
         <select id="itemType">
-          <option value="cap">🧢 수모</option>
-          <option value="swim">🩲 수영복</option>
+
+          <option value="cap">
+            🧢 수모
+          </option>
+
+          <option value="swim">
+            🩲 수영복
+          </option>
+
         </select>
 
         <input
@@ -178,36 +183,9 @@ export function renderLayout(){
     </div>
 
   </div>
-
   `;
 
-  dom.capList =
-    document.getElementById(
-      "capList"
-    );
+  dom.initialized = true;
 
-  dom.swimList =
-    document.getElementById(
-      "swimList"
-    );
-
-  dom.capResultImage =
-    document.getElementById(
-      "capResultImage"
-    );
-
-  dom.capResultName =
-    document.getElementById(
-      "capResultName"
-    );
-
-  dom.swimResultImage =
-    document.getElementById(
-      "swimResultImage"
-    );
-
-  dom.swimResultName =
-    document.getElementById(
-      "swimResultName"
-    );
+  cacheDOM();
 }

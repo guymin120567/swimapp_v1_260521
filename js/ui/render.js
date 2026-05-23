@@ -10,37 +10,36 @@ import {
   renderLists
 } from "./renderCoverflow.js";
 
-let initialized = false;
-
-let renderScheduled = false;
-
 // =========================
-// APP RENDER
+// FULL
 // =========================
 export function renderApp(){
 
-  if(renderScheduled) return;
+  renderLayout();
 
-  renderScheduled = true;
+  renderRoulette();
+
+  renderLists();
+}
+
+// =========================
+// ROULETTE
+// =========================
+export function renderRouletteOnly(){
 
   requestAnimationFrame(()=>{
 
-    renderScheduled = false;
-
-    if(!initialized){
-
-      renderLayout();
-
-      initialized = true;
-    }
-
     renderRoulette();
+  });
+}
+
+// =========================
+// LIST
+// =========================
+export function renderListsOnly(){
+
+  requestAnimationFrame(()=>{
 
     renderLists();
   });
 }
-
-export {
-  renderRoulette,
-  renderLists
-};

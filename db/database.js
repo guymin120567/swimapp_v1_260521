@@ -1,10 +1,13 @@
-const DB_NAME = "swim_app_db";
-const DB_VERSION = 2;
+const DB_NAME =
+  "swimRouletteDB";
 
-const STATE_STORE = "stateStore";
-const IMAGE_STORE = "imageStore";
+const DB_VERSION = 3;
 
-const STATE_KEY = "main_state";
+const STATE_STORE =
+  "stateStore";
+
+const STATE_KEY =
+  "main_state";
 
 let dbInstance = null;
 
@@ -14,42 +17,76 @@ let dbInstance = null;
 async function openDB(){
 
   if(dbInstance){
+
     return dbInstance;
   }
 
-  return new Promise((resolve,reject)=>{
+  return new Promise(
+    (resolve,reject)=>{
 
-    const request = indexedDB.open(
-      DB_NAME,
-      DB_VERSION
-    );
+      const request =
+        indexedDB.open(
+          DB_NAME,
+          DB_VERSION
+        );
 
-    request.onupgradeneeded = (event)=>{
+      request.onupgradeneeded =
+        event=>{
 
-      const db = event.target.result;
+          const db =
+            event.target.result;
 
-      // STATE STORE
-      if(!db.objectStoreNames.contains(STATE_STORE)){
-        db.createObjectStore(STATE_STORE);
-      }
+          if(
+            !db.objectStoreNames.contains(
+              STATE_STORE
+            )
+          ){
 
-      // IMAGE STORE
-      if(!db.objectStoreNames.contains(IMAGE_STORE)){
-        db.createObjectStore(IMAGE_STORE);
-      }
-    };
+            db.createObjectStore(
+              STATE_STORE
+            );
+          }
 
-    request.onsuccess = ()=>{
+          if(
+            db.objectStoreNames.contains(
+              "appState"
+            )
+          ){
 
-      dbInstance = request.result;
+            db.deleteObjectStore(
+              "appState"
+            );
+          }
 
-      resolve(dbInstance);
-    };
+          if(
+            db.objectStoreNames.contains(
+              "imageStore"
+            )
+          ){
 
-    request.onerror = ()=>{
-      reject(request.error);
-    };
-  });
+            db.deleteObjectStore(
+              "imageStore"
+            );
+          }
+        };
+
+      request.onsuccess =
+        ()=>{
+
+          dbInstance =
+            request.result;
+
+          resolve(
+            dbInstance
+          );
+        };
+
+      request.onerror =
+        ()=>reject(
+          request.error
+        );
+    }
+  );
 }
 
 // =========================
@@ -57,32 +94,38 @@ async function openDB(){
 // =========================
 export async function saveState(state){
 
-  const db = await openDB();
+  const db =
+    await openDB();
 
-  return new Promise((resolve,reject)=>{
+  return new Promise(
+    (resolve,reject)=>{
 
-    const tx = db.transaction(
-      STATE_STORE,
-      "readwrite"
-    );
+      const tx =
+        db.transaction(
+          STATE_STORE,
+          "readwrite"
+        );
 
-    const store = tx.objectStore(
-      STATE_STORE
-    );
+      const store =
+        tx.objectStore(
+          STATE_STORE
+        );
 
-    const request = store.put(
-      state,
-      STATE_KEY
-    );
+      const request =
+        store.put(
+          state,
+          STATE_KEY
+        );
 
-    request.onsuccess = ()=>{
-      resolve(true);
-    };
+      request.onsuccess =
+        ()=>resolve(true);
 
-    request.onerror = ()=>{
-      reject(request.error);
-    };
-  });
+      request.onerror =
+        ()=>reject(
+          request.error
+        );
+    }
+  );
 }
 
 // =========================
@@ -90,133 +133,37 @@ export async function saveState(state){
 // =========================
 export async function loadState(){
 
-  const db = await openDB();
+  const db =
+    await openDB();
 
-  return new Promise((resolve,reject)=>{
+  return new Promise(
+    (resolve,reject)=>{
 
-    const tx = db.transaction(
-      STATE_STORE,
-      "readonly"
-    );
+      const tx =
+        db.transaction(
+          STATE_STORE,
+          "readonly"
+        );
 
-    const store = tx.objectStore(
-      STATE_STORE
-    );
+      const store =
+        tx.objectStore(
+          STATE_STORE
+        );
 
-    const request = store.get(
-      STATE_KEY
-    );
+      const request =
+        store.get(
+          STATE_KEY
+        );
 
-    request.onsuccess = ()=>{
-      resolve(request.result || null);
-    };
+      request.onsuccess =
+        ()=>resolve(
+          request.result || null
+        );
 
-    request.onerror = ()=>{
-      reject(request.error);
-    };
-  });
-}
-
-// =========================
-// SAVE IMAGE
-// =========================
-export async function saveImage(
-  imageId,
-  imageData
-){
-
-  const db = await openDB();
-
-  return new Promise((resolve,reject)=>{
-
-    const tx = db.transaction(
-      IMAGE_STORE,
-      "readwrite"
-    );
-
-    const store = tx.objectStore(
-      IMAGE_STORE
-    );
-
-    const request = store.put(
-      imageData,
-      imageId
-    );
-
-    request.onsuccess = ()=>{
-      resolve(true);
-    };
-
-    request.onerror = ()=>{
-      reject(request.error);
-    };
-  });
-}
-
-// =========================
-// LOAD IMAGE
-// =========================
-export async function loadImage(
-  imageId
-){
-
-  const db = await openDB();
-
-  return new Promise((resolve,reject)=>{
-
-    const tx = db.transaction(
-      IMAGE_STORE,
-      "readonly"
-    );
-
-    const store = tx.objectStore(
-      IMAGE_STORE
-    );
-
-    const request = store.get(
-      imageId
-    );
-
-    request.onsuccess = ()=>{
-      resolve(request.result || null);
-    };
-
-    request.onerror = ()=>{
-      reject(request.error);
-    };
-  });
-}
-
-// =========================
-// DELETE IMAGE
-// =========================
-export async function deleteImage(
-  imageId
-){
-
-  const db = await openDB();
-
-  return new Promise((resolve,reject)=>{
-
-    const tx = db.transaction(
-      IMAGE_STORE,
-      "readwrite"
-    );
-
-    const store = tx.objectStore(
-      IMAGE_STORE
-    );
-
-    const request = store.delete(
-      imageId
-    );
-
-    request.onsuccess = ()=>{
-      resolve(true);
-    };
-
-    request.onerror = ()=>{
-      reject(request.error);
-    };
-  });
+      request.onerror =
+        ()=>reject(
+          request.error
+        );
+    }
+  );
 }

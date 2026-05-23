@@ -11,16 +11,38 @@ import {
 // =========================
 export function renderRoulette(){
 
-  const state = getState();
+  if(
+    !dom.capResultName ||
+    !dom.swimResultName
+  ){
+    return;
+  }
+
+  const state =
+    getState();
+
+  const selectedCap =
+    state.data.caps.find(
+      item =>
+        item.id ===
+        state.selection.capId
+    );
+
+  const selectedSwim =
+    state.data.swimsuits.find(
+      item =>
+        item.id ===
+        state.selection.swimId
+    );
 
   updateRouletteCard(
     "cap",
-    state.selectedCap
+    selectedCap
   );
 
   updateRouletteCard(
     "swim",
-    state.selectedSwim
+    selectedSwim
   );
 }
 
@@ -43,12 +65,21 @@ function updateRouletteCard(
     : dom.swimResultName;
 
   const placeholder =
-    document.getElementById(
-      type === "cap"
-      ? "capResultPlaceholder"
-      : "swimResultPlaceholder"
-    );
+    type === "cap"
+    ? dom.capResultPlaceholder
+    : dom.swimResultPlaceholder;
 
+  if(
+    !image ||
+    !name ||
+    !placeholder
+  ){
+    return;
+  }
+
+  // =========================
+  // EMPTY
+  // =========================
   if(!item){
 
     image.style.display =
@@ -63,9 +94,15 @@ function updateRouletteCard(
     return;
   }
 
+  // =========================
+  // TITLE
+  // =========================
   name.innerText =
     item.name;
 
+  // =========================
+  // IMAGE
+  // =========================
   if(item.image){
 
     image.src =

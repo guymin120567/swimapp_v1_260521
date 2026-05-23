@@ -4,8 +4,19 @@ import {
 
 import {
   setActiveCap,
-  setActiveSwim
+  setActiveSwim,
+  setSelectedCap,
+  setSelectedSwim
 } from "../../state/actions.js";
+
+import {
+  renderListsOnly,
+  renderRouletteOnly
+} from "../../ui/render.js";
+
+import {
+  saveState
+} from "../../../db/database.js";
 
 // =========================
 // DRAG CAROUSEL
@@ -33,8 +44,6 @@ function bindCarousel(type){
 
   let startScroll = 0;
 
-  let moved = false;
-
   document.addEventListener(
     "pointerdown",
     e=>{
@@ -48,8 +57,6 @@ function bindCarousel(type){
 
       dragging = true;
 
-      moved = false;
-
       startX =
         e.clientX;
 
@@ -59,7 +66,8 @@ function bindCarousel(type){
       wrap.classList.add(
         "dragging"
       );
-    }
+    },
+    { passive:true }
   );
 
   document.addEventListener(
@@ -78,19 +86,15 @@ function bindCarousel(type){
       const delta =
         e.clientX - startX;
 
-      if(Math.abs(delta) > 4){
-
-        moved = true;
-      }
-
       wrap.scrollLeft =
         startScroll - delta;
-    }
+    },
+    { passive:true }
   );
 
   document.addEventListener(
     "pointerup",
-    ()=>{
+    async ()=>{
 
       if(!dragging) return;
 
@@ -107,7 +111,7 @@ function bindCarousel(type){
         "dragging"
       );
 
-      snapToClosest(
+      await snapToClosest(
         wrap,
         type
       );
@@ -118,10 +122,18 @@ function bindCarousel(type){
 // =========================
 // SNAP
 // =========================
-function snapToClosest(
+async function snapToClosest(
   wrap,
   type
 ){
+
+  const state =
+    getState();
+
+  const items =
+    type === "cap"
+    ? state.data.caps
+    : state.data.swimsuits;
 
   const cards =
     [
@@ -141,7 +153,7 @@ function snapToClosest(
   let closestDistance =
     Infinity;
 
-  cards.forEach((card,index)=>{
+  cards.forEach(card=>{
 
     const cardCenter =
       card.offsetLeft +
@@ -164,10 +176,17 @@ function snapToClosest(
     }
   });
 
+  const selected =
+    items[closestIndex];
+
   if(type === "cap"){
 
     setActiveCap(
       closestIndex
+    );
+
+    setSelectedCap(
+      selected?.id || null
     );
   }
   else{
@@ -175,11 +194,23 @@ function snapToClosest(
     setActiveSwim(
       closestIndex
     );
+
+    setSelectedSwim(
+      selected?.id || null
+    );
   }
+
+  renderListsOnly();
+
+  renderRouletteOnly();
 
   centerCard(
     wrap,
     closestIndex
+  );
+
+  await saveState(
+    getState()
   );
 }
 

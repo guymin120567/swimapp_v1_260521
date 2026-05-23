@@ -15,10 +15,15 @@ export function addCap(item){
 
     ...state,
 
-    caps:[
-      ...state.caps,
-      item
-    ]
+    data:{
+
+      ...state.data,
+
+      caps:[
+        ...state.data.caps,
+        item
+      ]
+    }
   });
 }
 
@@ -31,10 +36,15 @@ export function removeCap(id){
 
     ...state,
 
-    caps:
-      state.caps.filter(
-        item => item.id !== id
-      )
+    data:{
+
+      ...state.data,
+
+      caps:
+        state.data.caps.filter(
+          item => item.id !== id
+        )
+    }
   });
 }
 
@@ -47,11 +57,16 @@ export function setActiveCap(index){
 
     ...state,
 
-    activeCapIndex:index
+    ui:{
+
+      ...state.ui,
+
+      activeCapIndex:index
+    }
   });
 }
 
-export function setSelectedCap(item){
+export function setSelectedCap(id){
 
   const state =
     getState();
@@ -60,7 +75,12 @@ export function setSelectedCap(item){
 
     ...state,
 
-    selectedCap:item
+    selection:{
+
+      ...state.selection,
+
+      capId:id
+    }
   });
 }
 
@@ -76,10 +96,15 @@ export function addSwim(item){
 
     ...state,
 
-    swimsuits:[
-      ...state.swimsuits,
-      item
-    ]
+    data:{
+
+      ...state.data,
+
+      swimsuits:[
+        ...state.data.swimsuits,
+        item
+      ]
+    }
   });
 }
 
@@ -92,10 +117,15 @@ export function removeSwim(id){
 
     ...state,
 
-    swimsuits:
-      state.swimsuits.filter(
-        item => item.id !== id
-      )
+    data:{
+
+      ...state.data,
+
+      swimsuits:
+        state.data.swimsuits.filter(
+          item => item.id !== id
+        )
+    }
   });
 }
 
@@ -108,11 +138,16 @@ export function setActiveSwim(index){
 
     ...state,
 
-    activeSwimIndex:index
+    ui:{
+
+      ...state.ui,
+
+      activeSwimIndex:index
+    }
   });
 }
 
-export function setSelectedSwim(item){
+export function setSelectedSwim(id){
 
   const state =
     getState();
@@ -121,6 +156,11 @@ export function setSelectedSwim(item){
 
     ...state,
 
-    selectedSwim:item
+    selection:{
+
+      ...state.selection,
+
+      swimId:id
+    }
   });
 }

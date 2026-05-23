@@ -11,43 +11,48 @@ import {
 // =========================
 export function renderLists(){
 
+  if(
+    !dom.capList ||
+    !dom.swimList
+  ){
+    return;
+  }
+
   const state =
     getState();
 
-  document.getElementById(
-    "capTitle"
-  ).innerText =
-    `🧢 수모 (${state.caps.length})`;
+  dom.capTitle.innerText =
+    `🧢 수모 (${state.data.caps.length})`;
 
-  document.getElementById(
-    "swimTitle"
-  ).innerText =
-    `🩳 수영복 (${state.swimsuits.length})`;
+  dom.swimTitle.innerText =
+    `🩳 수영복 (${state.data.swimsuits.length})`;
 
   updateList(
     dom.capList,
-    state.caps,
-    state.activeCapIndex,
-    "cap"
+    state.data.caps,
+    state.ui.activeCapIndex,
+    "cap",
+    state.selection.capId
   );
 
   updateList(
     dom.swimList,
-    state.swimsuits,
-    state.activeSwimIndex,
-    "swim"
+    state.data.swimsuits,
+    state.ui.activeSwimIndex,
+    "swim",
+    state.selection.swimId
   );
 
   requestAnimationFrame(()=>{
 
     centerActive(
       dom.capList,
-      state.activeCapIndex
+      state.ui.activeCapIndex
     );
 
     centerActive(
       dom.swimList,
-      state.activeSwimIndex
+      state.ui.activeSwimIndex
     );
   });
 }
@@ -59,7 +64,8 @@ function updateList(
   target,
   items,
   activeIndex,
-  type
+  type,
+  selectedId
 ){
 
   if(!items.length){
@@ -87,9 +93,9 @@ function updateList(
         const active =
           index === activeIndex;
 
-        // =========================
-        // SCALE
-        // =========================
+        const selected =
+          item.id === selectedId;
+
         let scale = 1;
 
         if(distance === 1){
@@ -101,9 +107,6 @@ function updateList(
           scale = .74;
         }
 
-        // =========================
-        // OPACITY
-        // =========================
         let opacity = 1;
 
         if(distance === 1){
@@ -115,9 +118,6 @@ function updateList(
           opacity = .52;
         }
 
-        // =========================
-        // ROTATE
-        // =========================
         let rotate = 0;
 
         if(rawDistance < 0){
@@ -129,9 +129,6 @@ function updateList(
           rotate = -16;
         }
 
-        // =========================
-        // OFFSET
-        // =========================
         let offset = 0;
 
         if(rawDistance < 0){
@@ -145,13 +142,18 @@ function updateList(
 
         return `
           <div
-            class="cover-card ${active ? "active" : ""}"
+            class="
+              cover-card
+              ${active ? "active" : ""}
+              ${selected ? "selected" : ""}
+            "
+
             data-type="${type}"
             data-index="${index}"
 
             style="
               transform:
-                translateX(${offset}px)
+                translate3d(${offset}px,0,0)
                 scale(${scale})
                 rotateY(${rotate}deg);
 
@@ -206,9 +208,6 @@ function updateList(
       .join("");
 }
 
-// =========================
-// CENTER
-// =========================
 function centerActive(
   wrap,
   activeIndex

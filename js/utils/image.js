@@ -1,11 +1,11 @@
 export async function compressImage(file){
 
-  return new Promise((resolve)=>{
+  return new Promise(resolve=>{
 
     const reader =
       new FileReader();
 
-    reader.onload = (event)=>{
+    reader.onload = event=>{
 
       const img =
         new Image();
@@ -17,7 +17,10 @@ export async function compressImage(file){
             "canvas"
           );
 
-        const MAX_SIZE = 600;
+        const ctx =
+          canvas.getContext("2d");
+
+        const MAX_SIZE = 800;
 
         let width =
           img.width;
@@ -54,15 +57,6 @@ export async function compressImage(file){
         canvas.height =
           height;
 
-        const ctx =
-          canvas.getContext("2d");
-
-        ctx.imageSmoothingEnabled =
-          true;
-
-        ctx.imageSmoothingQuality =
-          "high";
-
         ctx.drawImage(
           img,
           0,
@@ -71,19 +65,23 @@ export async function compressImage(file){
           height
         );
 
-        const result =
+        const compressed =
           canvas.toDataURL(
             "image/webp",
-            0.72
+            .72
           );
 
-        resolve(result);
+        resolve(
+          compressed
+        );
       };
 
       img.src =
         event.target.result;
     };
 
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(
+      file
+    );
   });
 }

@@ -1,16 +1,27 @@
 export const defaultState = {
 
-  caps: [],
+  data:{
 
-  swimsuits: [],
+    caps:[],
 
-  selectedCap: null,
+    swimsuits:[]
+  },
 
-  selectedSwim: null,
+  selection:{
 
-  activeCapIndex: 0,
+    capId:null,
 
-  activeSwimIndex: 0
+    swimId:null
+  },
+
+  ui:{
+
+    activeCapIndex:0,
+
+    activeSwimIndex:0,
+
+    isSpinning:false
+  }
 };
 
 let currentState =

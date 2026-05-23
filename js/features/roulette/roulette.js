@@ -8,12 +8,12 @@ import {
 } from "../../state/actions.js";
 
 import {
-  renderRoulette
+  renderRouletteOnly
 } from "../../ui/render.js";
 
 import {
   saveState
-} from "../../core/db.js";
+} from "../../../db/database.js";
 
 import {
   SPIN_TOTAL_FRAME,
@@ -63,8 +63,8 @@ export async function animateRoulette(type){
 
   const items =
     type === "cap"
-    ? state.caps
-    : state.swimsuits;
+    ? state.data.caps
+    : state.data.swimsuits;
 
   if(!items.length) return;
 
@@ -95,17 +95,17 @@ export async function animateRoulette(type){
         if(type === "cap"){
 
           setSelectedCap(
-            selected
+            selected.id
           );
         }
         else{
 
           setSelectedSwim(
-            selected
+            selected.id
           );
         }
 
-        renderRoulette();
+        renderRouletteOnly();
 
         triggerShuffle(type);
 

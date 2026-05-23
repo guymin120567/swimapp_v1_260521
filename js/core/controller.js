@@ -15,7 +15,8 @@ import {
 
 import {
   renderApp,
-  renderLists
+  renderListsOnly,
+  renderRouletteOnly
 } from "../ui/render.js";
 
 import {
@@ -25,7 +26,7 @@ import {
 import {
   saveState,
   loadState
-} from "./db.js";
+} from "../../db/database.js";
 
 import {
   compressImage
@@ -83,36 +84,45 @@ export function initController(){
 
     setState({
 
-      caps:
-        state.caps || [],
+      data:{
 
-      swimsuits:
-        state.swimsuits || [],
+        caps:
+          state.data?.caps || [],
 
-      selectedCap:
-        state.selectedCap || null,
+        swimsuits:
+          state.data?.swimsuits || []
+      },
 
-      selectedSwim:
-        state.selectedSwim || null,
+      selection:{
 
-      activeCapIndex:
-        state.activeCapIndex || 0,
+        capId:
+          state.selection?.capId || null,
 
-      activeSwimIndex:
-        state.activeSwimIndex || 0
+        swimId:
+          state.selection?.swimId || null
+      },
+
+      ui:{
+
+        activeCapIndex:
+          state.ui?.activeCapIndex || 0,
+
+        activeSwimIndex:
+          state.ui?.activeSwimIndex || 0,
+
+        isSpinning:false
+      }
     });
   }
 
   // =========================
-  // UPDATE
+  // SAVE
   // =========================
-  async function update(){
+  async function persist(){
 
     await saveState(
       getState()
     );
-
-    renderApp();
   }
 
   // =========================
@@ -152,7 +162,7 @@ export function initController(){
 
     const item = {
 
-      id: Date.now(),
+      id:Date.now(),
 
       name:text,
 
@@ -176,7 +186,9 @@ export function initController(){
       "itemImage"
     ).value = "";
 
-    await update();
+    renderListsOnly();
+
+    await persist();
   }
 
   // =========================
@@ -202,11 +214,9 @@ export function initController(){
       removeSwim(id);
     }
 
-    renderLists();
+    renderListsOnly();
 
-    await saveState(
-      getState()
-    );
+    await persist();
   }
 
   // =========================
@@ -226,7 +236,7 @@ export function initController(){
       setActiveSwim(index);
     }
 
-    renderLists();
+    renderListsOnly();
   }
 
   // =========================
@@ -244,6 +254,8 @@ export function initController(){
         if(action === "spin"){
 
           await spinAll();
+
+          renderRouletteOnly();
         }
 
         if(action === "add"){

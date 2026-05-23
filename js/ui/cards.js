@@ -1,8 +1,4 @@
-import {
-  loadImage
-} from "../../db/database.js";
-
-export async function renderCards(
+export function renderCards(
   list,
   container
 ){
@@ -14,32 +10,25 @@ export async function renderCards(
     const card =
       document.createElement("div");
 
-    card.className = "card";
-
-    let imageHTML = "";
-
-    if(item.imageId){
-
-      const image =
-        await loadImage(
-          item.imageId
-        );
-
-      if(image){
-
-        imageHTML = `
-          <img
-            src="${image}"
-            class="thumb"
-          />
-        `;
-      }
-    }
+    card.className =
+      "card";
 
     card.innerHTML = `
-      ${imageHTML}
+
+      ${
+        item.image
+        ? `
+          <img
+            src="${item.image}"
+            class="thumb"
+            loading="lazy"
+          />
+        `
+        : ""
+      }
+
       <div class="name">
-        ${item.text}
+        ${item.name}
       </div>
     `;
 
