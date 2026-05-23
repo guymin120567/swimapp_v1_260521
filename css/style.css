@@ -725,3 +725,275 @@ body{
   transition:
     opacity .8s ease;
 }
+/* =========================
+   ROULETTE BACKGROUND
+========================= */
+
+#rouletteSection{
+
+  position:relative;
+
+  overflow:hidden;
+
+  border-radius:32px;
+
+  margin-bottom:28px;
+
+  min-height:320px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #07111d 0%,
+      #0b1d30 100%
+    );
+
+  border:
+    1px solid
+    rgba(120,180,255,.14);
+}
+
+/* =========================
+   BG IMAGE
+========================= */
+
+.roulette-bg{
+
+  position:absolute;
+
+  inset:0;
+
+  background-image:
+    url("../assets/roulette-bg.png");
+
+  background-size:cover;
+
+  background-position:center;
+
+  opacity:.18;
+
+  transform:scale(1.08);
+
+  filter:
+    blur(8px)
+    saturate(.95);
+
+  pointer-events:none;
+}
+
+/* =========================
+   BLUE OVERLAY
+========================= */
+
+.roulette-overlay{
+
+  position:absolute;
+
+  inset:0;
+
+  background:
+
+    radial-gradient(
+      circle at center,
+      rgba(90,170,255,.16),
+      transparent 60%
+    ),
+
+    linear-gradient(
+      180deg,
+      rgba(5,12,20,.35),
+      rgba(5,12,20,.72)
+    );
+
+  backdrop-filter:
+    blur(2px);
+
+  pointer-events:none;
+}
+
+/* =========================
+   CONTENT
+========================= */
+
+.roulette-content{
+
+  position:relative;
+
+  z-index:2;
+
+  padding:32px 24px;
+
+  display:flex;
+
+  flex-direction:column;
+
+  align-items:center;
+
+  justify-content:center;
+}
+
+/* =========================
+   TITLE
+========================= */
+
+.roulette-title{
+
+  font-size:30px;
+
+  font-weight:800;
+
+  color:white;
+
+  margin-bottom:22px;
+
+  letter-spacing:-1px;
+
+  text-shadow:
+    0 4px 18px
+    rgba(0,0,0,.32);
+}
+
+/* =========================
+   GLASS CARD
+========================= */
+
+.glass-card{
+
+  width:100%;
+
+  max-width:540px;
+
+  padding:28px;
+
+  border-radius:28px;
+
+  background:
+    rgba(15,25,40,.42);
+
+  border:
+    1px solid
+    rgba(180,220,255,.14);
+
+  backdrop-filter:
+    blur(18px);
+
+  box-shadow:
+    0 10px 40px
+    rgba(0,0,0,.28),
+
+    inset
+    0 1px 0
+    rgba(255,255,255,.05);
+}
+
+/* =========================
+   RESULT
+========================= */
+
+.roulette-result{
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  gap:18px;
+
+  margin-bottom:24px;
+}
+
+.roulette-item{
+
+  flex:1;
+
+  text-align:center;
+}
+
+.roulette-label{
+
+  font-size:14px;
+
+  color:
+    rgba(210,230,255,.68);
+
+  margin-bottom:10px;
+}
+
+.roulette-value{
+
+  font-size:22px;
+
+  font-weight:700;
+
+  color:white;
+
+  word-break:keep-all;
+
+  line-height:1.4;
+}
+
+.roulette-divider{
+
+  width:1px;
+
+  height:72px;
+
+  background:
+    rgba(255,255,255,.08);
+}
+
+/* =========================
+   BUTTON
+========================= */
+
+.spin-button{
+
+  width:100%;
+
+  height:58px;
+
+  border:none;
+
+  border-radius:18px;
+
+  cursor:pointer;
+
+  font-size:18px;
+
+  font-weight:700;
+
+  color:white;
+
+  background:
+
+    linear-gradient(
+      180deg,
+      #3b82f6 0%,
+      #2563eb 100%
+    );
+
+  box-shadow:
+    0 10px 24px
+    rgba(37,99,235,.32);
+
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease;
+}
+
+.spin-button:hover{
+
+  transform:
+    translateY(-2px);
+
+  box-shadow:
+    0 16px 30px
+    rgba(37,99,235,.42);
+}
+
+.spin-button:active{
+
+  transform:
+    scale(.98);
+}
