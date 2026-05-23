@@ -1,30 +1,73 @@
-// =========================
-// DOM CACHE
-// =========================
 export const dom = {
 
-  app:null,
-
-  roulette:null,
-
+  // =========================
+  // LIST
+  // =========================
   capList:null,
 
   swimList:null,
 
+  // =========================
+  // TITLE
+  // =========================
+  capTitle:null,
+
+  swimTitle:null,
+
+  // =========================
+  // RESULT
+  // =========================
   capResultImage:null,
-  capResultName:null,
 
   swimResultImage:null,
+
+  capResultName:null,
+
   swimResultName:null
 };
 
 // =========================
-// INIT DOM
+// INIT
 // =========================
 export function initDOM(){
 
-  dom.app =
+  dom.capList =
     document.getElementById(
-      "app"
+      "capList"
+    );
+
+  dom.swimList =
+    document.getElementById(
+      "swimList"
+    );
+
+  dom.capTitle =
+    document.getElementById(
+      "capTitle"
+    );
+
+  dom.swimTitle =
+    document.getElementById(
+      "swimTitle"
+    );
+
+  dom.capResultImage =
+    document.getElementById(
+      "capResultImage"
+    );
+
+  dom.swimResultImage =
+    document.getElementById(
+      "swimResultImage"
+    );
+
+  dom.capResultName =
+    document.getElementById(
+      "capResultName"
+    );
+
+  dom.swimResultName =
+    document.getElementById(
+      "swimResultName"
     );
 }
