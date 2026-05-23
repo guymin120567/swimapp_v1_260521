@@ -1,4 +1,4 @@
-import { resetDatabase } from "./database.js";
+import { resetDatabase } from "../db/database.js";
 
 await resetDatabase();
 
