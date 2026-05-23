@@ -13,6 +13,9 @@ const controller =
 // =========================
 async function start(){
 
+  const startedAt =
+    performance.now();
+
   try{
 
     // =========================
@@ -34,32 +37,53 @@ async function start(){
   finally{
 
     // =========================
-    // SPLASH REMOVE
+    // 최소 splash 유지시간
     // =========================
-    const splash =
-      document.getElementById(
-        "splash"
+    const MIN_SPLASH = 1600;
+
+    const elapsed =
+      performance.now() - startedAt;
+
+    const remain =
+      Math.max(
+        0,
+        MIN_SPLASH - elapsed
       );
-
-    const app =
-      document.getElementById(
-        "app"
-      );
-
-    requestAnimationFrame(()=>{
-
-      app.style.opacity = 1;
-
-      splash.classList.add(
-        "hide"
-      );
-    });
 
     setTimeout(()=>{
 
-      splash.remove();
+      const splash =
+        document.getElementById(
+          "splash"
+        );
 
-    },900);
+      const app =
+        document.getElementById(
+          "app"
+        );
+
+      requestAnimationFrame(()=>{
+
+        if(app){
+
+          app.style.opacity = 1;
+        }
+
+        if(splash){
+
+          splash.classList.add(
+            "hide"
+          );
+        }
+      });
+
+      setTimeout(()=>{
+
+        splash?.remove();
+
+      },900);
+
+    },remain);
   }
 }
 
