@@ -1,93 +1,125 @@
 import {
-  if(!target) return;
+  getState
+} from "../../state/state.js";
 
-  target.classList.remove(
-    "shuffle"
-  );
+import {
+  setSelectedCap,
+  setSelectedSwim
+} from "../../state/actions.js";
 
-  void target.offsetWidth;
+import {
+  renderRoulette
+} from "../../ui/render.js";
 
-  target.classList.add(
-    "shuffle"
-  );
+import {
+  saveState
+} from "../../../db/database.js";
+
+import {
+  SPIN_TOTAL_FRAME,
+  SPIN_BASE_DELAY,
+  SPIN_DELAY_STEP
+} from "../../constants/animation.js";
+
+export async function spinAll(){
+
+  const button =
+    document.querySelector(
+      ".spin-btn"
+    );
+
+  button.disabled = true;
+
+  button.innerText =
+    "돌리는 중...";
+
+  await Promise.all([
+
+    animateRoulette("cap"),
+
+    animateRoulette("swim")
+  ]);
+
+  button.disabled = false;
+
+  button.innerText =
+    "오늘 뭐 입지?";
 }
 
-// =========================
-// WINNER
-// =========================
-function triggerWinnerPulse(){
+export async function animateRoulette(type){
 
-  const cards =
-    document.querySelectorAll(
-      ".roulette-card"
-    );
+  const state =
+    getState();
 
-  cards.forEach(card=>{
+  const items =
+    type === "cap"
+    ? state.data.caps
+    : state.data.swimsuits;
 
-    card.classList.remove(
-      "winner"
-    );
+  if(!items.length) return;
 
-    void card.offsetWidth;
+  return new Promise(resolve=>{
 
-    card.classList.add(
-      "winner"
+    let frame = 0;
+
+    let lastTime = 0;
+
+    function loop(time){
+
+      const delay =
+        SPIN_BASE_DELAY +
+        Math.pow(frame,1.35) *
+        SPIN_DELAY_STEP;
+
+      if(time - lastTime > delay){
+
+        const randomIndex =
+          Math.floor(
+            Math.random() *
+            items.length
+          );
+
+        const selected =
+          items[randomIndex];
+
+        if(type === "cap"){
+
+          setSelectedCap(
+            selected.id
+          );
+        }
+        else{
+
+          setSelectedSwim(
+            selected.id
+          );
+        }
+
+        renderRoulette();
+
+        frame++;
+
+        lastTime = time;
+      }
+
+      if(frame < SPIN_TOTAL_FRAME){
+
+        requestAnimationFrame(
+          loop
+        );
+      }
+      else{
+
+        saveState(
+          getState()
+        );
+
+        resolve();
+      }
+    }
+
+    requestAnimationFrame(
+      loop
     );
   });
-}
-
-// =========================
-// CONFETTI
-// =========================
-function createConfetti(){
-
-  const colors = [
-
-    "#c084fc",
-    "#a855f7",
-    "#d8b4fe",
-    "#9333ea",
-    "#e9d5ff"
-  ];
-
-  for(let i=0;i<34;i++){
-
-    const confetti =
-      document.createElement(
-        "div"
-      );
-
-    confetti.className =
-      "confetti";
-
-    confetti.style.left =
-      Math.random() * 100 + "%";
-
-    confetti.style.animationDelay =
-      Math.random() * .35 + "s";
-
-    confetti.style.transform =
-      `rotate(${Math.random()*360}deg)`;
-
-    confetti.style.background =
-      colors[
-        Math.floor(
-          Math.random() *
-          colors.length
-        )
-      ];
-
-    confetti.style.opacity =
-      .85 + Math.random() * .15;
-
-    document.body.appendChild(
-      confetti
-    );
-
-    setTimeout(()=>{
-
-      confetti.remove();
-
-    },2400);
-  }
 }
