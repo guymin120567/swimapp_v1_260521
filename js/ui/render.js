@@ -1,4 +1,8 @@
 import {
+  renderLayout
+} from "./renderLayout.js";
+
+import {
   renderRoulette
 } from "./renderRoulette.js";
 
@@ -7,33 +11,35 @@ import {
 } from "./renderCoverflow.js";
 
 // =========================
-// FULL RENDER
+// FULL
 // =========================
 export function renderApp(){
 
-  renderRouletteOnly();
+  // =========================
+  // LAYOUT 먼저 생성
+  // =========================
+  renderLayout();
 
-  renderListsOnly();
+  // =========================
+  // 실제 데이터 렌더
+  // =========================
+  renderRoulette();
+
+  renderLists();
 }
 
 // =========================
-// ROULETTE
+// ROULETTE ONLY
 // =========================
 export function renderRouletteOnly(){
 
-  requestAnimationFrame(()=>{
-
-    renderRoulette();
-  });
+  renderRoulette();
 }
 
 // =========================
-// LISTS
+// LIST ONLY
 // =========================
 export function renderListsOnly(){
 
-  requestAnimationFrame(()=>{
-
-    renderLists();
-  });
+  renderLists();
 }
