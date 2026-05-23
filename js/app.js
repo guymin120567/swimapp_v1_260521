@@ -9,36 +9,58 @@ const controller =
   initController();
 
 // =========================
-// BOOT
+// START
 // =========================
 async function start(){
 
-  await controller.boot();
+  try{
 
-  // =========================
-  // SPLASH
-  // =========================
-  const splash =
-    document.getElementById(
-      "splash"
+    // =========================
+    // BOOT
+    // =========================
+    await controller.boot();
+
+    console.log(
+      "BOOT SUCCESS"
     );
+  }
+  catch(error){
 
-  requestAnimationFrame(()=>{
-
-    document
-      .getElementById("app")
-      .style.opacity = 1;
-
-    splash.classList.add(
-      "hide"
+    console.error(
+      "APP ERROR",
+      error
     );
-  });
+  }
+  finally{
 
-  setTimeout(()=>{
+    // =========================
+    // SPLASH REMOVE
+    // =========================
+    const splash =
+      document.getElementById(
+        "splash"
+      );
 
-    splash.remove();
+    const app =
+      document.getElementById(
+        "app"
+      );
 
-  },900);
+    requestAnimationFrame(()=>{
+
+      app.style.opacity = 1;
+
+      splash.classList.add(
+        "hide"
+      );
+    });
+
+    setTimeout(()=>{
+
+      splash.remove();
+
+    },900);
+  }
 }
 
 start();
