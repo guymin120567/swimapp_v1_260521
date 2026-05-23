@@ -1,147 +1,11 @@
 import {
-  getState
-} from "../../state/state.js";
-
-import {
-  setActiveCap,
-  setActiveSwim
-} from "../../state/actions.js";
-
-// =========================
-// DRAG CAROUSEL
-// =========================
-export function bindDrag(){
-
-  bindCarousel("cap");
-
-  bindCarousel("swim");
-}
-
-// =========================
-// BIND
-// =========================
-function bindCarousel(type){
-
-  const targetId =
-    type === "cap"
-    ? "capList"
-    : "swimList";
-
-  let dragging = false;
-
-  let startX = 0;
-
-  let startScroll = 0;
-
-  let moved = false;
-
-  document.addEventListener(
-    "pointerdown",
-    e=>{
-
-      const wrap =
-        e.target.closest(
-          `#${targetId}`
-        );
-
-      if(!wrap) return;
-
-      dragging = true;
-
-      moved = false;
-
-      startX =
-        e.clientX;
-
-      startScroll =
-        wrap.scrollLeft;
-
-      wrap.classList.add(
-        "dragging"
-      );
-    }
-  );
-
-  document.addEventListener(
-    "pointermove",
-    e=>{
-
-      if(!dragging) return;
-
-      const wrap =
-        document.getElementById(
-          targetId
-        );
-
-      if(!wrap) return;
-
-      const delta =
-        e.clientX - startX;
-
-      if(Math.abs(delta) > 4){
-
-        moved = true;
-      }
-
-      wrap.scrollLeft =
-        startScroll - delta;
-    }
-  );
-
-  document.addEventListener(
-    "pointerup",
-    ()=>{
-
-      if(!dragging) return;
-
-      dragging = false;
-
-      const wrap =
-        document.getElementById(
-          targetId
-        );
-
-      if(!wrap) return;
-
-      wrap.classList.remove(
-        "dragging"
-      );
-
-      snapToClosest(
-        wrap,
-        type
-      );
-    }
-  );
-}
-
-// =========================
-// SNAP
-// =========================
-function snapToClosest(
-  wrap,
-  type
-){
-
-  const cards =
-    [
-      ...wrap.querySelectorAll(
-        ".cover-card"
-      )
-    ];
-
-  if(!cards.length) return;
-
-  const wrapCenter =
-    wrap.scrollLeft +
-    wrap.clientWidth / 2;
 
   let closestIndex = 0;
 
   let closestDistance =
     Infinity;
 
-  cards.forEach((card,index)=>{
+  cards.forEach(card=>{
 
     const cardCenter =
       card.offsetLeft +
@@ -176,6 +40,8 @@ function snapToClosest(
       closestIndex
     );
   }
+
+  renderLists();
 
   centerCard(
     wrap,
