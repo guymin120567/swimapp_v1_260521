@@ -1,8 +1,4 @@
 import {
-  renderLayout
-} from "./renderLayout.js";
-
-import {
   renderRoulette
 } from "./renderRoulette.js";
 
@@ -10,37 +6,34 @@ import {
   renderLists
 } from "./renderCoverflow.js";
 
-let initialized = false;
-
-let renderScheduled = false;
-
 // =========================
-// APP RENDER
+// FULL RENDER
 // =========================
 export function renderApp(){
 
-  if(renderScheduled) return;
+  renderRouletteOnly();
 
-  renderScheduled = true;
+  renderListsOnly();
+}
+
+// =========================
+// ROULETTE
+// =========================
+export function renderRouletteOnly(){
 
   requestAnimationFrame(()=>{
 
-    renderScheduled = false;
-
-    if(!initialized){
-
-      renderLayout();
-
-      initialized = true;
-    }
-
     renderRoulette();
+  });
+}
+
+// =========================
+// LISTS
+// =========================
+export function renderListsOnly(){
+
+  requestAnimationFrame(()=>{
 
     renderLists();
   });
 }
-
-export {
-  renderRoulette,
-  renderLists
-};
