@@ -1,4 +1,88 @@
 const DB_NAME =
+  "swimRouletteDB";
+
+const DB_VERSION = 3;
+
+const STATE_STORE =
+  "stateStore";
+
+const STATE_KEY =
+  "main_state";
+
+let dbInstance = null;
+
+// =========================
+// OPEN DB
+// =========================
+async function openDB(){
+
+  if(dbInstance){
+
+    return dbInstance;
+  }
+
+  return new Promise(
+    (resolve,reject)=>{
+
+      const request =
+        indexedDB.open(
+          DB_NAME,
+          DB_VERSION
+        );
+
+      request.onupgradeneeded =
+        event=>{
+
+          const db =
+            event.target.result;
+
+          if(
+            !db.objectStoreNames.contains(
+              STATE_STORE
+            )
+          ){
+
+            db.createObjectStore(
+              STATE_STORE
+            );
+          }
+
+          if(
+            db.objectStoreNames.contains(
+              "appState"
+            )
+          ){
+
+            db.deleteObjectStore(
+              "appState"
+            );
+          }
+
+          if(
+            db.objectStoreNames.contains(
+              "imageStore"
+            )
+          ){
+
+            db.deleteObjectStore(
+              "imageStore"
+            );
+          }
+        };
+
+      request.onsuccess =
+        ()=>{
+
+          dbInstance =
+            request.result;
+
+          resolve(
+            dbInstance
+          );
+        };
+
+      request.onerror =
+        ()=>reject(
           request.error
         );
     }
