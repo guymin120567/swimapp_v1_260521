@@ -2,124 +2,94 @@ import {
   getState
 } from "../state/state.js";
 
-import {
-  dom
-} from "./dom.js";
-
 // =========================
-// RENDER
+// ROULETTE
 // =========================
 export function renderRoulette(){
 
-  if(
-    !dom.capResultName ||
-    !dom.swimResultName
-  ){
-    return;
-  }
+  const target =
+    document.getElementById(
+      "rouletteSection"
+    );
+
+  if(!target) return;
 
   const state =
     getState();
 
-  const selectedCap =
-    state.data.caps.find(
-      item =>
-        item.id ===
-        state.selection.capId
-    );
+  const cap =
+    state.selection.cap;
 
-  const selectedSwim =
-    state.data.swimsuits.find(
-      item =>
-        item.id ===
-        state.selection.swimId
-    );
+  const swim =
+    state.selection.swim;
 
-  updateRouletteCard(
-    "cap",
-    selectedCap
-  );
+  target.innerHTML = `
 
-  updateRouletteCard(
-    "swim",
-    selectedSwim
-  );
-}
+    <div class="roulette-bg"></div>
 
-// =========================
-// CARD
-// =========================
-function updateRouletteCard(
-  type,
-  item
-){
+    <div class="roulette-overlay"></div>
 
-  const image =
-    type === "cap"
-    ? dom.capResultImage
-    : dom.swimResultImage;
+    <div class="roulette-content">
 
-  const name =
-    type === "cap"
-    ? dom.capResultName
-    : dom.swimResultName;
+      <div class="roulette-title">
+        🎰 오늘 뭐 입지?
+      </div>
 
-  const placeholder =
-    type === "cap"
-    ? dom.capResultPlaceholder
-    : dom.swimResultPlaceholder;
+      <div class="roulette-card glass-card">
 
-  if(
-    !image ||
-    !name ||
-    !placeholder
-  ){
-    return;
-  }
+        <div class="roulette-result">
 
-  // =========================
-  // EMPTY
-  // =========================
-  if(!item){
+          <div class="roulette-item">
 
-    image.style.display =
-      "none";
+            <div class="roulette-label">
+              🧢 수모
+            </div>
 
-    placeholder.style.display =
-      "flex";
+            <div
+              id="rouletteCap"
+              class="roulette-value"
+            >
+              ${
+                cap
+                  ? cap.name
+                  : "없음"
+              }
+            </div>
 
-    name.innerText =
-      "없음";
+          </div>
 
-    return;
-  }
+          <div class="roulette-divider"></div>
 
-  // =========================
-  // TITLE
-  // =========================
-  name.innerText =
-    item.name;
+          <div class="roulette-item">
 
-  // =========================
-  // IMAGE
-  // =========================
-  if(item.image){
+            <div class="roulette-label">
+              🩳 수영복
+            </div>
 
-    image.src =
-      item.image;
+            <div
+              id="rouletteSwim"
+              class="roulette-value"
+            >
+              ${
+                swim
+                  ? swim.name
+                  : "없음"
+              }
+            </div>
 
-    image.style.display =
-      "block";
+          </div>
 
-    placeholder.style.display =
-      "none";
-  }
-  else{
+        </div>
 
-    image.style.display =
-      "none";
+        <button
+          id="spinButton"
+          class="spin-button"
+        >
+          🎲 돌리기
+        </button>
 
-    placeholder.style.display =
-      "flex";
-  }
+      </div>
+
+    </div>
+  `;
 }
