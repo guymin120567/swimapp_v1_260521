@@ -15,31 +15,31 @@ import {
 // =========================
 export function renderApp(){
 
-  // =========================
-  // LAYOUT 먼저 생성
-  // =========================
   renderLayout();
 
-  // =========================
-  // 실제 데이터 렌더
-  // =========================
   renderRoulette();
 
   renderLists();
 }
 
 // =========================
-// ROULETTE ONLY
+// ROULETTE
 // =========================
 export function renderRouletteOnly(){
 
-  renderRoulette();
+  requestAnimationFrame(()=>{
+
+    renderRoulette();
+  });
 }
 
 // =========================
-// LIST ONLY
+// LIST
 // =========================
 export function renderListsOnly(){
 
-  renderLists();
+  requestAnimationFrame(()=>{
+
+    renderLists();
+  });
 }
