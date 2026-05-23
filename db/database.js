@@ -167,3 +167,26 @@ export async function loadState(){
     }
   );
 }
+
+// =========================
+// RESET (DEV ONLY)
+// =========================
+export function resetDatabase() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.deleteDatabase("swimDB");
+
+    request.onsuccess = () => {
+      console.log("DB RESET SUCCESS");
+      resolve();
+    };
+
+    request.onerror = () => {
+      console.error("DB RESET FAIL");
+      reject(request.error);
+    };
+
+    request.onblocked = () => {
+      console.warn("DB RESET BLOCKED (close other tabs)");
+    };
+  });
+}
