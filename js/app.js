@@ -1,6 +1,6 @@
 import {
   initController
-} from "./js/core/controller.js";
+} from "./core/controller.js";
 
 // =========================
 // CONTROLLER
