@@ -222,23 +222,22 @@ export function initController(){
   // =========================
   // ACTIVE
   // =========================
-  function setActiveIndex(
-    type,
-    index
-  ){
+ function setActiveIndex(
+  type,
+  index
+){
 
-    if(type === "cap"){
+  if(type === "cap"){
 
-      setActiveCap(index);
-    }
-    else{
+    setActiveCap(index);
+  }
+  else{
 
-      setActiveSwim(index);
-    }
-
-    renderListsOnly();
+    setActiveSwim(index);
   }
 
+  renderListsOnly();
+}
   // =========================
   // EVENTS
   // =========================
