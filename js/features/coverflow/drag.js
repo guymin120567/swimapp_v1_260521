@@ -1,25 +1,14 @@
 import {
-  getState
-} from "../../state/state.js";
-
-import {
   setActiveCap,
-  setActiveSwim,
-  setSelectedCap,
-  setSelectedSwim
+  setActiveSwim
 } from "../../state/actions.js";
 
 import {
-  renderListsOnly,
-  renderRouletteOnly
+  renderListsOnly
 } from "../../ui/render.js";
 
-import {
-  saveState
-} from "../../../db/database.js";
-
 // =========================
-// DRAG CAROUSEL
+// DRAG
 // =========================
 export function bindDrag(){
 
@@ -94,7 +83,7 @@ function bindCarousel(type){
 
   document.addEventListener(
     "pointerup",
-    async ()=>{
+    ()=>{
 
       if(!dragging) return;
 
@@ -111,7 +100,7 @@ function bindCarousel(type){
         "dragging"
       );
 
-      await snapToClosest(
+      snapToClosest(
         wrap,
         type
       );
@@ -122,18 +111,10 @@ function bindCarousel(type){
 // =========================
 // SNAP
 // =========================
-async function snapToClosest(
+function snapToClosest(
   wrap,
   type
 ){
-
-  const state =
-    getState();
-
-  const items =
-    type === "cap"
-    ? state.data.caps
-    : state.data.swimsuits;
 
   const cards =
     [
@@ -176,17 +157,13 @@ async function snapToClosest(
     }
   });
 
-  const selected =
-    items[closestIndex];
-
+  // =========================
+  // ACTIVE ONLY
+  // =========================
   if(type === "cap"){
 
     setActiveCap(
       closestIndex
-    );
-
-    setSelectedCap(
-      selected?.id || null
     );
   }
   else{
@@ -194,23 +171,13 @@ async function snapToClosest(
     setActiveSwim(
       closestIndex
     );
-
-    setSelectedSwim(
-      selected?.id || null
-    );
   }
 
   renderListsOnly();
 
-  renderRouletteOnly();
-
   centerCard(
     wrap,
     closestIndex
-  );
-
-  await saveState(
-    getState()
   );
 }
 
