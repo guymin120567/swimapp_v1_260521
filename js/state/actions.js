@@ -1,66 +1,13 @@
 import {
-  getState,
-  setState
-} from "./state.js";
-
-// =========================
-// CAP
-// =========================
-export function addCap(item){
-
-  const state =
-    getState();
-
-  setState({
 
     ...state,
 
-    caps:[
-      ...state.caps,
-      item
-    ]
-  });
-}
+    selection:{
 
-export function removeCap(id){
+      ...state.selection,
 
-  const state =
-    getState();
-
-  setState({
-
-    ...state,
-
-    caps:
-      state.caps.filter(
-        item => item.id !== id
-      )
-  });
-}
-
-export function setActiveCap(index){
-
-  const state =
-    getState();
-
-  setState({
-
-    ...state,
-
-    activeCapIndex:index
-  });
-}
-
-export function setSelectedCap(item){
-
-  const state =
-    getState();
-
-  setState({
-
-    ...state,
-
-    selectedCap:item
+      capId:id
+    }
   });
 }
 
@@ -76,10 +23,15 @@ export function addSwim(item){
 
     ...state,
 
-    swimsuits:[
-      ...state.swimsuits,
-      item
-    ]
+    data:{
+
+      ...state.data,
+
+      swimsuits:[
+        ...state.data.swimsuits,
+        item
+      ]
+    }
   });
 }
 
@@ -92,10 +44,15 @@ export function removeSwim(id){
 
     ...state,
 
-    swimsuits:
-      state.swimsuits.filter(
-        item => item.id !== id
-      )
+    data:{
+
+      ...state.data,
+
+      swimsuits:
+        state.data.swimsuits.filter(
+          item => item.id !== id
+        )
+    }
   });
 }
 
@@ -108,11 +65,16 @@ export function setActiveSwim(index){
 
     ...state,
 
-    activeSwimIndex:index
+    ui:{
+
+      ...state.ui,
+
+      activeSwimIndex:index
+    }
   });
 }
 
-export function setSelectedSwim(item){
+export function setSelectedSwim(id){
 
   const state =
     getState();
@@ -121,6 +83,11 @@ export function setSelectedSwim(item){
 
     ...state,
 
-    selectedSwim:item
+    selection:{
+
+      ...state.selection,
+
+      swimId:id
+    }
   });
 }
