@@ -6,17 +6,20 @@ import {
   dom
 } from "./dom.js";
 
+// =========================
+// LISTS
+// =========================
 export function renderLists(){
 
-  const state =
-    getState();
-
   if(
-    !dom.capTitle ||
-    !dom.swimTitle
+    !dom.capList ||
+    !dom.swimList
   ){
     return;
   }
+
+  const state =
+    getState();
 
   dom.capTitle.innerText =
     `🧢 수모 (${state.data.caps.length})`;
@@ -28,14 +31,16 @@ export function renderLists(){
     dom.capList,
     state.data.caps,
     state.ui.activeCapIndex,
-    "cap"
+    "cap",
+    state.selection.capId
   );
 
   updateList(
     dom.swimList,
     state.data.swimsuits,
     state.ui.activeSwimIndex,
-    "swim"
+    "swim",
+    state.selection.swimId
   );
 
   requestAnimationFrame(()=>{
@@ -52,11 +57,15 @@ export function renderLists(){
   });
 }
 
+// =========================
+// UPDATE
+// =========================
 function updateList(
   target,
   items,
   activeIndex,
-  type
+  type,
+  selectedId
 ){
 
   if(!items.length){
@@ -83,6 +92,9 @@ function updateList(
 
         const active =
           index === activeIndex;
+
+        const selected =
+          item.id === selectedId;
 
         let scale = 1;
 
@@ -130,7 +142,12 @@ function updateList(
 
         return `
           <div
-            class="cover-card ${active ? "active" : ""}"
+            class="
+              cover-card
+              ${active ? "active" : ""}
+              ${selected ? "selected" : ""}
+            "
+
             data-type="${type}"
             data-index="${index}"
 
