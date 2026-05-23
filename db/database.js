@@ -167,30 +167,3 @@ export async function loadState(){
     }
   );
 }
-
-// =========================
-// RESET (DEV ONLY)
-// =========================
-export function resetDatabase() {
-  return new Promise((resolve, reject) => {
-
-    // 1. 강제로 연결 끊기
-    dbInstance = null;
-
-    const request = indexedDB.deleteDatabase("swimRouletteDB");
-
-    request.onsuccess = () => {
-      console.log("DB RESET SUCCESS");
-      resolve();
-    };
-
-    request.onerror = () => {
-      console.error("DB RESET FAIL");
-      reject(request.error);
-    };
-
-    request.onblocked = () => {
-      console.warn("DB RESET BLOCKED (close tabs / refresh app)");
-    };
-  });
-}
