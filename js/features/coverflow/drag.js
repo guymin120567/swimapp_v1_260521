@@ -1,12 +1,26 @@
 import {
+  getState
+} from "../../state/state.js";
+
+import {
   setActiveCap,
-  setActiveSwim
+  setActiveSwim,
+  setSelectedCap,
+  setSelectedSwim
 } from "../../state/actions.js";
 
 import {
-  renderListsOnly
+  renderListsOnly,
+  renderRouletteOnly
 } from "../../ui/render.js";
 
+import {
+  saveState
+} from "../../../db/database.js";
+
+// =========================
+// DRAG CAROUSEL
+// =========================
 export function bindDrag(){
 
   bindCarousel("cap");
@@ -14,6 +28,9 @@ export function bindDrag(){
   bindCarousel("swim");
 }
 
+// =========================
+// BIND
+// =========================
 function bindCarousel(type){
 
   const targetId =
@@ -77,7 +94,7 @@ function bindCarousel(type){
 
   document.addEventListener(
     "pointerup",
-    ()=>{
+    async ()=>{
 
       if(!dragging) return;
 
@@ -94,7 +111,7 @@ function bindCarousel(type){
         "dragging"
       );
 
-      snapToClosest(
+      await snapToClosest(
         wrap,
         type
       );
@@ -102,10 +119,21 @@ function bindCarousel(type){
   );
 }
 
-function snapToClosest(
+// =========================
+// SNAP
+// =========================
+async function snapToClosest(
   wrap,
   type
 ){
+
+  const state =
+    getState();
+
+  const items =
+    type === "cap"
+    ? state.data.caps
+    : state.data.swimsuits;
 
   const cards =
     [
@@ -148,10 +176,17 @@ function snapToClosest(
     }
   });
 
+  const selected =
+    items[closestIndex];
+
   if(type === "cap"){
 
     setActiveCap(
       closestIndex
+    );
+
+    setSelectedCap(
+      selected?.id || null
     );
   }
   else{
@@ -159,16 +194,29 @@ function snapToClosest(
     setActiveSwim(
       closestIndex
     );
+
+    setSelectedSwim(
+      selected?.id || null
+    );
   }
 
   renderListsOnly();
+
+  renderRouletteOnly();
 
   centerCard(
     wrap,
     closestIndex
   );
+
+  await saveState(
+    getState()
+  );
 }
 
+// =========================
+// CENTER
+// =========================
 function centerCard(
   wrap,
   index
