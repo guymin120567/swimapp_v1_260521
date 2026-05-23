@@ -1,4 +1,18 @@
 import {
+  getState
+} from "../state/state.js";
+
+import {
+  dom
+} from "./dom.js";
+
+export function renderRoulette(){
+
+  const state =
+    getState();
+
+  const selectedCap =
+    state.data.caps.find(
       item =>
         item.id ===
         state.selection.capId
@@ -22,9 +36,6 @@ import {
   );
 }
 
-// =========================
-// CARD
-// =========================
 function updateRouletteCard(
   type,
   item
