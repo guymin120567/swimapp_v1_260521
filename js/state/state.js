@@ -7,11 +7,14 @@ export const defaultState = {
     swimsuits:[]
   },
 
+  // =========================
+  // SELECTED OBJECT
+  // =========================
   selection:{
 
-    capId:null,
+    cap:null,
 
-    swimId:null
+    swim:null
   },
 
   ui:{
