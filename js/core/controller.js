@@ -15,7 +15,8 @@ import {
 
 import {
   renderApp,
-  renderLists
+  renderListsOnly,
+  renderRouletteOnly
 } from "../ui/render.js";
 
 import {
@@ -115,15 +116,13 @@ export function initController(){
   }
 
   // =========================
-  // UPDATE
+  // SAVE
   // =========================
-  async function update(){
+  async function persist(){
 
     await saveState(
       getState()
     );
-
-    renderApp();
   }
 
   // =========================
@@ -187,7 +186,9 @@ export function initController(){
       "itemImage"
     ).value = "";
 
-    await update();
+    renderListsOnly();
+
+    await persist();
   }
 
   // =========================
@@ -213,11 +214,9 @@ export function initController(){
       removeSwim(id);
     }
 
-    renderLists();
+    renderListsOnly();
 
-    await saveState(
-      getState()
-    );
+    await persist();
   }
 
   // =========================
@@ -237,7 +236,7 @@ export function initController(){
       setActiveSwim(index);
     }
 
-    renderLists();
+    renderListsOnly();
   }
 
   // =========================
@@ -255,6 +254,8 @@ export function initController(){
         if(action === "spin"){
 
           await spinAll();
+
+          renderRouletteOnly();
         }
 
         if(action === "add"){
