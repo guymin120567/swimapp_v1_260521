@@ -1,14 +1,20 @@
 import {
-  dom
+  dom,
+  cacheDOM
 } from "./dom.js";
 
+// =========================
+// LAYOUT
+// =========================
 export function renderLayout(){
 
-  if(
-    document.getElementById(
-      "capList"
-    )
-  ){
+  // =========================
+  // 이미 생성됨
+  // =========================
+  if(dom.initialized){
+
+    cacheDOM();
+
     return;
   }
 
@@ -179,43 +185,7 @@ export function renderLayout(){
   </div>
   `;
 
-  dom.capList =
-    document.getElementById(
-      "capList"
-    );
+  dom.initialized = true;
 
-  dom.swimList =
-    document.getElementById(
-      "swimList"
-    );
-
-  dom.capTitle =
-    document.getElementById(
-      "capTitle"
-    );
-
-  dom.swimTitle =
-    document.getElementById(
-      "swimTitle"
-    );
-
-  dom.capResultImage =
-    document.getElementById(
-      "capResultImage"
-    );
-
-  dom.swimResultImage =
-    document.getElementById(
-      "swimResultImage"
-    );
-
-  dom.capResultName =
-    document.getElementById(
-      "capResultName"
-    );
-
-  dom.swimResultName =
-    document.getElementById(
-      "swimResultName"
-    );
+  cacheDOM();
 }
