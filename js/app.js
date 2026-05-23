@@ -1,22 +1,44 @@
 import {
   initController
-} from "./core/controller.js";
+} from "./js/core/controller.js";
 
-document.addEventListener(
-  "DOMContentLoaded",
-  async ()=>{
+// =========================
+// CONTROLLER
+// =========================
+const controller =
+  initController();
 
-    console.log(
-      "DOM LOADED"
+// =========================
+// BOOT
+// =========================
+async function start(){
+
+  await controller.boot();
+
+  // =========================
+  // SPLASH
+  // =========================
+  const splash =
+    document.getElementById(
+      "splash"
     );
 
-    const app =
-      initController();
+  requestAnimationFrame(()=>{
 
-    await app.boot();
+    document
+      .getElementById("app")
+      .style.opacity = 1;
 
-    console.log(
-      "APP READY"
+    splash.classList.add(
+      "hide"
     );
-  }
-);
+  });
+
+  setTimeout(()=>{
+
+    splash.remove();
+
+  },900);
+}
+
+start();
