@@ -94,16 +94,16 @@ export async function animateRoulette(type){
 
         if(type === "cap"){
 
-          setSelectedCap(
-            selected.id
-          );
-        }
-        else{
+  setSelectedCap(
+    selected
+  );
+}
+else{
 
-          setSelectedSwim(
-            selected.id
-          );
-        }
+  setSelectedSwim(
+    selected
+  );
+}
 
         renderRouletteOnly();
 
