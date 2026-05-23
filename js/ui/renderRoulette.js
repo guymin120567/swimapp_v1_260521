@@ -11,6 +11,13 @@ import {
 // =========================
 export function renderRoulette(){
 
+  if(
+    !dom.capResultName ||
+    !dom.swimResultName
+  ){
+    return;
+  }
+
   const state =
     getState();
 
@@ -58,15 +65,10 @@ function updateRouletteCard(
     : dom.swimResultName;
 
   const placeholder =
-    document.getElementById(
-      type === "cap"
-      ? "capResultPlaceholder"
-      : "swimResultPlaceholder"
-    );
+    type === "cap"
+    ? dom.capResultPlaceholder
+    : dom.swimResultPlaceholder;
 
-  // =========================
-  // NULL GUARD
-  // =========================
   if(
     !image ||
     !name ||
