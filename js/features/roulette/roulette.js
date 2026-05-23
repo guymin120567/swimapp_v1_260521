@@ -28,8 +28,10 @@ export async function spinAll(){
 
   const button =
     document.querySelector(
-      ".spin-btn"
+      ".spin-button"
     );
+
+  if(!button) return;
 
   button.disabled = true;
 
@@ -50,7 +52,7 @@ export async function spinAll(){
   button.disabled = false;
 
   button.innerText =
-    "오늘 뭐 입지?";
+    "🎲 돌리기";
 }
 
 // =========================
@@ -92,18 +94,21 @@ export async function animateRoulette(type){
         const selected =
           items[randomIndex];
 
+        // =========================
+        // SAVE OBJECT
+        // =========================
         if(type === "cap"){
 
-  setSelectedCap(
-    selected
-  );
-}
-else{
+          setSelectedCap(
+            selected
+          );
+        }
+        else{
 
-  setSelectedSwim(
-    selected
-  );
-}
+          setSelectedSwim(
+            selected
+          );
+        }
 
         renderRouletteOnly();
 
@@ -144,8 +149,8 @@ function triggerShuffle(type){
   const target =
     document.querySelector(
       type === "cap"
-      ? ".roulette-slot:first-child .roulette-card"
-      : ".roulette-slot:last-child .roulette-card"
+      ? ".roulette-item:first-child .roulette-value"
+      : ".roulette-item:last-child .roulette-value"
     );
 
   if(!target) return;
@@ -168,7 +173,7 @@ function triggerWinnerPulse(){
 
   const cards =
     document.querySelectorAll(
-      ".roulette-card"
+      ".glass-card"
     );
 
   cards.forEach(card=>{
@@ -192,11 +197,11 @@ function createConfetti(){
 
   const colors = [
 
-    "#c084fc",
-    "#a855f7",
-    "#d8b4fe",
-    "#9333ea",
-    "#e9d5ff"
+    "#60a5fa",
+    "#3b82f6",
+    "#93c5fd",
+    "#2563eb",
+    "#dbeafe"
   ];
 
   for(let i=0;i<34;i++){
