@@ -6,6 +6,9 @@ import {
   dom
 } from "./dom.js";
 
+// =========================
+// RENDER
+// =========================
 export function renderRoulette(){
 
   const state =
@@ -36,6 +39,9 @@ export function renderRoulette(){
   );
 }
 
+// =========================
+// CARD
+// =========================
 function updateRouletteCard(
   type,
   item
@@ -58,6 +64,20 @@ function updateRouletteCard(
       : "swimResultPlaceholder"
     );
 
+  // =========================
+  // NULL GUARD
+  // =========================
+  if(
+    !image ||
+    !name ||
+    !placeholder
+  ){
+    return;
+  }
+
+  // =========================
+  // EMPTY
+  // =========================
   if(!item){
 
     image.style.display =
@@ -72,9 +92,15 @@ function updateRouletteCard(
     return;
   }
 
+  // =========================
+  // TITLE
+  // =========================
   name.innerText =
     item.name;
 
+  // =========================
+  // IMAGE
+  // =========================
   if(item.image){
 
     image.src =
