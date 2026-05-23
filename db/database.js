@@ -173,7 +173,7 @@ export async function loadState(){
 // =========================
 export function resetDatabase() {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.deleteDatabase("swimDB");
+    const request = indexedDB.deleteDatabase("swimRouletteDB");
 
     request.onsuccess = () => {
       console.log("DB RESET SUCCESS");
