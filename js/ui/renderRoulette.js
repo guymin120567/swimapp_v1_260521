@@ -1,26 +1,24 @@
 import {
-  getState
-} from "../state/state.js";
+      item =>
+        item.id ===
+        state.selection.capId
+    );
 
-import {
-  dom
-} from "./dom.js";
-
-// =========================
-// RENDER
-// =========================
-export function renderRoulette(){
-
-  const state = getState();
+  const selectedSwim =
+    state.data.swimsuits.find(
+      item =>
+        item.id ===
+        state.selection.swimId
+    );
 
   updateRouletteCard(
     "cap",
-    state.selectedCap
+    selectedCap
   );
 
   updateRouletteCard(
     "swim",
-    state.selectedSwim
+    selectedSwim
   );
 }
 
