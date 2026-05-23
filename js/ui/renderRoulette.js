@@ -1,32 +1,20 @@
-import {
-  getState
-} from "../state/state.js";
+import { getState } from "../state/state.js";
 
 // =========================
 // ROULETTE
 // =========================
-export function renderRoulette(){
+export function renderRoulette() {
 
-  const target =
-    document.getElementById(
-      "rouletteSection"
-    );
+  const target = document.getElementById("rouletteSection");
+  if (!target) return;
 
-  if(!target) return;
+  const state = getState();
 
-  const state =
-    getState();
-
-  const cap =
-    state.selection.cap;
-
-  const swim =
-    state.selection.swim;
+  const cap = state.selection.cap;
+  const swim = state.selection.swim;
 
   target.innerHTML = `
-
     <div class="roulette-bg"></div>
-
     <div class="roulette-overlay"></div>
 
     <div class="roulette-content">
@@ -40,54 +28,63 @@ export function renderRoulette(){
         <div class="roulette-result">
 
           <div class="roulette-item">
-
-            <div class="roulette-label">
-              🧢 수모
+            <div class="roulette-label">🧢 수모</div>
+            <div class="roulette-value">
+              ${cap?.name ?? "아직 선택 안됨"}
             </div>
-
-            <div
-              id="rouletteCap"
-              class="roulette-value"
-            >
-              ${
-                cap?.name ||
-                "선택 없음"
-              }
-            </div>
-
           </div>
 
           <div class="roulette-divider"></div>
 
           <div class="roulette-item">
-
-            <div class="roulette-label">
-              🩳 수영복
+            <div class="roulette-label">🩳 수영복</div>
+            <div class="roulette-value">
+              ${swim?.name ?? "아직 선택 안됨"}
             </div>
-
-            <div
-              id="rouletteSwim"
-              class="roulette-value"
-            >
-              ${
-                swim?.name ||
-                "선택 없음"
-              }
-            </div>
-
           </div>
 
         </div>
 
-        <button
-          id="spinButton"
-          class="spin-button"
-        >
+        <button id="spinButton" class="spin-button">
           🎲 돌리기
         </button>
 
       </div>
-
     </div>
   `;
+
+  bindSpin();
+}
+
+// =========================
+// SPIN BUTTON
+// =========================
+function bindSpin() {
+
+  const btn = document.getElementById("spinButton");
+  if (!btn) return;
+
+  btn.onclick = () => {
+
+    const state = getState();
+
+    const caps = state.data.caps;
+    const swims = state.data.swimsuits;
+
+    if (!caps.length || !swims.length) {
+      console.warn("DATA EMPTY");
+      return;
+    }
+
+    const randomCap =
+      caps[Math.floor(Math.random() * caps.length)];
+
+    const randomSwim =
+      swims[Math.floor(Math.random() * swims.length)];
+
+    state.selection.cap = randomCap;
+    state.selection.swim = randomSwim;
+
+    renderRoulette();
+  };
 }
