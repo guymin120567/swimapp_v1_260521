@@ -1,3 +1,7 @@
+import { resetDatabase } from "./database.js";
+
+await resetDatabase();
+
 import {
   initController
 } from "./core/controller.js";
