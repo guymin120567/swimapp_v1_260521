@@ -8,7 +8,7 @@ import {
 } from "../../state/actions.js";
 
 import {
-  renderRoulette
+  renderRouletteOnly
 } from "../../ui/render.js";
 
 import {
@@ -105,7 +105,7 @@ export async function animateRoulette(type){
           );
         }
 
-        renderRoulette();
+        renderRouletteOnly();
 
         triggerShuffle(type);
 
