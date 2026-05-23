@@ -717,3 +717,11 @@ body{
       translateY(0);
   }
 }
+
+#app{
+
+  opacity:0;
+
+  transition:
+    opacity .8s ease;
+}
