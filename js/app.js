@@ -1,6 +1,3 @@
-import { resetDatabase } from "../db/database.js";
-
-
 import {
   initController
 } from "./core/controller.js";
@@ -16,8 +13,6 @@ const controller =
 // =========================
 async function start(){
 
-  
-await resetDatabase();
   
   const startedAt =
     performance.now();
