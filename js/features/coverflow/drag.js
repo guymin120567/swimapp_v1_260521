@@ -4,7 +4,7 @@ import {
 } from "../../state/actions.js";
 
 import {
-  renderLists
+  renderListsOnly
 } from "../../ui/render.js";
 
 export function bindDrag(){
@@ -161,7 +161,7 @@ function snapToClosest(
     );
   }
 
-  renderLists();
+  renderListsOnly();
 
   centerCard(
     wrap,
