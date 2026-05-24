@@ -1,27 +1,142 @@
 import {
-  getState
+  getState,
+  setState
 } from "./state.js";
 
 // =========================
-// SET CAP
+// CAP
 // =========================
-export function setSelectedCap(id) {
+export function addCap(item){
 
   const state =
     getState();
 
-  state.selection.capId =
-    id;
+  setState({
+
+    ...state,
+
+    data:{
+
+      ...state.data,
+
+      caps:[
+        ...state.data.caps,
+        item
+      ]
+    }
+  });
 }
 
 // =========================
-// SET SWIM
+// SWIM
 // =========================
-export function setSelectedSwim(id) {
+export function addSwim(item){
 
   const state =
     getState();
 
-  state.selection.swimId =
-    id;
+  setState({
+
+    ...state,
+
+    data:{
+
+      ...state.data,
+
+      swimsuits:[
+        ...state.data.swimsuits,
+        item
+      ]
+    }
+  });
+}
+
+// =========================
+// REMOVE CAP
+// =========================
+export function removeCap(id){
+
+  const state =
+    getState();
+
+  setState({
+
+    ...state,
+
+    data:{
+
+      ...state.data,
+
+      caps:
+        state.data.caps.filter(
+          item=>item.id !== id
+        )
+    }
+  });
+}
+
+// =========================
+// REMOVE SWIM
+// =========================
+export function removeSwim(id){
+
+  const state =
+    getState();
+
+  setState({
+
+    ...state,
+
+    data:{
+
+      ...state.data,
+
+      swimsuits:
+        state.data.swimsuits.filter(
+          item=>item.id !== id
+        )
+    }
+  });
+}
+
+// =========================
+// ACTIVE CAP
+// =========================
+export function setActiveCap(index){
+
+  const state =
+    getState();
+
+  setState({
+
+    ...state,
+
+    ui:{
+
+      ...state.ui,
+
+      activeCapIndex:index
+    }
+  });
+}
+
+// =========================
+// ACTIVE SWIM
+// =========================
+export function setActiveSwim(index){
+
+  const state =
+    getState();
+
+  setState({
+
+    ...state,
+
+    ui:{
+
+      ...state.ui,
+
+      activeSwimIndex:index
+    }
+  });
 }
