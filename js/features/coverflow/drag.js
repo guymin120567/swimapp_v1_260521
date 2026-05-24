@@ -1,9 +1,4 @@
 import {
-  setActiveCap,
-  setActiveSwim
-} from "../../state/actions.js";
-
-import {
   renderListsOnly
 } from "../../ui/render.js";
 
@@ -24,8 +19,24 @@ function bindCarousel(type){
 
   const targetId =
     type === "cap"
-    ? "capList"
-    : "swimList";
+      ? "capList"
+      : "swimList";
+
+  const wrap =
+    document.getElementById(
+      targetId
+    );
+
+  if(!wrap) return;
+
+  // =========================
+  // 중복 방지
+  // =========================
+  if(wrap.dataset.dragBound){
+    return;
+  }
+
+  wrap.dataset.dragBound = "true";
 
   let dragging = false;
 
@@ -33,16 +44,12 @@ function bindCarousel(type){
 
   let startScroll = 0;
 
-  document.addEventListener(
+  // =========================
+  // POINTER DOWN
+  // =========================
+  wrap.addEventListener(
     "pointerdown",
     e=>{
-
-      const wrap =
-        e.target.closest(
-          `#${targetId}`
-        );
-
-      if(!wrap) return;
 
       dragging = true;
 
@@ -55,33 +62,30 @@ function bindCarousel(type){
       wrap.classList.add(
         "dragging"
       );
-    },
-    { passive:true }
+    }
   );
 
-  document.addEventListener(
+  // =========================
+  // POINTER MOVE
+  // =========================
+  wrap.addEventListener(
     "pointermove",
     e=>{
 
       if(!dragging) return;
-
-      const wrap =
-        document.getElementById(
-          targetId
-        );
-
-      if(!wrap) return;
 
       const delta =
         e.clientX - startX;
 
       wrap.scrollLeft =
         startScroll - delta;
-    },
-    { passive:true }
+    }
   );
 
-  document.addEventListener(
+  // =========================
+  // POINTER UP
+  // =========================
+  window.addEventListener(
     "pointerup",
     ()=>{
 
@@ -89,22 +93,47 @@ function bindCarousel(type){
 
       dragging = false;
 
-      const wrap =
-        document.getElementById(
-          targetId
-        );
-
-      if(!wrap) return;
-
       wrap.classList.remove(
         "dragging"
       );
 
       snapToClosest(
-        wrap,
-        type
+        wrap
       );
     }
+  );
+
+  // =========================
+  // TOUCH START
+  // =========================
+  wrap.addEventListener(
+    "touchstart",
+    e=>{
+
+      startX =
+        e.touches[0].clientX;
+
+      startScroll =
+        wrap.scrollLeft;
+    },
+    { passive:true }
+  );
+
+  // =========================
+  // TOUCH MOVE
+  // =========================
+  wrap.addEventListener(
+    "touchmove",
+    e=>{
+
+      const delta =
+        e.touches[0].clientX -
+        startX;
+
+      wrap.scrollLeft =
+        startScroll - delta;
+    },
+    { passive:true }
   );
 }
 
@@ -112,8 +141,7 @@ function bindCarousel(type){
 // SNAP
 // =========================
 function snapToClosest(
-  wrap,
-  type
+  wrap
 ){
 
   const cards =
@@ -129,7 +157,7 @@ function snapToClosest(
     wrap.scrollLeft +
     wrap.clientWidth / 2;
 
-  let closestIndex = 0;
+  let closestCard = null;
 
   let closestDistance =
     Infinity;
@@ -150,35 +178,25 @@ function snapToClosest(
       closestDistance =
         distance;
 
-      closestIndex =
-        Number(
-          card.dataset.index
-        );
+      closestCard =
+        card;
     }
   });
 
-  // =========================
-  // ACTIVE ONLY
-  // =========================
-  if(type === "cap"){
-
-    setActiveCap(
-      closestIndex
-    );
-  }
-  else{
-
-    setActiveSwim(
-      closestIndex
-    );
-  }
-
-  renderListsOnly();
+  if(!closestCard) return;
 
   centerCard(
     wrap,
-    closestIndex
+    closestCard
   );
+
+  // =========================
+  // active 연출만 갱신
+  // =========================
+  requestAnimationFrame(()=>{
+
+    renderListsOnly();
+  });
 }
 
 // =========================
@@ -186,15 +204,8 @@ function snapToClosest(
 // =========================
 function centerCard(
   wrap,
-  index
+  target
 ){
-
-  const target =
-    wrap.querySelector(
-      `.cover-card[data-index="${index}"]`
-    );
-
-  if(!target) return;
 
   const left =
     target.offsetLeft -
