@@ -8,8 +8,8 @@ import {
 } from "../../state/actions.js";
 
 import {
-  renderRouletteOnly
-} from "../../ui/render.js";
+  updateRouletteValues
+} from "../../ui/renderRoulette.js";
 
 import {
   saveState
@@ -24,12 +24,14 @@ import {
 // =========================
 // SPIN ALL
 // =========================
-export async function spinAll(){
+export async function spinAll() {
 
   const button =
-    document.querySelector(
-      ".spin-btn"
+    document.getElementById(
+      "spinButton"
     );
+
+  if (!button) return;
 
   button.disabled = true;
 
@@ -37,9 +39,7 @@ export async function spinAll(){
     "돌리는 중...";
 
   await Promise.all([
-
     animateRoulette("cap"),
-
     animateRoulette("swim")
   ]);
 
@@ -50,38 +50,41 @@ export async function spinAll(){
   button.disabled = false;
 
   button.innerText =
-    "오늘 뭐 입지?";
+    "🎲 돌리기";
 }
 
 // =========================
 // ROULETTE
 // =========================
-export async function animateRoulette(type){
+export async function animateRoulette(type) {
 
   const state =
     getState();
 
   const items =
     type === "cap"
-    ? state.data.caps
-    : state.data.swimsuits;
+      ? state.data.caps
+      : state.data.swimsuits;
 
-  if(!items.length) return;
+  if (!items.length) return;
 
-  return new Promise(resolve=>{
+  return new Promise(resolve => {
 
     let frame = 0;
 
     let lastTime = 0;
 
-    function loop(time){
+    function loop(time) {
 
       const delay =
         SPIN_BASE_DELAY +
-        Math.pow(frame,1.35) *
+        Math.pow(frame, 1.35) *
         SPIN_DELAY_STEP;
 
-      if(time - lastTime > delay){
+      if (
+        time - lastTime >
+        delay
+      ) {
 
         const randomIndex =
           Math.floor(
@@ -92,20 +95,20 @@ export async function animateRoulette(type){
         const selected =
           items[randomIndex];
 
-        if(type === "cap"){
+        if (type === "cap") {
 
           setSelectedCap(
             selected.id
           );
         }
-        else{
+        else {
 
           setSelectedSwim(
             selected.id
           );
         }
 
-        renderRouletteOnly();
+        updateRouletteValues();
 
         triggerShuffle(type);
 
@@ -114,13 +117,16 @@ export async function animateRoulette(type){
         lastTime = time;
       }
 
-      if(frame < SPIN_TOTAL_FRAME){
+      if (
+        frame <
+        SPIN_TOTAL_FRAME
+      ) {
 
         requestAnimationFrame(
           loop
         );
       }
-      else{
+      else {
 
         saveState(
           getState()
@@ -137,18 +143,18 @@ export async function animateRoulette(type){
 }
 
 // =========================
-// SHUFFLE
+// SHUFFLE FX
 // =========================
-function triggerShuffle(type){
+function triggerShuffle(type) {
 
   const target =
-    document.querySelector(
+    document.getElementById(
       type === "cap"
-      ? ".roulette-slot:first-child .roulette-card"
-      : ".roulette-slot:last-child .roulette-card"
+        ? "capValue"
+        : "swimValue"
     );
 
-  if(!target) return;
+  if (!target) return;
 
   target.classList.remove(
     "shuffle"
@@ -162,44 +168,64 @@ function triggerShuffle(type){
 }
 
 // =========================
-// WINNER
+// WINNER FX
 // =========================
-function triggerWinnerPulse(){
+function triggerWinnerPulse() {
 
-  const cards =
-    document.querySelectorAll(
-      ".roulette-card"
+  const cap =
+    document.getElementById(
+      "capValue"
     );
 
-  cards.forEach(card=>{
-
-    card.classList.remove(
-      "winner"
+  const swim =
+    document.getElementById(
+      "swimValue"
     );
 
-    void card.offsetWidth;
+  if (cap) {
 
-    card.classList.add(
-      "winner"
+    cap.classList.add(
+      "winner-pulse"
     );
-  });
+
+    setTimeout(() => {
+
+      cap.classList.remove(
+        "winner-pulse"
+      );
+
+    }, 900);
+  }
+
+  if (swim) {
+
+    swim.classList.add(
+      "winner-pulse"
+    );
+
+    setTimeout(() => {
+
+      swim.classList.remove(
+        "winner-pulse"
+      );
+
+    }, 900);
+  }
 }
 
 // =========================
 // CONFETTI
 // =========================
-function createConfetti(){
+function createConfetti() {
 
-  const colors = [
+  const body =
+    document.body;
 
-    "#c084fc",
-    "#a855f7",
-    "#d8b4fe",
-    "#9333ea",
-    "#e9d5ff"
-  ];
-
-  for(let i=0;i<34;i++){
+  for (
+    let i = 0;
+    i < 24;
+    i++
+  ) {
 
     const confetti =
       document.createElement(
@@ -210,33 +236,24 @@ function createConfetti(){
       "confetti";
 
     confetti.style.left =
-      Math.random() * 100 + "%";
+      Math.random() * 100 +
+      "%";
+
+    confetti.style.top =
+      "-20px";
 
     confetti.style.animationDelay =
-      Math.random() * .35 + "s";
+      Math.random() * 0.5 +
+      "s";
 
-    confetti.style.transform =
-      `rotate(${Math.random()*360}deg)`;
-
-    confetti.style.background =
-      colors[
-        Math.floor(
-          Math.random() *
-          colors.length
-        )
-      ];
-
-    confetti.style.opacity =
-      .85 + Math.random() * .15;
-
-    document.body.appendChild(
+    body.appendChild(
       confetti
     );
 
-    setTimeout(()=>{
+    setTimeout(() => {
 
       confetti.remove();
 
-    },2400);
+    }, 3000);
   }
 }
