@@ -12,6 +12,13 @@ const state = {
     capId: null,
 
     swimId: null
+  },
+
+  history: {
+
+    caps: [],
+
+    swimsuits: []
   }
 };
 
