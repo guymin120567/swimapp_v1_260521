@@ -1,158 +1,48 @@
 import {
-  renderApp
-} from "./ui/render.js";
-
-import {
-  loadState
-} from "../db/database.js";
-
-import {
-  getState
-} from "./state/state.js";
+  initController
+} from "./core/controller.js";
 
 // =========================
-// INIT
+// APP
 // =========================
 window.addEventListener(
   "DOMContentLoaded",
-  async () => {
+  async ()=>{
 
-    try {
+    try{
 
-      await bootstrapApp();
+      showSplash();
+
+      const controller =
+        initController();
+
+      await controller.boot();
+
+      hideSplash();
     }
-    catch (err) {
+    catch(err){
 
       console.error(
         "APP INIT ERROR",
         err
       );
 
-      forceStartApp();
+      forceStart();
     }
   }
 );
 
 // =========================
-// BOOTSTRAP
+// SPLASH
 // =========================
-async function bootstrapApp() {
-
-  showSplash();
-
-  // splash 최소 유지 시간
-  await delay(1200);
-
-  // 저장 데이터 로드
-  try {
-
-    const savedState =
-      await loadState();
-
-    if (savedState) {
-
-      hydrateState(
-        savedState
-      );
-    }
-  }
-  catch (err) {
-
-    console.error(
-      "LOAD STATE ERROR",
-      err
-    );
-  }
-
-  // 렌더
-  renderSafe();
-
-  // splash 제거
-  hideSplash();
-}
-
-// =========================
-// SAFE RENDER
-// =========================
-function renderSafe() {
-
-  try {
-
-    renderApp();
-  }
-  catch (err) {
-
-    console.error(
-      "RENDER ERROR",
-      err
-    );
-
-    // fallback UI
-    const app =
-      document.getElementById(
-        "app"
-      );
-
-    if (app) {
-
-      app.innerHTML = `
-
-        <div style="
-          padding:40px;
-          color:white;
-          text-align:center;
-          font-size:18px;
-        ">
-
-          앱 렌더 중 오류 발생
-
-        </div>
-      `;
-    }
-  }
-}
-
-// =========================
-// HYDRATE
-// =========================
-function hydrateState(saved) {
-
-  const state =
-    getState();
-
-  // DATA
-  if (saved.data) {
-
-    state.data =
-      saved.data;
-  }
-
-  // SELECTION
-  if (saved.selection) {
-
-    state.selection =
-      saved.selection;
-  }
-
-  // HISTORY
-  if (saved.history) {
-
-    state.history =
-      saved.history;
-  }
-}
-
-// =========================
-// SHOW SPLASH
-// =========================
-function showSplash() {
+function showSplash(){
 
   const splash =
     document.getElementById(
       "splash"
     );
 
-  if (!splash) return;
+  if(!splash) return;
 
   splash.style.opacity =
     "1";
@@ -162,9 +52,9 @@ function showSplash() {
 }
 
 // =========================
-// HIDE SPLASH
+// HIDE
 // =========================
-function hideSplash() {
+function hideSplash(){
 
   const splash =
     document.getElementById(
@@ -176,48 +66,56 @@ function hideSplash() {
       "app"
     );
 
-  // app fade in
-  if (app) {
+  if(app){
 
     app.style.opacity =
       "1";
   }
 
-  // splash hide
-  if (splash) {
+  if(splash){
 
     splash.classList.add(
       "hide"
     );
 
-    setTimeout(() => {
+    setTimeout(()=>{
 
       splash.remove();
 
-    }, 800);
+    },800);
   }
 }
 
 // =========================
 // FORCE START
 // =========================
-function forceStartApp() {
+function forceStart(){
 
-  renderSafe();
-
-  hideSplash();
-}
-
-// =========================
-// DELAY
-// =========================
-function delay(ms) {
-
-  return new Promise(resolve => {
-
-    setTimeout(
-      resolve,
-      ms
+  const splash =
+    document.getElementById(
+      "splash"
     );
-  });
+
+  if(splash){
+
+    splash.remove();
+  }
+
+  const app =
+    document.getElementById(
+      "app"
+    );
+
+  if(app){
+
+    app.innerHTML =
+      `
+      <div style="
+        padding:40px;
+        text-align:center;
+      ">
+        앱 시작 오류
+      </div>
+      `;
+  }
 }
