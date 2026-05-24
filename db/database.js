@@ -1,7 +1,7 @@
 const DB_NAME =
   "swimRouletteDB";
 
-const DB_VERSION = 3;
+const DB_VERSION = 4;
 
 const STATE_STORE =
   "stateStore";
@@ -46,28 +46,6 @@ async function openDB(){
               STATE_STORE
             );
           }
-
-          if(
-            db.objectStoreNames.contains(
-              "appState"
-            )
-          ){
-
-            db.deleteObjectStore(
-              "appState"
-            );
-          }
-
-          if(
-            db.objectStoreNames.contains(
-              "imageStore"
-            )
-          ){
-
-            db.deleteObjectStore(
-              "imageStore"
-            );
-          }
         };
 
       request.onsuccess =
@@ -90,7 +68,7 @@ async function openDB(){
 }
 
 // =========================
-// SAVE STATE
+// SAVE
 // =========================
 export async function saveState(state){
 
@@ -129,7 +107,7 @@ export async function saveState(state){
 }
 
 // =========================
-// LOAD STATE
+// LOAD
 // =========================
 export async function loadState(){
 
