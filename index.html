@@ -4,22 +4,22 @@
 
 <head>
 
+  <!-- =========================
+       META
+  ========================== -->
+
   <meta charset="UTF-8" />
 
   <meta
     name="viewport"
-    content="
-      width=device-width,
-      initial-scale=1.0,
-      viewport-fit=cover
-    "
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
   />
 
-  <title>
-    Swim App
-  </title>
+  <meta
+    name="mobile-web-app-capable"
+    content="yes"
+  />
 
-  <!-- IOS 대응 -->
   <meta
     name="apple-mobile-web-app-capable"
     content="yes"
@@ -35,7 +35,28 @@
     content="#0f172a"
   />
 
-  <!-- FONT -->
+  <!-- =========================
+       TITLE
+  ========================== -->
+
+  <title>
+    Swim App
+  </title>
+
+  <!-- =========================
+       FAVICON
+  ========================== -->
+
+  <link
+    rel="icon"
+    type="image/png"
+    href="./favicon.png"
+  />
+
+  <!-- =========================
+       FONT
+  ========================== -->
+
   <link
     rel="preconnect"
     href="https://fonts.googleapis.com"
@@ -48,15 +69,14 @@
   />
 
   <link
-    href="
-      https://fonts.googleapis.com/css2?
-      family=Pretendard:wght@400;500;600;700&
-      display=swap
-    "
+    href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700&display=swap"
     rel="stylesheet"
   />
 
-  <!-- CSS -->
+  <!-- =========================
+       CSS
+  ========================== -->
+
   <link
     rel="stylesheet"
     href="./css/style.css"
@@ -66,7 +86,10 @@
 
 <body>
 
-  <!-- SPLASH -->
+  <!-- =========================
+       SPLASH
+  ========================== -->
+
   <div id="splash">
 
     <div class="splash-inner">
@@ -87,13 +110,19 @@
 
   </div>
 
-  <!-- ROOT -->
+  <!-- =========================
+       ROOT
+  ========================== -->
+
   <div id="app"></div>
 
-  <!-- SCRIPT -->
+  <!-- =========================
+       SCRIPT
+  ========================== -->
+
   <script
     type="module"
-    src="./js/app.js"
+    src="./js/app.js?v=1"
   ></script>
 
 </body>
