@@ -406,10 +406,6 @@ function updateDepth(
   type
 ){
 
-  updateDepthByWrap(
-    wrap
-  );
-
   const state =
     getState();
 
@@ -419,20 +415,116 @@ function updateDepth(
       : state.ui?.activeSwimIndex || 0;
 
   const cards =
-    wrap.querySelectorAll(
-      ".cover-card"
-    );
+    [
+      ...wrap.querySelectorAll(
+        ".cover-card"
+      )
+    ];
 
-  cards.forEach(card=>{
+  if(!cards.length) return;
 
-    const index =
-      Number(
-        card.dataset.index
+  cards.forEach((card,index)=>{
+
+    const distance =
+      Math.abs(
+        index - activeIndex
       );
+
+    const direction =
+      index < activeIndex
+        ? -1
+        : 1;
+
+    // =========================
+    // SCALE
+    // =========================
+    let scale = 1;
+
+    if(distance === 0){
+
+      scale = 1.16;
+    }
+    else if(distance === 1){
+
+      scale = 0.9;
+    }
+    else if(distance === 2){
+
+      scale = 0.76;
+    }
+    else{
+
+      scale = 0.62;
+    }
+
+    // =========================
+    // BLUR
+    // =========================
+    let blur = 0;
+
+    if(distance === 1){
+
+      blur = 1.6;
+    }
+    else if(distance === 2){
+
+      blur = 3;
+    }
+    else if(distance >= 3){
+
+      blur = 4.4;
+    }
+
+    // =========================
+    // DEPTH
+    // =========================
+    const rotate =
+      direction *
+      Math.min(
+        distance * 16,
+        42
+      );
+
+    const translateZ =
+      distance === 0
+        ? 140
+        : 120 - distance * 48;
+
+    const offset =
+      direction *
+      distance *
+      -22;
+
+    const brightness =
+      1 - distance * 0.08;
+
+    const opacity =
+      Math.max(
+        1 - distance * 0.18,
+        0.22
+      );
+
+    card.style.transform = `
+      perspective(1400px)
+      translate3d(${offset}px,0,${translateZ}px)
+      rotateY(${rotate}deg)
+      scale(${scale})
+    `;
+
+    card.style.filter = `
+      blur(${blur}px)
+      brightness(${brightness})
+    `;
+
+    card.style.opacity =
+      opacity;
+
+    card.style.zIndex =
+      999 - distance;
 
     card.classList.toggle(
       "active",
-      index === activeIndex
+      distance === 0
     );
   });
 }
