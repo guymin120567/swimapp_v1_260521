@@ -20,7 +20,6 @@ window.addEventListener(
     try {
 
       await bootstrapApp();
-
     }
     catch (err) {
 
@@ -41,8 +40,10 @@ async function bootstrapApp() {
 
   showSplash();
 
+  // splash 최소 유지 시간
   await delay(1200);
 
+  // 저장 데이터 로드
   try {
 
     const savedState =
@@ -63,9 +64,52 @@ async function bootstrapApp() {
     );
   }
 
-  renderApp();
+  // 렌더
+  renderSafe();
 
+  // splash 제거
   hideSplash();
+}
+
+// =========================
+// SAFE RENDER
+// =========================
+function renderSafe() {
+
+  try {
+
+    renderApp();
+  }
+  catch (err) {
+
+    console.error(
+      "RENDER ERROR",
+      err
+    );
+
+    // fallback UI
+    const app =
+      document.getElementById(
+        "app"
+      );
+
+    if (app) {
+
+      app.innerHTML = `
+
+        <div style="
+          padding:40px;
+          color:white;
+          text-align:center;
+          font-size:18px;
+        ">
+
+          앱 렌더 중 오류 발생
+
+        </div>
+      `;
+    }
+  }
 }
 
 // =========================
@@ -76,21 +120,30 @@ function hydrateState(saved) {
   const state =
     getState();
 
+  // DATA
   if (saved.data) {
 
     state.data =
       saved.data;
   }
 
+  // SELECTION
   if (saved.selection) {
 
     state.selection =
       saved.selection;
   }
+
+  // HISTORY
+  if (saved.history) {
+
+    state.history =
+      saved.history;
+  }
 }
 
 // =========================
-// SPLASH
+// SHOW SPLASH
 // =========================
 function showSplash() {
 
@@ -104,8 +157,8 @@ function showSplash() {
   splash.style.opacity =
     "1";
 
-  splash.style.pointerEvents =
-    "all";
+  splash.style.visibility =
+    "visible";
 }
 
 // =========================
@@ -118,19 +171,31 @@ function hideSplash() {
       "splash"
     );
 
-  if (!splash) return;
+  const app =
+    document.getElementById(
+      "app"
+    );
 
-  splash.style.opacity =
-    "0";
+  // app fade in
+  if (app) {
 
-  splash.style.pointerEvents =
-    "none";
+    app.style.opacity =
+      "1";
+  }
 
-  setTimeout(() => {
+  // splash hide
+  if (splash) {
 
-    splash.remove();
+    splash.classList.add(
+      "hide"
+    );
 
-  }, 500);
+    setTimeout(() => {
+
+      splash.remove();
+
+    }, 800);
+  }
 }
 
 // =========================
@@ -138,7 +203,7 @@ function hideSplash() {
 // =========================
 function forceStartApp() {
 
-  renderApp();
+  renderSafe();
 
   hideSplash();
 }
