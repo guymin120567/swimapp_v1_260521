@@ -13,32 +13,62 @@ import {
 // =========================
 // FULL
 // =========================
-export function renderApp(){
+export function renderApp() {
 
-  renderLayout();
+  try {
 
-  renderRoulette();
+    renderLayout();
+  }
+  catch (err) {
 
-  renderLists();
+    console.error(
+      "LAYOUT ERROR",
+      err
+    );
+  }
+
+  try {
+
+    renderRoulette();
+  }
+  catch (err) {
+
+    console.error(
+      "ROULETTE ERROR",
+      err
+    );
+  }
+
+  try {
+
+    renderLists();
+  }
+  catch (err) {
+
+    console.error(
+      "LIST ERROR",
+      err
+    );
+  }
 }
 
 // =========================
-// ROULETTE
+// ROULETTE ONLY
 // =========================
-export function renderRouletteOnly(){
+export function renderRouletteOnly() {
 
-  requestAnimationFrame(()=>{
+  requestAnimationFrame(() => {
 
     renderRoulette();
   });
 }
 
 // =========================
-// LIST
+// LIST ONLY
 // =========================
-export function renderListsOnly(){
+export function renderListsOnly() {
 
-  requestAnimationFrame(()=>{
+  requestAnimationFrame(() => {
 
     renderLists();
   });
