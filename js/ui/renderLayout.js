@@ -40,26 +40,9 @@ export function renderLayout(){
 
   dom.app.innerHTML = `
 
-  <!-- 기존 layout 그대로 -->
-  `;
-
-  dom.initialized = true;
-
-  cacheDOM();
-}
-  dom.app.innerHTML = `
-
   <div class="container">
 
-    <!-- =========================
-         ROULETTE
-    ========================== -->
-
     <div class="roulette-wrap">
-
-      <!-- =========================
-           CAP
-      ========================== -->
 
       <div class="roulette-slot">
 
@@ -96,10 +79,6 @@ export function renderLayout(){
         </div>
 
       </div>
-
-      <!-- =========================
-           SWIM
-      ========================== -->
 
       <div class="roulette-slot">
 
@@ -139,10 +118,6 @@ export function renderLayout(){
 
     </div>
 
-    <!-- =========================
-         SPIN
-    ========================== -->
-
     <div class="spin-row">
 
       <button
@@ -155,10 +130,6 @@ export function renderLayout(){
       </button>
 
     </div>
-
-    <!-- =========================
-         CAP LIST
-    ========================== -->
 
     <div class="block">
 
@@ -177,10 +148,6 @@ export function renderLayout(){
 
     </div>
 
-    <!-- =========================
-         SWIM LIST
-    ========================== -->
-
     <div class="block">
 
       <div
@@ -197,10 +164,6 @@ export function renderLayout(){
       </div>
 
     </div>
-
-    <!-- =========================
-         ADD
-    ========================== -->
 
     <div class="block">
 
