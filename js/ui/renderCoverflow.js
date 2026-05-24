@@ -24,7 +24,6 @@ export function renderLists(){
   // =========================
   // TITLE
   // =========================
-
   if(dom.capTitle){
 
     dom.capTitle.innerText =
@@ -40,30 +39,44 @@ export function renderLists(){
   // =========================
   // LIST
   // =========================
-
   updateList(
+
     dom.capList,
+
     state.data.caps,
+
     state.ui?.activeCapIndex || 0,
+
     "cap"
   );
 
   updateList(
+
     dom.swimList,
+
     state.data.swimsuits,
+
     state.ui?.activeSwimIndex || 0,
+
     "swim"
   );
 
+  // =========================
+  // CENTER
+  // =========================
   requestAnimationFrame(()=>{
 
     centerActive(
+
       dom.capList,
+
       state.ui?.activeCapIndex || 0
     );
 
     centerActive(
+
       dom.swimList,
+
       state.ui?.activeSwimIndex || 0
     );
   });
@@ -79,7 +92,9 @@ function updateList(
   type
 ){
 
-  if(!items.length){
+  if(!target) return;
+
+  if(!items?.length){
 
     target.innerHTML =
       `
@@ -92,6 +107,7 @@ function updateList(
   }
 
   target.innerHTML =
+
     items
       .map((item,index)=>{
 
@@ -104,6 +120,9 @@ function updateList(
         const active =
           index === activeIndex;
 
+        // =========================
+        // SCALE
+        // =========================
         let scale = 1;
 
         if(distance === 1){
@@ -119,6 +138,9 @@ function updateList(
           scale = .58;
         }
 
+        // =========================
+        // OPACITY
+        // =========================
         let opacity = 1;
 
         if(distance === 1){
@@ -134,6 +156,9 @@ function updateList(
           opacity = .28;
         }
 
+        // =========================
+        // ROTATE
+        // =========================
         let rotate = 0;
 
         if(rawDistance < 0){
@@ -145,6 +170,9 @@ function updateList(
           rotate = -22;
         }
 
+        // =========================
+        // OFFSET
+        // =========================
         let offset = 0;
 
         if(rawDistance < 0){
@@ -164,6 +192,7 @@ function updateList(
             "
 
             data-type="${type}"
+
             data-index="${index}"
 
             style="
@@ -233,16 +262,22 @@ function centerActive(
 
   if(!wrap) return;
 
-  const activeCard =
+  const cards =
     wrap.querySelectorAll(
       ".cover-card"
-    )[activeIndex];
+    );
+
+  const activeCard =
+    cards[activeIndex];
 
   if(!activeCard) return;
 
   const left =
+
     activeCard.offsetLeft -
+
     wrap.clientWidth / 2 +
+
     activeCard.clientWidth / 2;
 
   wrap.scrollTo({
