@@ -9,6 +9,26 @@ import {
 export function renderLayout(){
 
   // =========================
+  // DOM CACHE
+  // =========================
+  if(!dom.app){
+
+    cacheDOM();
+  }
+
+  // =========================
+  // ROOT 없음
+  // =========================
+  if(!dom.app){
+
+    console.error(
+      "#app NOT FOUND"
+    );
+
+    return;
+  }
+
+  // =========================
   // 이미 생성됨
   // =========================
   if(dom.initialized){
@@ -18,15 +38,15 @@ export function renderLayout(){
     return;
   }
 
-  if(!dom.app){
+  dom.app.innerHTML = `
 
-    console.error(
-      "dom.app NOT FOUND"
-    );
+  <!-- 기존 layout 그대로 -->
+  `;
 
-    return;
-  }
+  dom.initialized = true;
 
+  cacheDOM();
+}
   dom.app.innerHTML = `
 
   <div class="container">
