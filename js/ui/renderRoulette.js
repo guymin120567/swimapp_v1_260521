@@ -1,9 +1,10 @@
-import { getState } from "../state/state.js";
+import {
+  getState
+} from "../state/state.js";
 
 import {
-  setSelectedCap,
-  setSelectedSwim
-} from "../state/actions.js";
+  spinAll
+} from "../features/roulette/roulette.js";
 
 // =========================
 // ROULETTE
@@ -15,7 +16,14 @@ export function renderRoulette() {
       "rouletteSection"
     );
 
-  if (!target) return;
+  if (!target) {
+
+    console.error(
+      "#rouletteSection NOT FOUND"
+    );
+
+    return;
+  }
 
   const state =
     getState();
@@ -35,6 +43,7 @@ export function renderRoulette() {
     );
 
   target.innerHTML = `
+
     <div class="roulette-bg"></div>
 
     <div class="roulette-overlay"></div>
@@ -45,7 +54,7 @@ export function renderRoulette() {
         🎰 오늘 뭐 입지?
       </div>
 
-      <div class="roulette-card glass-card">
+      <div class="glass-card">
 
         <div class="roulette-result">
 
@@ -152,93 +161,20 @@ export function updateRouletteValues() {
 }
 
 // =========================
-// SPIN BUTTON
+// BIND
 // =========================
 function bindSpin() {
 
-  const btn =
+  const button =
     document.getElementById(
       "spinButton"
     );
 
-  if (!btn) return;
+  if (!button) return;
 
-  btn.onclick = () => {
+  button.onclick =
+    async () => {
 
-    const state =
-      getState();
-
-    const caps =
-      state.data.caps;
-
-    const swims =
-      state.data.swimsuits;
-
-    if (
-      !caps.length ||
-      !swims.length
-    ) {
-
-      console.warn(
-        "DATA EMPTY"
-      );
-
-      return;
-    }
-
-    let randomCap =
-      caps[
-        Math.floor(
-          Math.random() *
-          caps.length
-        )
-      ];
-
-    let randomSwim =
-      swims[
-        Math.floor(
-          Math.random() *
-          swims.length
-        )
-      ];
-
-    // 연속 중복 방지
-    if (
-      caps.length > 1 &&
-      randomCap.id ===
-      state.selection.capId
-    ) {
-
-      randomCap =
-        caps.find(
-          item =>
-            item.id !==
-            state.selection.capId
-        );
-    }
-
-    if (
-      swims.length > 1 &&
-      randomSwim.id ===
-      state.selection.swimId
-    ) {
-
-      randomSwim =
-        swims.find(
-          item =>
-            item.id !==
-            state.selection.swimId
-        );
-    }
-
-    setSelectedCap(
-      randomCap.id
-    );
-
-    setSelectedSwim(
-      randomSwim.id
-    );
-
-    updateRouletteValues();
-  };
+      await spinAll();
+    };
 }
