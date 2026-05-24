@@ -21,23 +21,37 @@ export function renderLists(){
   const state =
     getState();
 
-  dom.capTitle.innerText =
-    `🧢 수모 (${state.data.caps.length})`;
+  // =========================
+  // TITLE
+  // =========================
 
-  dom.swimTitle.innerText =
-    `🩳 수영복 (${state.data.swimsuits.length})`;
+  if(dom.capTitle){
+
+    dom.capTitle.innerText =
+      `🧢 수모 (${state.data.caps.length})`;
+  }
+
+  if(dom.swimTitle){
+
+    dom.swimTitle.innerText =
+      `🩲 수영복 (${state.data.swimsuits.length})`;
+  }
+
+  // =========================
+  // LIST
+  // =========================
 
   updateList(
     dom.capList,
     state.data.caps,
-    state.ui.activeCapIndex,
+    state.ui?.activeCapIndex || 0,
     "cap"
   );
 
   updateList(
     dom.swimList,
     state.data.swimsuits,
-    state.ui.activeSwimIndex,
+    state.ui?.activeSwimIndex || 0,
     "swim"
   );
 
@@ -45,12 +59,12 @@ export function renderLists(){
 
     centerActive(
       dom.capList,
-      state.ui.activeCapIndex
+      state.ui?.activeCapIndex || 0
     );
 
     centerActive(
       dom.swimList,
-      state.ui.activeSwimIndex
+      state.ui?.activeSwimIndex || 0
     );
   });
 }
@@ -90,9 +104,6 @@ function updateList(
         const active =
           index === activeIndex;
 
-        // =========================
-        // SCALE
-        // =========================
         let scale = 1;
 
         if(distance === 1){
@@ -108,9 +119,6 @@ function updateList(
           scale = .58;
         }
 
-        // =========================
-        // OPACITY
-        // =========================
         let opacity = 1;
 
         if(distance === 1){
@@ -126,9 +134,6 @@ function updateList(
           opacity = .28;
         }
 
-        // =========================
-        // ROTATE
-        // =========================
         let rotate = 0;
 
         if(rawDistance < 0){
@@ -140,9 +145,6 @@ function updateList(
           rotate = -22;
         }
 
-        // =========================
-        // OFFSET
-        // =========================
         let offset = 0;
 
         if(rawDistance < 0){
@@ -229,19 +231,19 @@ function centerActive(
   activeIndex
 ){
 
-  const target =
-    wrap.querySelector(
-      `.cover-card[data-index="${activeIndex}"]`
-    );
+  if(!wrap) return;
 
-  if(!target) return;
+  const activeCard =
+    wrap.querySelectorAll(
+      ".cover-card"
+    )[activeIndex];
+
+  if(!activeCard) return;
 
   const left =
-    target.offsetLeft -
-    (
-      wrap.clientWidth / 2 -
-      target.clientWidth / 2
-    );
+    activeCard.offsetLeft -
+    wrap.clientWidth / 2 +
+    activeCard.clientWidth / 2;
 
   wrap.scrollTo({
 
