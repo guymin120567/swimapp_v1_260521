@@ -1,180 +1,121 @@
 import {
-  getState
-} from "../state/state.js";
+  dom
+} from "./dom.js";
 
 import {
-  spinAll
-} from "../features/roulette/roulette.js";
+  getState
+} from "../state/state.js";
 
 // =========================
 // ROULETTE
 // =========================
-export function renderRoulette() {
-
-  const target =
-    document.getElementById(
-      "rouletteSection"
-    );
-
-  if (!target) {
-
-    console.error(
-      "#rouletteSection NOT FOUND"
-    );
-
-    return;
-  }
+export function renderRoulette(){
 
   const state =
     getState();
 
-  const selectedCap =
+  const cap =
     state.data.caps.find(
       item =>
         item.id ===
         state.selection.capId
     );
 
-  const selectedSwim =
+  const swim =
     state.data.swimsuits.find(
       item =>
         item.id ===
         state.selection.swimId
     );
 
-  target.innerHTML = `
+  // =========================
+  // CAP
+  // =========================
 
-    <div class="roulette-bg"></div>
+  if(dom.capResultName){
 
-    <div class="roulette-overlay"></div>
-
-    <div class="roulette-content">
-
-      <div class="roulette-title">
-        🎰 오늘 뭐 입지?
-      </div>
-
-      <div class="glass-card">
-
-        <div class="roulette-result">
-
-          <div class="roulette-item">
-
-            <div class="roulette-label">
-              🧢 수모
-            </div>
-
-            <div
-              id="capValue"
-              class="roulette-value"
-            >
-              ${
-                selectedCap?.name ??
-                "아직 선택 안됨"
-              }
-            </div>
-
-          </div>
-
-          <div class="roulette-divider"></div>
-
-          <div class="roulette-item">
-
-            <div class="roulette-label">
-              🩳 수영복
-            </div>
-
-            <div
-              id="swimValue"
-              class="roulette-value"
-            >
-              ${
-                selectedSwim?.name ??
-                "아직 선택 안됨"
-              }
-            </div>
-
-          </div>
-
-        </div>
-
-        <button
-          id="spinButton"
-          class="spin-button"
-        >
-          🎲 돌리기
-        </button>
-
-      </div>
-
-    </div>
-  `;
-
-  bindSpin();
-}
-
-// =========================
-// UPDATE VALUES
-// =========================
-export function updateRouletteValues() {
-
-  const state =
-    getState();
-
-  const selectedCap =
-    state.data.caps.find(
-      item =>
-        item.id ===
-        state.selection.capId
-    );
-
-  const selectedSwim =
-    state.data.swimsuits.find(
-      item =>
-        item.id ===
-        state.selection.swimId
-    );
-
-  const capEl =
-    document.getElementById(
-      "capValue"
-    );
-
-  const swimEl =
-    document.getElementById(
-      "swimValue"
-    );
-
-  if (capEl) {
-
-    capEl.textContent =
-      selectedCap?.name ??
-      "아직 선택 안됨";
+    dom.capResultName.innerText =
+      cap?.name || "없음";
   }
 
-  if (swimEl) {
+  if(
+    dom.capResultImage &&
+    dom.capResultPlaceholder
+  ){
 
-    swimEl.textContent =
-      selectedSwim?.name ??
-      "아직 선택 안됨";
+    if(cap?.image){
+
+      dom.capResultImage.src =
+        cap.image;
+
+      dom.capResultImage.style.display =
+        "block";
+
+      dom.capResultPlaceholder.style.display =
+        "none";
+    }
+    else{
+
+      dom.capResultImage.style.display =
+        "none";
+
+      dom.capResultPlaceholder.style.display =
+        "flex";
+    }
   }
-}
 
-// =========================
-// BIND
-// =========================
-function bindSpin() {
+  // =========================
+  // SWIM
+  // =========================
 
-  const button =
+  if(dom.swimResultName){
+
+    dom.swimResultName.innerText =
+      swim?.name || "없음";
+  }
+
+  if(
+    dom.swimResultImage &&
+    dom.swimResultPlaceholder
+  ){
+
+    if(swim?.image){
+
+      dom.swimResultImage.src =
+        swim.image;
+
+      dom.swimResultImage.style.display =
+        "block";
+
+      dom.swimResultPlaceholder.style.display =
+        "none";
+    }
+    else{
+
+      dom.swimResultImage.style.display =
+        "none";
+
+      dom.swimResultPlaceholder.style.display =
+        "flex";
+    }
+  }
+
+  // =========================
+  // BUTTON
+  // =========================
+
+  const spinButton =
     document.getElementById(
       "spinButton"
     );
 
-  if (!button) return;
+  if(spinButton){
 
-  button.onclick =
-    async () => {
+    const canSpin =
+      state.data.caps.length > 0 &&
+      state.data.swimsuits.length > 0;
 
-      await spinAll();
-    };
+    spinButton.disabled =
+      !canSpin;
+  }
 }
