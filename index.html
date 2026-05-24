@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="ko">
 
 <head>
@@ -7,23 +8,58 @@
 
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1.0"
+    content="
+      width=device-width,
+      initial-scale=1.0,
+      viewport-fit=cover
+    "
   />
 
   <title>
-    오늘 뭐 입지?
+    Swim App
   </title>
+
+  <!-- IOS 대응 -->
+  <meta
+    name="apple-mobile-web-app-capable"
+    content="yes"
+  />
+
+  <meta
+    name="apple-mobile-web-app-status-bar-style"
+    content="black-translucent"
+  />
+
+  <meta
+    name="theme-color"
+    content="#0f172a"
+  />
+
+  <!-- FONT -->
+  <link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+  />
+
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  />
+
+  <link
+    href="
+      https://fonts.googleapis.com/css2?
+      family=Pretendard:wght@400;500;600;700&
+      display=swap
+    "
+    rel="stylesheet"
+  />
 
   <!-- CSS -->
   <link
     rel="stylesheet"
     href="./css/style.css"
-  />
-
-  <!-- favicon 404 방지 -->
-  <link
-    rel="icon"
-    href="data:,"
   />
 
 </head>
@@ -33,35 +69,33 @@
   <!-- SPLASH -->
   <div id="splash">
 
-    <div class="splash-bg"></div>
-
     <div class="splash-inner">
 
-      <img
-        src="./assets/splash.png"
-        class="splash-dolphin"
-      />
+      <div class="splash-logo">
+        🏊
+      </div>
 
       <div class="splash-title">
-        오늘 뭐 입지?
+        SWIM APP
       </div>
 
       <div class="splash-sub">
-        SWIM RANDOM
+        loading...
       </div>
 
     </div>
 
   </div>
 
-  <!-- APP -->
+  <!-- ROOT -->
   <div id="app"></div>
 
-  <!-- JS -->
+  <!-- SCRIPT -->
   <script
     type="module"
     src="./js/app.js"
   ></script>
 
 </body>
+
 </html>
