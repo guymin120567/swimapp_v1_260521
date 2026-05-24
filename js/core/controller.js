@@ -47,12 +47,19 @@ export function initController(){
 
   async function boot(){
 
+    // =========================
+    // DOM
+    // =========================
     initDOM();
 
+    // =========================
+    // EVENT
+    // =========================
     bindGlobal();
 
-    bindDrag();
-
+    // =========================
+    // LOAD
+    // =========================
     const saved =
       await loadState();
 
@@ -69,9 +76,20 @@ export function initController(){
       );
     }
 
+    // =========================
+    // NORMALIZE
+    // =========================
     normalizeState();
 
+    // =========================
+    // RENDER
+    // =========================
     renderApp();
+
+    // =========================
+    // DRAG
+    // =========================
+    bindDrag();
   }
 
   // =========================
@@ -87,10 +105,18 @@ export function initController(){
       data:{
 
         caps:
-          state.data?.caps || [],
+          Array.isArray(
+            state.data?.caps
+          )
+            ? state.data.caps
+            : [],
 
         swimsuits:
-          state.data?.swimsuits || []
+          Array.isArray(
+            state.data?.swimsuits
+          )
+            ? state.data.swimsuits
+            : []
       },
 
       selection:{
@@ -126,49 +152,84 @@ export function initController(){
   }
 
   // =========================
-  // ADD
+  // ADD ITEM
   // =========================
   async function submitSelectedItem(){
 
-    const type =
+    const typeEl =
       document.getElementById(
         "itemType"
-      ).value;
+      );
 
-    const text =
+    const textEl =
       document.getElementById(
         "itemText"
-      ).value.trim();
+      );
 
-    const file =
+    const imageEl =
       document.getElementById(
         "itemImage"
-      ).files[0];
+      );
 
+    if(
+      !typeEl ||
+      !textEl ||
+      !imageEl
+    ){
+      console.error(
+        "INPUT DOM NOT FOUND"
+      );
+
+      return;
+    }
+
+    const type =
+      typeEl.value;
+
+    const text =
+      textEl.value.trim();
+
+    const file =
+      imageEl.files?.[0];
+
+    // =========================
+    // VALIDATION
+    // =========================
     if(!text){
 
-      alert("이름 입력");
+      alert(
+        "이름 입력"
+      );
 
       return;
     }
 
     let image = null;
 
+    // =========================
+    // IMAGE
+    // =========================
     if(file){
 
       image =
-        await compressImage(file);
+        await compressImage(
+          file
+        );
     }
 
     const item = {
 
-      id:Date.now(),
+      id:
+        crypto.randomUUID(),
 
       name:text,
 
       image
     };
 
+    // =========================
+    // ADD
+    // =========================
     if(type === "cap"){
 
       addCap(item);
@@ -178,30 +239,43 @@ export function initController(){
       addSwim(item);
     }
 
-    document.getElementById(
-      "itemText"
-    ).value = "";
+    // =========================
+    // RESET
+    // =========================
+    textEl.value = "";
 
-    document.getElementById(
-      "itemImage"
-    ).value = "";
+    imageEl.value = "";
 
+    // =========================
+    // RENDER
+    // =========================
     renderListsOnly();
 
+    renderRouletteOnly();
+
+    // =========================
+    // REBIND DRAG
+    // =========================
+    bindDrag();
+
+    // =========================
+    // SAVE
+    // =========================
     await persist();
   }
 
   // =========================
-  // REMOVE
+  // REMOVE ITEM
   // =========================
   async function removeItem(
     type,
     id
   ){
 
-    const ok = confirm(
-      "정말 삭제할까요?"
-    );
+    const ok =
+      confirm(
+        "정말 삭제할까요?"
+      );
 
     if(!ok) return;
 
@@ -214,30 +288,46 @@ export function initController(){
       removeSwim(id);
     }
 
+    // =========================
+    // RENDER
+    // =========================
     renderListsOnly();
 
+    renderRouletteOnly();
+
+    // =========================
+    // REBIND DRAG
+    // =========================
+    bindDrag();
+
+    // =========================
+    // SAVE
+    // =========================
     await persist();
   }
 
   // =========================
   // ACTIVE
   // =========================
- function setActiveIndex(
-  type,
-  index
-){
+  function setActiveIndex(
+    type,
+    index
+  ){
 
-  if(type === "cap"){
+    if(type === "cap"){
 
-    setActiveCap(index);
+      setActiveCap(index);
+    }
+    else{
+
+      setActiveSwim(index);
+    }
+
+    renderListsOnly();
+
+    bindDrag();
   }
-  else{
 
-    setActiveSwim(index);
-  }
-
-  renderListsOnly();
-}
   // =========================
   // EVENTS
   // =========================
@@ -247,21 +337,37 @@ export function initController(){
       "click",
       async e=>{
 
+        // =========================
+        // ACTION
+        // =========================
         const action =
           e.target.dataset.action;
 
+        // =========================
+        // SPIN
+        // =========================
         if(action === "spin"){
 
           await spinAll();
 
           renderRouletteOnly();
+
+          return;
         }
 
+        // =========================
+        // ADD
+        // =========================
         if(action === "add"){
 
           await submitSelectedItem();
+
+          return;
         }
 
+        // =========================
+        // DELETE
+        // =========================
         const removeBtn =
           e.target.closest(
             ".delete-btn"
@@ -272,13 +378,18 @@ export function initController(){
           e.stopPropagation();
 
           await removeItem(
+
             removeBtn.dataset.type,
-            Number(
-              removeBtn.dataset.id
-            )
+
+            removeBtn.dataset.id
           );
+
+          return;
         }
 
+        // =========================
+        // ACTIVE CARD
+        // =========================
         const card =
           e.target.closest(
             ".cover-card"
@@ -287,7 +398,9 @@ export function initController(){
         if(card){
 
           setActiveIndex(
+
             card.dataset.type,
+
             Number(
               card.dataset.index
             )
