@@ -4,52 +4,31 @@ export const dom = {
 
   app:null,
 
-  // =========================
-  // LIST
-  // =========================
   capList:null,
-
   swimList:null,
 
-  // =========================
-  // TITLE
-  // =========================
-  capTitle:null,
-
-  swimTitle:null,
-
-  // =========================
-  // RESULT
-  // =========================
   capResultImage:null,
-
   swimResultImage:null,
 
-  capResultName:null,
-
-  swimResultName:null,
-
   capResultPlaceholder:null,
+  swimResultPlaceholder:null,
 
-  swimResultPlaceholder:null
+  capResultName:null,
+  swimResultName:null
 };
-
-// =========================
-// INIT ROOT
-// =========================
-export function initDOM(){
-
-  dom.app =
-    document.getElementById(
-      "app"
-    );
-}
 
 // =========================
 // CACHE
 // =========================
 export function cacheDOM(){
 
+  // ROOT
+  dom.app =
+    document.getElementById(
+      "app"
+    );
+
+  // LIST
   dom.capList =
     document.getElementById(
       "capList"
@@ -60,16 +39,7 @@ export function cacheDOM(){
       "swimList"
     );
 
-  dom.capTitle =
-    document.getElementById(
-      "capTitle"
-    );
-
-  dom.swimTitle =
-    document.getElementById(
-      "swimTitle"
-    );
-
+  // RESULT IMAGE
   dom.capResultImage =
     document.getElementById(
       "capResultImage"
@@ -80,16 +50,7 @@ export function cacheDOM(){
       "swimResultImage"
     );
 
-  dom.capResultName =
-    document.getElementById(
-      "capResultName"
-    );
-
-  dom.swimResultName =
-    document.getElementById(
-      "swimResultName"
-    );
-
+  // PLACEHOLDER
   dom.capResultPlaceholder =
     document.getElementById(
       "capResultPlaceholder"
@@ -98,5 +59,16 @@ export function cacheDOM(){
   dom.swimResultPlaceholder =
     document.getElementById(
       "swimResultPlaceholder"
+    );
+
+  // NAME
+  dom.capResultName =
+    document.getElementById(
+      "capResultName"
+    );
+
+  dom.swimResultName =
+    document.getElementById(
+      "swimResultName"
     );
 }
