@@ -29,11 +29,45 @@ export function renderLayout() {
       </section>
 
       <!-- =========================
-           COVERFLOW
+           CAP LIST
+      ========================== -->
+
+      <section class="block">
+
+        <div class="section-title">
+          수모
+        </div>
+
+        <div
+          id="capListSection"
+        >
+        </div>
+
+      </section>
+
+      <!-- =========================
+           SWIM LIST
+      ========================== -->
+
+      <section class="block">
+
+        <div class="section-title">
+          수영복
+        </div>
+
+        <div
+          id="swimListSection"
+        >
+        </div>
+
+      </section>
+
+      <!-- =========================
+           EXTRA
       ========================== -->
 
       <section
-        id="coverflowSection"
+        id="extraSection"
         class="block"
       >
       </section>
