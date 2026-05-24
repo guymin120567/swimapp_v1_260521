@@ -7,6 +7,9 @@ export const dom = {
   capList:null,
   swimList:null,
 
+  capTitle:null,
+  swimTitle:null,
+  
   capResultImage:null,
   swimResultImage:null,
 
@@ -37,6 +40,17 @@ export function cacheDOM(){
   dom.swimList =
     document.getElementById(
       "swimList"
+    );
+
+    // TITLE
+  dom.capTitle =
+    document.getElementById(
+      "capTitle"
+    );
+
+  dom.swimTitle =
+    document.getElementById(
+      "swimTitle"
     );
 
   // RESULT IMAGE
