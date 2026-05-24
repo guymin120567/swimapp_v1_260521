@@ -140,3 +140,49 @@ export function setActiveSwim(index){
     }
   });
 }
+
+// =========================
+// SELECT CAP
+// =========================
+export function setSelectedCap(
+  id
+){
+
+  const state =
+    getState();
+
+  setState({
+
+    ...state,
+
+    selection:{
+
+      ...state.selection,
+
+      capId:id
+    }
+  });
+}
+
+// =========================
+// SELECT SWIM
+// =========================
+export function setSelectedSwim(
+  id
+){
+
+  const state =
+    getState();
+
+  setState({
+
+    ...state,
+
+    selection:{
+
+      ...state.selection,
+
+      swimId:id
+    }
+  });
+}
