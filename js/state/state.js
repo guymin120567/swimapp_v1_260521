@@ -1,41 +1,37 @@
 export const defaultState = {
 
-  data:{
+  data: {
 
-    caps:[],
+    caps: [],
 
-    swimsuits:[]
+    swimsuits: []
   },
 
-  selection:{
+  selection: {
 
-    capId:null,
+    capId: null,
 
-    swimId:null
+    swimId: null
   },
 
-  history:{
+  history: {
 
-    caps:[],
+    caps: [],
 
-    swimsuits:[]
+    swimsuits: []
   },
 
-  ui:{
+  ui: {
 
-    activeCapIndex:0,
+    activeCapIndex: 0,
 
-    activeSwimIndex:0,
+    activeSwimIndex: 0,
 
-    isSpinning:false
+    isSpinning: false
   }
 };
 
-// =========================
-// STATE
-// =========================
-let state =
-
+const state =
   structuredClone(
     defaultState
   );
@@ -51,20 +47,10 @@ export function getState(){
 // =========================
 // SET
 // =========================
-export function setState(
-  newState
-){
+export function setState(newState){
 
-  state = newState;
-}
-
-// =========================
-// RESET
-// =========================
-export function resetState(){
-
-  state =
-    structuredClone(
-      defaultState
-    );
+  Object.assign(
+    state,
+    newState
+  );
 }
