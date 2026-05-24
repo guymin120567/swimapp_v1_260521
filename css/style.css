@@ -1006,3 +1006,14 @@ body{
   transform:
     scale(.98);
 }
+
+
+/* =========================
+   WINNER FX
+========================= */
+
+.winner-pulse{
+
+  animation:
+    winnerPulse .9s ease;
+}
