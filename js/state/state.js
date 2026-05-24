@@ -1,40 +1,24 @@
-export const defaultState = {
+const state = {
 
-  data:{
+  data: {
 
-    caps:[],
+    caps: [],
 
-    swimsuits:[]
+    swimsuits: []
   },
 
-  selection:{
+  selection: {
 
-    capId:null,
+    capId: null,
 
-    swimId:null
-  },
-
-  ui:{
-
-    activeCapIndex:0,
-
-    activeSwimIndex:0,
-
-    isSpinning:false
+    swimId: null
   }
 };
 
-let currentState =
-  structuredClone(
-    defaultState
-  );
+// =========================
+// GET STATE
+// =========================
+export function getState() {
 
-export function getState(){
-
-  return currentState;
-}
-
-export function setState(next){
-
-  currentState = next;
+  return state;
 }
