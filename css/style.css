@@ -248,16 +248,30 @@ select{
 
   margin-left:-34px;
 
+  will-change:
+    transform,
+    opacity,
+    filter;
+
+  cursor:grab;
+
+  transform-style:
+    preserve-3d;
+
+  backface-visibility:
+    hidden;
+}
+
+/* =========================
+   READY
+========================= */
+
+.cover-card.ready{
+
   transition:
     transform .34s cubic-bezier(.2,.8,.2,1),
     opacity .28s ease,
     filter .28s ease;
-
-  will-change:
-    transform,
-    opacity;
-
-  cursor:grab;
 }
 
 .cover-card:first-child{
