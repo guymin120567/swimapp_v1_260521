@@ -24,14 +24,14 @@ import {
 // =========================
 // SPIN ALL
 // =========================
-export async function spinAll() {
+export async function spinAll(){
 
   const button =
     document.getElementById(
       "spinButton"
     );
 
-  if (!button) return;
+  if(!button) return;
 
   button.disabled = true;
 
@@ -39,7 +39,9 @@ export async function spinAll() {
     "돌리는 중...";
 
   await Promise.all([
+
     animateRoulette("cap"),
+
     animateRoulette("swim")
   ]);
 
@@ -56,7 +58,9 @@ export async function spinAll() {
 // =========================
 // ROULETTE
 // =========================
-export async function animateRoulette(type) {
+export async function animateRoulette(
+  type
+){
 
   const state =
     getState();
@@ -66,48 +70,67 @@ export async function animateRoulette(type) {
       ? state.data.caps
       : state.data.swimsuits;
 
-  if (!items.length) return;
+  if(!items.length){
 
-  return new Promise(resolve => {
+    return;
+  }
+
+  return new Promise(resolve=>{
 
     let frame = 0;
 
     let lastTime = 0;
 
-    function loop(time) {
+    function loop(time){
 
       const delay =
+
         SPIN_BASE_DELAY +
-        Math.pow(frame, 1.35) *
+
+        Math.pow(
+          frame,
+          1.35
+        ) *
+
         SPIN_DELAY_STEP;
 
-      if (
+      if(
         time - lastTime >
         delay
-      ) {
-
-        const randomIndex =
-          Math.floor(
-            Math.random() *
-            items.length
-          );
+      ){
 
         const selected =
-          items[randomIndex];
+          getWeightedRandom(
+            items,
+            type
+          );
 
-        if (type === "cap") {
+        if(!selected){
+
+          resolve();
+
+          return;
+        }
+
+        // =========================
+        // SELECT
+        // =========================
+        if(type === "cap"){
 
           setSelectedCap(
             selected.id
           );
         }
-        else {
+        else{
 
           setSelectedSwim(
             selected.id
           );
         }
 
+        // =========================
+        // RENDER
+        // =========================
         renderRoulette();
 
         triggerShuffle(type);
@@ -117,22 +140,33 @@ export async function animateRoulette(type) {
         lastTime = time;
       }
 
-      if (
+      // =========================
+      // NEXT FRAME
+      // =========================
+      if(
         frame <
         SPIN_TOTAL_FRAME
-      ) {
+      ){
 
         requestAnimationFrame(
           loop
         );
       }
-      else {
+      else{
+
+        // =========================
+        // HISTORY SAVE
+        // =========================
+        pushHistory(
+          type
+        );
 
         saveState(
           getState()
-        );
+        ).finally(()=>{
 
-        resolve();
+          resolve();
+        });
       }
     }
 
@@ -143,18 +177,180 @@ export async function animateRoulette(type) {
 }
 
 // =========================
+// WEIGHT RANDOM
+// =========================
+function getWeightedRandom(
+  items,
+  type
+){
+
+  const state =
+    getState();
+
+  const history =
+    type === "cap"
+      ? state.history?.caps || []
+      : state.history?.swimsuits || [];
+
+  // =========================
+  // 최근 1회 제외
+  // =========================
+  const latestId =
+    history[0];
+
+  const weighted =
+    items
+      .map(item=>{
+
+        // =========================
+        // 방금 등장 제외
+        // =========================
+        if(
+          item.id === latestId
+        ){
+
+          return null;
+        }
+
+        let weight = 1;
+
+        // =========================
+        // 최근 등장 가중치
+        // =========================
+        const historyIndex =
+          history.indexOf(
+            item.id
+          );
+
+        if(historyIndex === 1){
+
+          weight = 0.3;
+        }
+        else if(historyIndex === 2){
+
+          weight = 0.5;
+        }
+        else if(historyIndex === 3){
+
+          weight = 0.7;
+        }
+
+        return {
+
+          item,
+
+          weight
+        };
+      })
+      .filter(Boolean);
+
+  if(!weighted.length){
+
+    return items[
+      Math.floor(
+        Math.random() *
+        items.length
+      )
+    ];
+  }
+
+  // =========================
+  // TOTAL
+  // =========================
+  const totalWeight =
+
+    weighted.reduce(
+
+      (
+        sum,
+        current
+      )=>
+
+        sum +
+        current.weight,
+
+      0
+    );
+
+  let random =
+
+    Math.random() *
+    totalWeight;
+
+  // =========================
+  // PICK
+  // =========================
+  for(
+    const current
+    of weighted
+  ){
+
+    random -=
+      current.weight;
+
+    if(random <= 0){
+
+      return current.item;
+    }
+  }
+
+  return weighted[0].item;
+}
+
+// =========================
+// HISTORY
+// =========================
+function pushHistory(type){
+
+  const state =
+    getState();
+
+  const selectedId =
+
+    type === "cap"
+      ? state.selection.capId
+      : state.selection.swimId;
+
+  if(!selectedId){
+
+    return;
+  }
+
+  const key =
+    type === "cap"
+      ? "caps"
+      : "swimsuits";
+
+  const currentHistory =
+    state.history?.[key] || [];
+
+  const nextHistory = [
+
+    selectedId,
+
+    ...currentHistory.filter(
+      id=>id !== selectedId
+    )
+  ].slice(0,4);
+
+  state.history[key] =
+    nextHistory;
+}
+
+// =========================
 // SHUFFLE FX
 // =========================
-function triggerShuffle(type) {
+function triggerShuffle(type){
 
   const target =
     document.getElementById(
+
       type === "cap"
         ? "capResultName"
         : "swimResultName"
     );
 
-  if (!target) return;
+  if(!target) return;
 
   target.classList.remove(
     "shuffle"
@@ -170,7 +366,7 @@ function triggerShuffle(type) {
 // =========================
 // WINNER FX
 // =========================
-function triggerWinnerPulse() {
+function triggerWinnerPulse(){
 
   const cap =
     document.getElementById(
@@ -182,47 +378,47 @@ function triggerWinnerPulse() {
       "swimResultName"
     );
 
-  if (cap) {
+  if(cap){
 
     cap.classList.add(
       "winner-pulse"
     );
 
-    setTimeout(() => {
+    setTimeout(()=>{
 
       cap.classList.remove(
         "winner-pulse"
       );
 
-    }, 900);
+    },900);
   }
 
-  if (swim) {
+  if(swim){
 
     swim.classList.add(
       "winner-pulse"
     );
 
-    setTimeout(() => {
+    setTimeout(()=>{
 
       swim.classList.remove(
         "winner-pulse"
       );
 
-    }, 900);
+    },900);
   }
 }
 
 // =========================
 // CONFETTI
 // =========================
-function createConfetti() {
+function createConfetti(){
 
-  for (
+  for(
     let i = 0;
     i < 24;
     i++
-  ) {
+  ){
 
     const confetti =
       document.createElement(
@@ -233,10 +429,12 @@ function createConfetti() {
       "confetti";
 
     confetti.style.left =
+
       Math.random() * 100 +
       "%";
 
     confetti.style.animationDelay =
+
       Math.random() * 0.5 +
       "s";
 
@@ -244,10 +442,10 @@ function createConfetti() {
       confetti
     );
 
-    setTimeout(() => {
+    setTimeout(()=>{
 
       confetti.remove();
 
-    }, 3000);
+    },3000);
   }
 }
