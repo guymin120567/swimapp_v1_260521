@@ -1,31 +1,70 @@
-const state = {
+export const defaultState = {
 
-  data: {
+  data:{
 
-    caps: [],
+    caps:[],
 
-    swimsuits: []
+    swimsuits:[]
   },
 
-  selection: {
+  selection:{
 
-    capId: null,
+    capId:null,
 
-    swimId: null
+    swimId:null
   },
 
-  history: {
+  history:{
 
-    caps: [],
+    caps:[],
 
-    swimsuits: []
+    swimsuits:[]
+  },
+
+  ui:{
+
+    activeCapIndex:0,
+
+    activeSwimIndex:0,
+
+    isSpinning:false
   }
 };
 
 // =========================
-// GET STATE
+// STATE
 // =========================
-export function getState() {
+let state =
+
+  structuredClone(
+    defaultState
+  );
+
+// =========================
+// GET
+// =========================
+export function getState(){
 
   return state;
+}
+
+// =========================
+// SET
+// =========================
+export function setState(
+  newState
+){
+
+  state = newState;
+}
+
+// =========================
+// RESET
+// =========================
+export function resetState(){
+
+  state =
+    structuredClone(
+      defaultState
+    );
 }
