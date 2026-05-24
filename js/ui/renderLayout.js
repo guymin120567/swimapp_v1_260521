@@ -1,77 +1,236 @@
-export function renderLayout() {
+import {
+  dom,
+  cacheDOM
+} from "./dom.js";
 
-  const app =
-    document.getElementById(
-      "app"
-    );
+// =========================
+// LAYOUT
+// =========================
+export function renderLayout(){
 
-  if (!app) {
+  // =========================
+  // 이미 생성됨
+  // =========================
+  if(dom.initialized){
+
+    cacheDOM();
+
+    return;
+  }
+
+  if(!dom.app){
 
     console.error(
-      "#app NOT FOUND"
+      "dom.app NOT FOUND"
     );
 
     return;
   }
 
-  app.innerHTML = `
+  dom.app.innerHTML = `
 
-    <div class="container">
+  <div class="container">
 
-      <!-- =========================
-           ROULETTE
-      ========================== -->
+    <!-- =========================
+         ROULETTE
+    ========================== -->
 
-      <section
-        id="rouletteSection"
-        class="block"
-      >
-      </section>
+    <div class="roulette-wrap">
 
       <!-- =========================
-           CAP LIST
+           CAP
       ========================== -->
 
-      <section class="block">
+      <div class="roulette-slot">
 
-        <div class="section-title">
-          수모
+        <div class="roulette-label">
+          🧢 수모
         </div>
 
-        <div
-          id="capListSection"
-        >
+        <div class="roulette-card">
+
+          <img
+            id="capResultImage"
+            class="card-image"
+            draggable="false"
+          />
+
+          <div
+            id="capResultPlaceholder"
+            class="card-placeholder"
+          >
+            🌊
+          </div>
+
+          <div class="card-overlay">
+
+            <div
+              id="capResultName"
+              class="roulette-name"
+            >
+              없음
+            </div>
+
+          </div>
+
         </div>
 
-      </section>
+      </div>
 
       <!-- =========================
-           SWIM LIST
+           SWIM
       ========================== -->
 
-      <section class="block">
+      <div class="roulette-slot">
 
-        <div class="section-title">
-          수영복
+        <div class="roulette-label">
+          🩲 수영복
         </div>
 
-        <div
-          id="swimListSection"
-        >
+        <div class="roulette-card">
+
+          <img
+            id="swimResultImage"
+            class="card-image"
+            draggable="false"
+          />
+
+          <div
+            id="swimResultPlaceholder"
+            class="card-placeholder"
+          >
+            🌊
+          </div>
+
+          <div class="card-overlay">
+
+            <div
+              id="swimResultName"
+              class="roulette-name"
+            >
+              없음
+            </div>
+
+          </div>
+
         </div>
 
-      </section>
-
-      <!-- =========================
-           EXTRA
-      ========================== -->
-
-      <section
-        id="extraSection"
-        class="block"
-      >
-      </section>
+      </div>
 
     </div>
+
+    <!-- =========================
+         SPIN
+    ========================== -->
+
+    <div class="spin-row">
+
+      <button
+        id="spinButton"
+        class="spin-btn"
+        data-action="spin"
+        disabled
+      >
+        오늘 뭐 입지?
+      </button>
+
+    </div>
+
+    <!-- =========================
+         CAP LIST
+    ========================== -->
+
+    <div class="block">
+
+      <div
+        class="section-title"
+        id="capTitle"
+      >
+        🧢 수모
+      </div>
+
+      <div
+        class="coverflow"
+        id="capList"
+      >
+      </div>
+
+    </div>
+
+    <!-- =========================
+         SWIM LIST
+    ========================== -->
+
+    <div class="block">
+
+      <div
+        class="section-title"
+        id="swimTitle"
+      >
+        🩲 수영복
+      </div>
+
+      <div
+        class="coverflow"
+        id="swimList"
+      >
+      </div>
+
+    </div>
+
+    <!-- =========================
+         ADD
+    ========================== -->
+
+    <div class="block">
+
+      <div class="section-title">
+        ➕ 추가하기
+      </div>
+
+      <div class="input-area">
+
+        <select id="itemType">
+
+          <option value="cap">
+            🧢 수모
+          </option>
+
+          <option value="swim">
+            🩲 수영복
+          </option>
+
+        </select>
+
+        <input
+          id="itemText"
+          type="text"
+          placeholder="이름 입력"
+          maxlength="30"
+        />
+
+        <input
+          id="itemImage"
+          type="file"
+          accept="image/*"
+        />
+
+        <button
+          id="addButton"
+          class="spin-btn"
+          data-action="add"
+        >
+          추가
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
   `;
+
+  dom.initialized = true;
+
+  cacheDOM();
 }
