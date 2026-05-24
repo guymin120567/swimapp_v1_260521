@@ -152,7 +152,7 @@ export function initController(){
   }
 
   // =========================
-  // ADD ITEM
+  // ADD
   // =========================
   async function submitSelectedItem(){
 
@@ -176,10 +176,6 @@ export function initController(){
       !textEl ||
       !imageEl
     ){
-      console.error(
-        "INPUT DOM NOT FOUND"
-      );
-
       return;
     }
 
@@ -192,9 +188,6 @@ export function initController(){
     const file =
       imageEl.files?.[0];
 
-    // =========================
-    // VALIDATION
-    // =========================
     if(!text){
 
       alert(
@@ -206,9 +199,6 @@ export function initController(){
 
     let image = null;
 
-    // =========================
-    // IMAGE
-    // =========================
     if(file){
 
       image =
@@ -227,9 +217,6 @@ export function initController(){
       image
     };
 
-    // =========================
-    // ADD
-    // =========================
     if(type === "cap"){
 
       addCap(item);
@@ -239,33 +226,21 @@ export function initController(){
       addSwim(item);
     }
 
-    // =========================
-    // RESET
-    // =========================
     textEl.value = "";
 
     imageEl.value = "";
 
-    // =========================
-    // RENDER
-    // =========================
     renderListsOnly();
 
     renderRouletteOnly();
 
-    // =========================
-    // REBIND DRAG
-    // =========================
     bindDrag();
 
-    // =========================
-    // SAVE
-    // =========================
     await persist();
   }
 
   // =========================
-  // REMOVE ITEM
+  // REMOVE
   // =========================
   async function removeItem(
     type,
@@ -288,21 +263,12 @@ export function initController(){
       removeSwim(id);
     }
 
-    // =========================
-    // RENDER
-    // =========================
     renderListsOnly();
 
     renderRouletteOnly();
 
-    // =========================
-    // REBIND DRAG
-    // =========================
     bindDrag();
 
-    // =========================
-    // SAVE
-    // =========================
     await persist();
   }
 
@@ -337,9 +303,6 @@ export function initController(){
       "click",
       async e=>{
 
-        // =========================
-        // ACTION
-        // =========================
         const action =
           e.target.dataset.action;
 
@@ -388,7 +351,7 @@ export function initController(){
         }
 
         // =========================
-        // ACTIVE CARD
+        // ACTIVE
         // =========================
         const card =
           e.target.closest(
