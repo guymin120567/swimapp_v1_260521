@@ -8,7 +8,7 @@ import {
 } from "../../state/actions.js";
 
 import {
-  updateRouletteValues
+  renderRoulette
 } from "../../ui/renderRoulette.js";
 
 import {
@@ -50,7 +50,7 @@ export async function spinAll() {
   button.disabled = false;
 
   button.innerText =
-    "🎲 돌리기";
+    "오늘 뭐 입지?";
 }
 
 // =========================
@@ -108,7 +108,7 @@ export async function animateRoulette(type) {
           );
         }
 
-        updateRouletteValues();
+        renderRoulette();
 
         triggerShuffle(type);
 
@@ -150,8 +150,8 @@ function triggerShuffle(type) {
   const target =
     document.getElementById(
       type === "cap"
-        ? "capValue"
-        : "swimValue"
+        ? "capResultName"
+        : "swimResultName"
     );
 
   if (!target) return;
@@ -174,12 +174,12 @@ function triggerWinnerPulse() {
 
   const cap =
     document.getElementById(
-      "capValue"
+      "capResultName"
     );
 
   const swim =
     document.getElementById(
-      "swimValue"
+      "swimResultName"
     );
 
   if (cap) {
@@ -218,9 +218,6 @@ function triggerWinnerPulse() {
 // =========================
 function createConfetti() {
 
-  const body =
-    document.body;
-
   for (
     let i = 0;
     i < 24;
@@ -239,14 +236,11 @@ function createConfetti() {
       Math.random() * 100 +
       "%";
 
-    confetti.style.top =
-      "-20px";
-
     confetti.style.animationDelay =
       Math.random() * 0.5 +
       "s";
 
-    body.appendChild(
+    document.body.appendChild(
       confetti
     );
 
