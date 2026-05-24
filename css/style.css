@@ -527,7 +527,6 @@ body{
     opacity:0;
   }
 }
-
 /* =========================
    SPLASH
 ========================= */
@@ -538,7 +537,7 @@ body{
 
   inset:0;
 
-  z-index:9999;
+  z-index:99999;
 
   overflow:hidden;
 
@@ -551,8 +550,8 @@ body{
   background:
     linear-gradient(
       180deg,
-      #081421 0%,
-      #10263d 100%
+      #07111d 0%,
+      #0d2034 100%
     );
 
   transition:
@@ -565,6 +564,8 @@ body{
   opacity:0;
 
   visibility:hidden;
+
+  pointer-events:none;
 }
 
 .splash-bg{
@@ -573,14 +574,16 @@ body{
 
   inset:0;
 
-  backdrop-filter:blur(10px);
-
   background:
+
     radial-gradient(
       circle at center,
       rgba(120,180,255,.18),
       transparent 70%
     );
+
+  filter:
+    blur(20px);
 }
 
 .splash-inner{
@@ -597,63 +600,77 @@ body{
 
   justify-content:center;
 
-  gap:10px;
-
   animation:
-    splashFade 1.4s ease;
+    splashFade 1.2s ease;
 }
 
 .splash-dolphin{
 
-  width:220px;
+  width:240px;
 
-  max-width:62vw;
+  max-width:70vw;
 
   object-fit:contain;
 
+  user-select:none;
+
+  -webkit-user-drag:none;
+
+  filter:
+    drop-shadow(
+      0 10px 30px
+      rgba(80,170,255,.25)
+    );
+
   animation:
-    dolphinFloat 2.4s ease-in-out infinite;
+    dolphinFloat 2.8s ease-in-out infinite;
 }
 
 .splash-title{
 
-  font-size:30px;
+  margin-top:22px;
+
+  font-size:34px;
 
   font-weight:800;
 
-  color:white;
-
   letter-spacing:-1px;
 
-  margin-top:4px;
+  color:white;
+
+  text-shadow:
+    0 6px 18px
+    rgba(0,0,0,.28);
 
   opacity:0;
 
   animation:
     textFade .8s ease forwards;
 
-  animation-delay:.35s;
+  animation-delay:.25s;
 }
 
 .splash-sub{
 
-  font-size:13px;
+  margin-top:10px;
 
-  color:
-    rgba(255,255,255,.72);
+  font-size:12px;
 
   letter-spacing:4px;
+
+  color:
+    rgba(255,255,255,.68);
 
   opacity:0;
 
   animation:
     textFade .8s ease forwards;
 
-  animation-delay:.55s;
+  animation-delay:.45s;
 }
 
 /* =========================
-   ANIMATION
+   SPLASH ANIMATION
 ========================= */
 
 @keyframes dolphinFloat{
@@ -706,7 +723,7 @@ body{
     opacity:0;
 
     transform:
-      translateY(10px);
+      translateY(12px);
   }
 
   to{
@@ -716,14 +733,6 @@ body{
     transform:
       translateY(0);
   }
-}
-
-#app{
-
-  opacity:0;
-
-  transition:
-    opacity .8s ease;
 }
 /* =========================
    ROULETTE BACKGROUND
