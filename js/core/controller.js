@@ -53,11 +53,6 @@ export function initController(){
     initDOM();
 
     // =========================
-    // EVENT
-    // =========================
-    bindGlobal();
-
-    // =========================
     // LOAD
     // =========================
     const saved =
@@ -85,6 +80,11 @@ export function initController(){
     // RENDER
     // =========================
     renderApp();
+
+    // =========================
+    // EVENTS
+    // =========================
+    bindGlobal();
 
     // =========================
     // DRAG
@@ -126,6 +126,23 @@ export function initController(){
 
         swimId:
           state.selection?.swimId || null
+      },
+
+      history:{
+
+        caps:
+          Array.isArray(
+            state.history?.caps
+          )
+            ? state.history.caps
+            : [],
+
+        swimsuits:
+          Array.isArray(
+            state.history?.swimsuits
+          )
+            ? state.history.swimsuits
+            : []
       },
 
       ui:{
@@ -234,8 +251,6 @@ export function initController(){
 
     renderRouletteOnly();
 
-    bindDrag();
-
     await persist();
   }
 
@@ -267,8 +282,6 @@ export function initController(){
 
     renderRouletteOnly();
 
-    bindDrag();
-
     await persist();
   }
 
@@ -290,8 +303,6 @@ export function initController(){
     }
 
     renderListsOnly();
-
-    bindDrag();
   }
 
   // =========================
@@ -344,7 +355,9 @@ export function initController(){
 
             removeBtn.dataset.type,
 
-            removeBtn.dataset.id
+            String(
+              removeBtn.dataset.id
+            )
           );
 
           return;
