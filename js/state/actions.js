@@ -1,188 +1,103 @@
 import {
-  getState,
-  setState
+  getState
 } from "./state.js";
 
 // =========================
-// CAP
+// ADD
 // =========================
 export function addCap(item){
 
-  const state =
-    getState();
-
-  setState({
-
-    ...state,
-
-    data:{
-
-      ...state.data,
-
-      caps:[
-        ...state.data.caps,
-        item
-      ]
-    }
-  });
+  getState()
+    .data
+    .caps
+    .push(item);
 }
 
-// =========================
-// SWIM
-// =========================
 export function addSwim(item){
 
-  const state =
-    getState();
-
-  setState({
-
-    ...state,
-
-    data:{
-
-      ...state.data,
-
-      swimsuits:[
-        ...state.data.swimsuits,
-        item
-      ]
-    }
-  });
+  getState()
+    .data
+    .swimsuits
+    .push(item);
 }
 
 // =========================
-// REMOVE CAP
+// REMOVE
 // =========================
 export function removeCap(id){
 
   const state =
     getState();
 
-  setState({
+  state.data.caps =
+    state.data.caps.filter(
+      item => item.id !== id
+    );
 
-    ...state,
+  state.history.caps =
+    state.history.caps.filter(
+      itemId => itemId !== id
+    );
 
-    data:{
-
-      ...state.data,
-
-      caps:
-        state.data.caps.filter(
-          item=>item.id !== id
-        )
-    }
-  });
+  if(
+    state.selection.capId === id
+  ){
+    state.selection.capId = null;
+  }
 }
 
-// =========================
-// REMOVE SWIM
-// =========================
 export function removeSwim(id){
 
   const state =
     getState();
 
-  setState({
+  state.data.swimsuits =
+    state.data.swimsuits.filter(
+      item => item.id !== id
+    );
 
-    ...state,
+  state.history.swimsuits =
+    state.history.swimsuits.filter(
+      itemId => itemId !== id
+    );
 
-    data:{
-
-      ...state.data,
-
-      swimsuits:
-        state.data.swimsuits.filter(
-          item=>item.id !== id
-        )
-    }
-  });
+  if(
+    state.selection.swimId === id
+  ){
+    state.selection.swimId = null;
+  }
 }
 
 // =========================
-// ACTIVE CAP
+// SELECT
+// =========================
+export function setSelectedCap(id){
+
+  getState()
+    .selection
+    .capId = id;
+}
+
+export function setSelectedSwim(id){
+
+  getState()
+    .selection
+    .swimId = id;
+}
+
+// =========================
+// ACTIVE
 // =========================
 export function setActiveCap(index){
 
-  const state =
-    getState();
-
-  setState({
-
-    ...state,
-
-    ui:{
-
-      ...state.ui,
-
-      activeCapIndex:index
-    }
-  });
+  getState()
+    .ui
+    .activeCapIndex = index;
 }
 
-// =========================
-// ACTIVE SWIM
-// =========================
 export function setActiveSwim(index){
 
-  const state =
-    getState();
-
-  setState({
-
-    ...state,
-
-    ui:{
-
-      ...state.ui,
-
-      activeSwimIndex:index
-    }
-  });
-}
-
-// =========================
-// SELECT CAP
-// =========================
-export function setSelectedCap(
-  id
-){
-
-  const state =
-    getState();
-
-  setState({
-
-    ...state,
-
-    selection:{
-
-      ...state.selection,
-
-      capId:id
-    }
-  });
-}
-
-// =========================
-// SELECT SWIM
-// =========================
-export function setSelectedSwim(
-  id
-){
-
-  const state =
-    getState();
-
-  setState({
-
-    ...state,
-
-    selection:{
-
-      ...state.selection,
-
-      swimId:id
-    }
-  });
+  getState()
+    .ui
+    .activeSwimIndex = index;
 }
