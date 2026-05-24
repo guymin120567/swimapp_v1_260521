@@ -406,14 +406,6 @@ function updateDepth(
   type
 ){
 
-  const state =
-    getState();
-
-  const activeIndex =
-    type === "cap"
-      ? state.ui?.activeCapIndex || 0
-      : state.ui?.activeSwimIndex || 0;
-
   const cards =
     [
       ...wrap.querySelectorAll(
@@ -423,17 +415,135 @@ function updateDepth(
 
   if(!cards.length) return;
 
+  // =========================
+  // 현재 화면 중심 기준
+  // =========================
+  const wrapCenter =
+    wrap.scrollLeft +
+    wrap.clientWidth / 2;
+
+  let closestIndex = 0;
+
+  let closestDistance =
+    Infinity;
+
+  cards.forEach((card,index)=>{
+
+    const cardCenter =
+      card.offsetLeft +
+      card.clientWidth / 2;
+
+    const distance =
+      Math.abs(
+        wrapCenter - cardCenter
+      );
+
+    if(distance < closestDistance){
+
+      closestDistance =
+        distance;
+
+      closestIndex =
+        index;
+    }
+  });
+
+  // =========================
+  // DEPTH
+  // =========================
   cards.forEach((card,index)=>{
 
     const distance =
       Math.abs(
-        index - activeIndex
+        index - closestIndex
       );
 
     const direction =
-      index < activeIndex
+      index < closestIndex
         ? -1
         : 1;
+
+    let scale = 1;
+
+    if(distance === 0){
+
+      scale = 1.16;
+    }
+    else if(distance === 1){
+
+      scale = 0.9;
+    }
+    else if(distance === 2){
+
+      scale = 0.76;
+    }
+    else{
+
+      scale = 0.62;
+    }
+
+    let blur = 0;
+
+    if(distance === 1){
+
+      blur = 1.4;
+    }
+    else if(distance === 2){
+
+      blur = 2.8;
+    }
+    else if(distance >= 3){
+
+      blur = 4;
+    }
+
+    const rotate =
+      direction *
+      Math.min(
+        distance * 16,
+        40
+      );
+
+    const translateZ =
+      distance === 0
+        ? 140
+        : 120 - distance * 46;
+
+    const offset =
+      direction *
+      distance *
+      -22;
+
+    const opacity =
+      Math.max(
+        1 - distance * 0.18,
+        0.22
+      );
+
+    card.style.transform = `
+      perspective(1400px)
+      translate3d(${offset}px,0,${translateZ}px)
+      rotateY(${rotate}deg)
+      scale(${scale})
+    `;
+
+    card.style.filter = `
+      blur(${blur}px)
+      brightness(${1 - distance * 0.08})
+    `;
+
+    card.style.opacity =
+      opacity;
+
+    card.style.zIndex =
+      999 - distance;
+
+    card.classList.toggle(
+      "active",
+      distance === 0
+    );
+  });
+}
 
     // =========================
     // SCALE
