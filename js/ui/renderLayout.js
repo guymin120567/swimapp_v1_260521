@@ -15,16 +15,28 @@ export function renderLayout() {
   }
 
   app.innerHTML = `
-  
-    <div class="app-layout">
 
-      <header class="top-header">
-        Swim App
-      </header>
+    <div class="container">
 
-      <main id="mainContent">
+      <!-- =========================
+           ROULETTE
+      ========================== -->
 
-      </main>
+      <section
+        id="rouletteSection"
+        class="block"
+      >
+      </section>
+
+      <!-- =========================
+           COVERFLOW
+      ========================== -->
+
+      <section
+        id="coverflowSection"
+        class="block"
+      >
+      </section>
 
     </div>
   `;
