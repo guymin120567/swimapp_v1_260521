@@ -22,6 +22,22 @@ import {
 } from "../../constants/animation.js";
 
 // =========================
+// WEIGHT
+// =========================
+const HISTORY_WEIGHT = {
+
+  latest: 0.12,
+
+  prev1: 0.3,
+
+  prev2: 0.5,
+
+  prev3: 0.7,
+
+  normal: 1
+};
+
+// =========================
 // SPIN ALL
 // =========================
 export async function spinAll(){
@@ -56,11 +72,9 @@ export async function spinAll(){
 }
 
 // =========================
-// ROULETTE
+// ANIMATE
 // =========================
-export async function animateRoulette(
-  type
-){
+export async function animateRoulette(type){
 
   const state =
     getState();
@@ -70,10 +84,7 @@ export async function animateRoulette(
       ? state.data.caps
       : state.data.swimsuits;
 
-  if(!items.length){
-
-    return;
-  }
+  if(!items.length) return;
 
   return new Promise(resolve=>{
 
@@ -100,21 +111,11 @@ export async function animateRoulette(
       ){
 
         const selected =
-          getWeightedRandom(
-            items,
-            type
+          pickWeightedItem(
+            type,
+            items
           );
 
-        if(!selected){
-
-          resolve();
-
-          return;
-        }
-
-        // =========================
-        // SELECT
-        // =========================
         if(type === "cap"){
 
           setSelectedCap(
@@ -128,9 +129,6 @@ export async function animateRoulette(
           );
         }
 
-        // =========================
-        // RENDER
-        // =========================
         renderRoulette();
 
         triggerShuffle(type);
@@ -140,9 +138,6 @@ export async function animateRoulette(
         lastTime = time;
       }
 
-      // =========================
-      // NEXT FRAME
-      // =========================
       if(
         frame <
         SPIN_TOTAL_FRAME
@@ -154,19 +149,15 @@ export async function animateRoulette(
       }
       else{
 
-        // =========================
-        // HISTORY SAVE
-        // =========================
-        pushHistory(
+        finalizeHistory(
           type
         );
 
         saveState(
           getState()
-        ).finally(()=>{
+        );
 
-          resolve();
-        });
+        resolve();
       }
     }
 
@@ -177,11 +168,11 @@ export async function animateRoulette(
 }
 
 // =========================
-// WEIGHT RANDOM
+// PICK WEIGHTED
 // =========================
-function getWeightedRandom(
-  items,
-  type
+function pickWeightedItem(
+  type,
+  items
 ){
 
   const state =
@@ -189,82 +180,51 @@ function getWeightedRandom(
 
   const history =
     type === "cap"
-      ? state.history?.caps || []
-      : state.history?.swimsuits || [];
-
-  // =========================
-  // 최근 1회 제외
-  // =========================
-  const latestId =
-    history[0];
+      ? state.history.caps
+      : state.history.swimsuits;
 
   const weighted =
-    items
-      .map(item=>{
+    items.map(item=>{
 
-        // =========================
-        // 방금 등장 제외
-        // =========================
-        if(
-          item.id === latestId
-        ){
+      const recentIndex =
+        history.indexOf(
+          item.id
+        );
 
-          return null;
-        }
+      let weight =
+        HISTORY_WEIGHT.normal;
 
-        let weight = 1;
+      if(recentIndex === 0){
 
-        // =========================
-        // 최근 등장 가중치
-        // =========================
-        const historyIndex =
-          history.indexOf(
-            item.id
-          );
+        weight =
+          HISTORY_WEIGHT.latest;
+      }
+      else if(recentIndex === 1){
 
-        if(historyIndex === 1){
+        weight =
+          HISTORY_WEIGHT.prev1;
+      }
+      else if(recentIndex === 2){
 
-          weight = 0.3;
-        }
-        else if(historyIndex === 2){
+        weight =
+          HISTORY_WEIGHT.prev2;
+      }
+      else if(recentIndex === 3){
 
-          weight = 0.5;
-        }
-        else if(historyIndex === 3){
+        weight =
+          HISTORY_WEIGHT.prev3;
+      }
 
-          weight = 0.7;
-        }
+      return {
+        item,
+        weight
+      };
+    });
 
-        return {
-
-          item,
-
-          weight
-        };
-      })
-      .filter(Boolean);
-
-  if(!weighted.length){
-
-    return items[
-      Math.floor(
-        Math.random() *
-        items.length
-      )
-    ];
-  }
-
-  // =========================
-  // TOTAL
-  // =========================
-  const totalWeight =
-
+  const total =
     weighted.reduce(
 
-      (
-        sum,
-        current
-      )=>
+      (sum,current)=>
 
         sum +
         current.weight,
@@ -273,68 +233,66 @@ function getWeightedRandom(
     );
 
   let random =
+    Math.random() * total;
 
-    Math.random() *
-    totalWeight;
-
-  // =========================
-  // PICK
-  // =========================
   for(
-    const current
-    of weighted
+    const entry of weighted
   ){
 
     random -=
-      current.weight;
+      entry.weight;
 
     if(random <= 0){
 
-      return current.item;
+      return entry.item;
     }
   }
 
-  return weighted[0].item;
+  return items[0];
 }
 
 // =========================
 // HISTORY
 // =========================
-function pushHistory(type){
+function finalizeHistory(type){
 
   const state =
     getState();
 
-  const selectedId =
+  if(type === "cap"){
 
-    type === "cap"
-      ? state.selection.capId
-      : state.selection.swimId;
+    const id =
+      state.selection.capId;
 
-  if(!selectedId){
+    if(!id) return;
 
-    return;
+    state.history.caps =
+      [
+        id,
+        ...state.history.caps.filter(
+          itemId =>
+            itemId !== id
+        )
+      ]
+      .slice(0,4);
   }
+  else{
 
-  const key =
-    type === "cap"
-      ? "caps"
-      : "swimsuits";
+    const id =
+      state.selection.swimId;
 
-  const currentHistory =
-    state.history?.[key] || [];
+    if(!id) return;
 
-  const nextHistory = [
-
-    selectedId,
-
-    ...currentHistory.filter(
-      id=>id !== selectedId
-    )
-  ].slice(0,4);
-
-  state.history[key] =
-    nextHistory;
+    state.history.swimsuits =
+      [
+        id,
+        ...state.history.swimsuits.filter(
+          itemId =>
+            itemId !== id
+        )
+      ]
+      .slice(0,4);
+  }
 }
 
 // =========================
@@ -364,7 +322,7 @@ function triggerShuffle(type){
 }
 
 // =========================
-// WINNER FX
+// WINNER
 // =========================
 function triggerWinnerPulse(){
 
