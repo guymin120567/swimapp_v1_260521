@@ -1,147 +1,289 @@
 import {
-  getState,
-  setActiveCap,
-  setActiveSwim
-} from "../../state/state.js";
+  getState
+} from "../state/state.js";
 
-export function renderCoverflow({
+import {
+  dom
+} from "./dom.js";
 
-  type,
-  targetId,
-  items
-}){
+// =========================
+// LISTS
+// =========================
+export function renderLists(){
 
-  const target =
-    document.getElementById(
-      targetId
-    );
-
-  if(!target) return;
+  if(
+    !dom.capList ||
+    !dom.swimList
+  ){
+    return;
+  }
 
   const state =
     getState();
 
-  let activeId =
-    type === "cap"
-      ? state.ui.activeCapId
-      : state.ui.activeSwimId;
+  // =========================
+  // TITLE
+  // =========================
+  if(dom.capTitle){
 
-  if(
-    !activeId &&
-    items.length
-  ){
-
-    activeId =
-      items[0].id;
-
-    if(type === "cap"){
-
-      setActiveCap(activeId);
-
-    }else{
-
-      setActiveSwim(activeId);
-    }
+    dom.capTitle.innerText =
+      `🧢 수모 (${state.data.caps.length})`;
   }
 
-  const activeIndex =
-    items.findIndex(
-      (item)=>
-        item.id === activeId
+  if(dom.swimTitle){
+
+    dom.swimTitle.innerText =
+      `🩲 수영복 (${state.data.swimsuits.length})`;
+  }
+
+  // =========================
+  // LIST
+  // =========================
+  updateList(
+
+    dom.capList,
+
+    state.data.caps,
+
+    state.ui?.activeCapIndex || 0,
+
+    "cap"
+  );
+
+  updateList(
+
+    dom.swimList,
+
+    state.data.swimsuits,
+
+    state.ui?.activeSwimIndex || 0,
+
+    "swim"
+  );
+
+  // =========================
+  // CENTER
+  // =========================
+  requestAnimationFrame(()=>{
+
+    centerActive(
+
+      dom.capList,
+
+      state.ui?.activeCapIndex || 0
     );
 
-  target.innerHTML = `
+    centerActive(
 
-  <div class="coverflow-track">
+      dom.swimList,
 
-    ${
-      items.map((item,index)=>{
+      state.ui?.activeSwimIndex || 0
+    );
+  });
+}
 
-        const distance =
+// =========================
+// UPDATE
+// =========================
+function updateList(
+  target,
+  items,
+  activeIndex,
+  type
+){
+
+  if(!target) return;
+
+  if(!items?.length){
+
+    target.innerHTML =
+      `
+      <div class="empty-card">
+        아이템 없음
+      </div>
+      `;
+
+    return;
+  }
+
+  target.innerHTML =
+
+    items
+      .map((item,index)=>{
+
+        const rawDistance =
           index - activeIndex;
 
-        return `
+        const distance =
+          Math.abs(rawDistance);
 
-        <div
-          class="
-            coverflow-card
-            ${
-              distance === 0
-                ? "active"
-                : ""
-            }
-          "
-          data-id="${item.id}"
-          style="
-            transform:
-              translateX(${distance * 90}px)
-              scale(${distance === 0 ? 1 : 0.8})
-              rotateY(${distance * -15}deg);
+        const active =
+          index === activeIndex;
 
-            z-index:${999 - Math.abs(distance)};
+        // =========================
+        // SCALE
+        // =========================
+        let scale = 1;
 
-            opacity:${
-              Math.abs(distance) > 4
-                ? 0
-                : 1 - Math.abs(distance) * 0.15
-            };
-          "
-        >
+        if(distance === 1){
 
-          ${
-            item.image
-            ? `
-            <img
-              src="${item.image}"
-              class="coverflow-image"
-              draggable="false"
-            />
-            `
-            : `
-            <div class="coverflow-placeholder">
-              🌊
-            </div>
-            `
-          }
-
-        </div>
-
-        `;
-      }).join("")
-    }
-
-  </div>
-
-  `;
-
-  target
-    .querySelectorAll(
-      ".coverflow-card"
-    )
-    .forEach((card)=>{
-
-      card.addEventListener(
-        "click",
-        ()=>{
-
-          const id =
-            card.dataset.id;
-
-          if(type === "cap"){
-
-            setActiveCap(id);
-
-          }else{
-
-            setActiveSwim(id);
-          }
-
-          renderCoverflow({
-            type,
-            targetId,
-            items
-          });
+          scale = .86;
         }
-      );
-    });
+        else if(distance === 2){
+
+          scale = .72;
+        }
+        else if(distance >= 3){
+
+          scale = .58;
+        }
+
+        // =========================
+        // OPACITY
+        // =========================
+        let opacity = 1;
+
+        if(distance === 1){
+
+          opacity = .82;
+        }
+        else if(distance === 2){
+
+          opacity = .55;
+        }
+        else if(distance >= 3){
+
+          opacity = .28;
+        }
+
+        // =========================
+        // ROTATE
+        // =========================
+        let rotate = 0;
+
+        if(rawDistance < 0){
+
+          rotate = 22;
+        }
+        else if(rawDistance > 0){
+
+          rotate = -22;
+        }
+
+        // =========================
+        // OFFSET
+        // =========================
+        let offset = 0;
+
+        if(rawDistance < 0){
+
+          offset = distance * 26;
+        }
+        else if(rawDistance > 0){
+
+          offset = distance * -26;
+        }
+
+        return `
+          <div
+            class="
+              cover-card
+              ${active ? "active" : ""}
+            "
+
+            data-type="${type}"
+
+            data-index="${index}"
+
+            style="
+              transform:
+                translate3d(${offset}px,0,0)
+                scale(${scale})
+                rotateY(${rotate}deg);
+
+              opacity:${opacity};
+
+              z-index:${100-distance};
+
+              filter:
+                brightness(${1 - distance * .08});
+            "
+          >
+
+            <div class="card-inner">
+
+              ${
+                item.image
+                ? `
+                  <img
+                    src="${item.image}"
+                    class="card-image"
+                    loading="lazy"
+                  />
+                `
+                : `
+                  <div class="card-placeholder">
+                    🌊
+                  </div>
+                `
+              }
+
+              <div class="card-overlay">
+
+                <div class="card-title">
+                  ${item.name}
+                </div>
+
+                <button
+                  class="delete-btn"
+                  data-type="${type}"
+                  data-id="${item.id}"
+                >
+                  ×
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+        `;
+      })
+      .join("");
+}
+
+// =========================
+// CENTER
+// =========================
+function centerActive(
+  wrap,
+  activeIndex
+){
+
+  if(!wrap) return;
+
+  const cards =
+    wrap.querySelectorAll(
+      ".cover-card"
+    );
+
+  const activeCard =
+    cards[activeIndex];
+
+  if(!activeCard) return;
+
+  const left =
+
+    activeCard.offsetLeft -
+
+    wrap.clientWidth / 2 +
+
+    activeCard.clientWidth / 2;
+
+  wrap.scrollTo({
+
+    left,
+
+    behavior:"smooth"
+  });
 }
