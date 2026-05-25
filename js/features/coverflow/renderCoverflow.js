@@ -27,40 +27,10 @@ export function renderCoverflow({
   const state =
     getState();
 
-  let activeId =
-    type === "cap"
-      ? state.ui.activeCapId
-      : state.ui.activeSwimId;
-
-  // =========================
-  // DEFAULT
-  // =========================
-  if(
-    !activeId &&
-    items.length
-  ){
-
-    activeId =
-      items[0].id;
-
-    if(type === "cap"){
-
-      setActiveCap(activeId);
-
-    }else{
-
-      setActiveSwim(activeId);
-    }
-  }
-
-  // =========================
-  // FIND INDEX
-  // =========================
   const activeIndex =
-    items.findIndex(
-      item =>
-        item.id === activeId
-    );
+    type === "cap"
+      ? state.ui.activeCapIndex || 0
+      : state.ui.activeSwimIndex || 0;
 
   // =========================
   // EMPTY
@@ -69,7 +39,7 @@ export function renderCoverflow({
 
     target.innerHTML = `
 
-    <div class="coverflow-empty">
+    <div class="empty-card">
 
       아이템 없음
 
@@ -85,13 +55,18 @@ export function renderCoverflow({
   // =========================
   target.innerHTML = `
 
-  <div class="coverflow-track">
+  <div
+    class="coverflow"
+    id="${targetId}Scroll"
+  >
 
     ${
       items.map((item,index)=>{
 
         const distance =
-          index - activeIndex;
+          Math.abs(
+            index - activeIndex
+          );
 
         return `
 
@@ -105,41 +80,47 @@ export function renderCoverflow({
             }
           "
           data-type="${type}"
-          data-id="${item.id}"
           data-index="${index}"
-          style="
-            transform:
-              translateX(${distance * 90}px)
-              scale(${distance === 0 ? 1 : 0.8})
-              rotateY(${distance * -15}deg);
-
-            z-index:
-              ${999 - Math.abs(distance)};
-
-            opacity:
-              ${
-                Math.abs(distance) > 4
-                  ? 0
-                  : 1 - Math.abs(distance) * 0.15
-              };
-          "
+          data-id="${item.id}"
         >
 
-          ${
-            item.image
-            ? `
-            <img
-              src="${item.image}"
-              class="coverflow-image"
-              draggable="false"
-            />
-            `
-            : `
-            <div class="coverflow-placeholder">
-              🌊
+          <div class="card-inner">
+
+            ${
+              item.image
+              ? `
+              <img
+                src="${item.image}"
+                class="card-image"
+                draggable="false"
+              />
+              `
+              : `
+              <div class="card-placeholder">
+                🌊
+              </div>
+              `
+            }
+
+            <div class="card-overlay">
+
+              <div class="card-title">
+
+                ${item.name}
+
+              </div>
+
             </div>
-            `
-          }
+
+            <button
+              class="delete-btn"
+              data-type="${type}"
+              data-id="${item.id}"
+            >
+              ×
+            </button>
+
+          </div>
 
         </div>
 
@@ -150,4 +131,34 @@ export function renderCoverflow({
   </div>
 
   `;
+
+  // =========================
+  // INITIAL CENTER
+  // =========================
+  requestAnimationFrame(()=>{
+
+    const wrap =
+      document.getElementById(
+        `${targetId}Scroll`
+      );
+
+    if(!wrap) return;
+
+    const activeCard =
+      wrap.querySelector(
+        ".cover-card.active"
+      );
+
+    if(!activeCard) return;
+
+    const targetLeft =
+      activeCard.offsetLeft -
+      (
+        wrap.clientWidth / 2 -
+        activeCard.clientWidth / 2
+      );
+
+    wrap.scrollLeft =
+      targetLeft;
+  });
 }
