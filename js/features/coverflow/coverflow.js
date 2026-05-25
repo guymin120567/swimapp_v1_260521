@@ -6,6 +6,10 @@ import {
   renderCoverflow
 } from "./renderCoverflow.js";
 
+import {
+  bindDrag
+} from "./drag.js";
+
 // =========================
 // REFRESH
 // =========================
@@ -16,25 +20,30 @@ export function refreshCoverflow(){
 
   renderCoverflow({
 
-    type: "cap",
+    type:"cap",
 
-    targetId: "capCoverflow",
+    targetId:"capCoverflow",
 
-    items: state.data.caps
+    items:state.data.caps
   });
 
   renderCoverflow({
 
-    type: "swim",
+    type:"swim",
 
-    targetId: "swimCoverflow",
+    targetId:"swimCoverflow",
 
-    items: state.data.swimsuits
+    items:state.data.swimsuits
+  });
+
+  requestAnimationFrame(()=>{
+
+    bindDrag();
   });
 }
 
 // =========================
-// REFRESH ONE
+// SINGLE
 // =========================
 export function refreshSingleCoverflow(
   type
@@ -47,22 +56,27 @@ export function refreshSingleCoverflow(
 
     renderCoverflow({
 
-      type: "cap",
+      type:"cap",
 
-      targetId: "capCoverflow",
+      targetId:"capCoverflow",
 
-      items: state.data.caps
+      items:state.data.caps
     });
 
-    return;
+  }else{
+
+    renderCoverflow({
+
+      type:"swim",
+
+      targetId:"swimCoverflow",
+
+      items:state.data.swimsuits
+    });
   }
 
-  renderCoverflow({
+  requestAnimationFrame(()=>{
 
-    type: "swim",
-
-    targetId: "swimCoverflow",
-
-    items: state.data.swimsuits
+    bindDrag();
   });
 }
