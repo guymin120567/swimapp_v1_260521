@@ -1,21 +1,19 @@
 import {
-  getState
-} from "../../state/state.js";
-
-import {
   setActiveCap,
   setActiveSwim
 } from "../../state/actions.js";
 
 import {
-  renderListsOnly
+  renderRouletteOnly
 } from "../../ui/render.js";
 
 // =========================
 // CONFIG
 // =========================
 const SNAP_DURATION = 420;
+
 const VELOCITY_MULTIPLIER = 18;
+
 const MIN_VELOCITY = 0.15;
 
 // =========================
@@ -23,336 +21,497 @@ const MIN_VELOCITY = 0.15;
 // =========================
 export function bindDrag(){
 
-  bindCarousel("cap");
-  bindCarousel("swim");
+  bindCarousel(
+    "capCoverflowScroll",
+    "cap"
+  );
+
+  bindCarousel(
+    "swimCoverflowScroll",
+    "swim"
+  );
 }
 
 // =========================
 // BIND
 // =========================
-function bindCarousel(type){
-
-  const targetId =
-    type === "cap"
-      ? "capList"
-      : "swimList";
+function bindCarousel(
+  targetId,
+  type
+){
 
   const wrap =
-    document.getElementById(targetId);
+    document.getElementById(
+      targetId
+    );
 
   if(!wrap) return;
 
   if(wrap.dataset.dragBound){
 
-    updateDepth(wrap, type);
+    updateDepth(wrap);
     return;
   }
 
-  wrap.dataset.dragBound = "true";
+  wrap.dataset.dragBound =
+    "true";
 
   let dragging = false;
+
   let startX = 0;
+
   let startScroll = 0;
+
   let lastX = 0;
+
   let lastTime = 0;
+
   let velocity = 0;
-  let momentumFrame = null;
 
-  wrap.addEventListener("pointerdown", e => {
+  // =========================
+  // DOWN
+  // =========================
+  wrap.addEventListener(
+    "pointerdown",
+    e=>{
 
-    dragging = true;
-    startX = e.clientX;
-    startScroll = wrap.scrollLeft;
-    lastX = e.clientX;
-    lastTime = performance.now();
-    velocity = 0;
+      dragging = true;
 
-    wrap.classList.add("dragging");
+      startX =
+        e.clientX;
 
-    if(momentumFrame){
-      cancelAnimationFrame(momentumFrame);
-    }
-  }, { passive:true });
+      startScroll =
+        wrap.scrollLeft;
 
-  wrap.addEventListener("pointermove", e => {
+      lastX =
+        e.clientX;
 
-    if(!dragging) return;
+      lastTime =
+        performance.now();
 
-    const delta = e.clientX - startX;
-    wrap.scrollLeft = startScroll - delta;
+      velocity = 0;
 
-    const now = performance.now();
-    const timeDelta = now - lastTime;
+      wrap.classList.add(
+        "dragging"
+      );
+    },
+    { passive:true }
+  );
 
-    if(timeDelta > 0){
-      velocity = (e.clientX - lastX) / timeDelta;
-    }
+  // =========================
+  // MOVE
+  // =========================
+  wrap.addEventListener(
+    "pointermove",
+    e=>{
 
-    lastX = e.clientX;
-    lastTime = now;
+      if(!dragging) return;
 
-    updateDepth(wrap, type);
-  }, { passive:true });
+      const delta =
+        e.clientX - startX;
 
+      wrap.scrollLeft =
+        startScroll - delta;
+
+      const now =
+        performance.now();
+
+      const timeDelta =
+        now - lastTime;
+
+      if(timeDelta > 0){
+
+        velocity =
+          (
+            e.clientX - lastX
+          ) / timeDelta;
+      }
+
+      lastX =
+        e.clientX;
+
+      lastTime =
+        now;
+
+      updateDepth(wrap);
+    },
+    { passive:true }
+  );
+
+  // =========================
+  // END
+  // =========================
   function endDrag(){
 
     if(!dragging) return;
 
     dragging = false;
-    wrap.classList.remove("dragging");
 
-    const inertia = velocity * VELOCITY_MULTIPLIER;
+    wrap.classList.remove(
+      "dragging"
+    );
 
-    animateMomentum(wrap, inertia, () => {
-      snapToClosest(wrap, type);
-    });
+    const inertia =
+      velocity *
+      VELOCITY_MULTIPLIER;
+
+    animateMomentum(
+      wrap,
+      inertia,
+      ()=>{
+
+        snapToClosest(
+          wrap,
+          type
+        );
+      }
+    );
   }
 
-  wrap.addEventListener("pointerup", endDrag);
-  wrap.addEventListener("pointercancel", endDrag);
+  wrap.addEventListener(
+    "pointerup",
+    endDrag
+  );
 
-  wrap.addEventListener("pointerleave", () => {
-    if(dragging) endDrag();
-  });
+  wrap.addEventListener(
+    "pointercancel",
+    endDrag
+  );
 
-  wrap.addEventListener("scroll", () => {
-    updateDepth(wrap, type);
-  }, { passive:true });
+  wrap.addEventListener(
+    "pointerleave",
+    ()=>{
 
-  requestAnimationFrame(() => {
-    updateDepth(wrap, type);
+      if(dragging){
+
+        endDrag();
+      }
+    }
+  );
+
+  wrap.addEventListener(
+    "scroll",
+    ()=>{
+
+      updateDepth(wrap);
+    },
+    { passive:true }
+  );
+
+  requestAnimationFrame(()=>{
+
+    updateDepth(wrap);
   });
 }
 
 // =========================
 // MOMENTUM
 // =========================
-function animateMomentum(wrap, velocity, callback){
+function animateMomentum(
+  wrap,
+  velocity,
+  callback
+){
 
-  if(Math.abs(velocity) < MIN_VELOCITY){
+  if(
+    Math.abs(velocity)
+    < MIN_VELOCITY
+  ){
+
     callback();
     return;
   }
 
-  let current = velocity;
+  let current =
+    velocity;
 
   function frame(){
 
     wrap.scrollLeft -= current;
+
     current *= 0.94;
 
-    updateDepthByWrap(wrap);
+    updateDepth(wrap);
 
-    if(Math.abs(current) < MIN_VELOCITY){
+    if(
+      Math.abs(current)
+      < MIN_VELOCITY
+    ){
+
       callback();
       return;
     }
 
-    requestAnimationFrame(frame);
+    requestAnimationFrame(
+      frame
+    );
   }
 
-  requestAnimationFrame(frame);
+  requestAnimationFrame(
+    frame
+  );
 }
 
 // =========================
 // SNAP
 // =========================
-function snapToClosest(wrap, type){
+function snapToClosest(
+  wrap,
+  type
+){
 
-  const cards = [...wrap.querySelectorAll(".cover-card")];
+  const cards =
+    [
+      ...wrap.querySelectorAll(
+        ".cover-card"
+      )
+    ];
+
   if(!cards.length) return;
 
   const wrapCenter =
-    wrap.scrollLeft + wrap.clientWidth / 2;
+    wrap.scrollLeft +
+    wrap.clientWidth / 2;
 
-  let closestCard = null;
-  let closestDistance = Infinity;
+  let closestCard =
+    null;
 
-  cards.forEach(card => {
+  let closestDistance =
+    Infinity;
+
+  cards.forEach(card=>{
 
     const cardCenter =
-      card.offsetLeft + card.clientWidth / 2;
+      card.offsetLeft +
+      card.clientWidth / 2;
 
     const distance =
-      Math.abs(wrapCenter - cardCenter);
+      Math.abs(
+        wrapCenter - cardCenter
+      );
 
-    if(distance < closestDistance){
-      closestDistance = distance;
-      closestCard = card;
+    if(
+      distance
+      < closestDistance
+    ){
+
+      closestDistance =
+        distance;
+
+      closestCard =
+        card;
     }
   });
 
   if(!closestCard) return;
 
-  const index = Number(closestCard.dataset.index);
+  const id =
+    closestCard.dataset.id;
 
   if(type === "cap"){
-    setActiveCap(index);
-  } else {
-    setActiveSwim(index);
+
+    setActiveCap(id);
+
+  }else{
+
+    setActiveSwim(id);
   }
 
-  renderListsOnly();
+  renderRouletteOnly();
 
-  centerCard(wrap, closestCard);
+  centerCard(
+    wrap,
+    closestCard
+  );
 }
 
 // =========================
 // CENTER
 // =========================
-function centerCard(wrap, card){
+function centerCard(
+  wrap,
+  card
+){
 
   const targetLeft =
     card.offsetLeft -
-    (wrap.clientWidth / 2 - card.clientWidth / 2);
+    (
+      wrap.clientWidth / 2 -
+      card.clientWidth / 2
+    );
 
   wrap.scrollTo({
-    left: targetLeft,
-    behavior: "smooth"
+
+    left:targetLeft,
+
+    behavior:"smooth"
   });
 
-  setTimeout(() => {
-    updateDepthByWrap(wrap);
-  }, SNAP_DURATION);
+  setTimeout(()=>{
+
+    updateDepth(wrap);
+
+  },SNAP_DURATION);
 }
 
 // =========================
 // DEPTH
 // =========================
-function updateDepth(wrap, type){
+function updateDepth(
+  wrap
+){
 
   const cards =
-    [...wrap.querySelectorAll(".cover-card")];
-
-  if(!cards.length) return;
-
-  const wrapCenter =
-    wrap.scrollLeft + wrap.clientWidth / 2;
-
-  let closestIndex = 0;
-  let closestDistance = Infinity;
-
-  cards.forEach((card, index) => {
-
-    const cardCenter =
-      card.offsetLeft + card.clientWidth / 2;
-
-    const distance =
-      Math.abs(wrapCenter - cardCenter);
-
-    if(distance < closestDistance){
-      closestDistance = distance;
-      closestIndex = index;
-    }
-  });
-
-  cards.forEach((card, index) => {
-
-    const distance =
-      Math.abs(index - closestIndex);
-
-    const direction =
-      index < closestIndex ? -1 : 1;
-
-    let scale = 1;
-
-    if(distance === 0) scale = 1.16;
-    else if(distance === 1) scale = 0.9;
-    else if(distance === 2) scale = 0.76;
-    else scale = 0.62;
-
-    let blur = 0;
-
-    if(distance === 1) blur = 1.4;
-    else if(distance === 2) blur = 2.8;
-    else if(distance >= 3) blur = 4;
-
-    const rotate =
-      direction * Math.min(distance * 16, 40);
-
-    const translateZ =
-      distance === 0 ? 140 : 120 - distance * 46;
-
-    const offset =
-      direction * distance * -22;
-
-    const opacity =
-      Math.max(1 - distance * 0.18, 0.22);
-
-    card.style.transform = `
-      perspective(1400px)
-      translate3d(${offset}px,0,${translateZ}px)
-      rotateY(${rotate}deg)
-      scale(${scale})
-    `;
-
-    card.style.filter = `
-      blur(${blur}px)
-      brightness(${1 - distance * 0.08})
-    `;
-
-    card.style.opacity = opacity;
-    card.style.zIndex = 999 - distance;
-
-    card.classList.toggle("active", distance === 0);
-
-    requestAnimationFrame(() => {
-      card.classList.add("ready");
-    });
-  });
-}
-
-// =========================
-// DEPTH ONLY
-// =========================
-function updateDepthByWrap(wrap){
-
-  const cards =
-    [...wrap.querySelectorAll(".cover-card")];
+    [
+      ...wrap.querySelectorAll(
+        ".cover-card"
+      )
+    ];
 
   if(!cards.length) return;
 
   const center =
-    wrap.scrollLeft + wrap.clientWidth / 2;
+    wrap.scrollLeft +
+    wrap.clientWidth / 2;
 
-  cards.forEach(card => {
+  let closestIndex = 0;
 
-    const cardCenter =
-      card.offsetLeft + card.clientWidth / 2;
+  let closestDistance =
+    Infinity;
 
-    const distance =
-      Math.abs(center - cardCenter);
+  cards.forEach(
+    (card,index)=>{
 
-    const normalized =
-      Math.min(distance / 260, 1);
+      const cardCenter =
+        card.offsetLeft +
+        card.clientWidth / 2;
 
-    const scale = 1.12 - normalized * 0.42;
+      const distance =
+        Math.abs(
+          center - cardCenter
+        );
 
-    const rotate =
-      (cardCenter < center ? 1 : -1) *
-      normalized * 34;
+      if(
+        distance
+        < closestDistance
+      ){
 
-    const translateZ = 120 - normalized * 160;
+        closestDistance =
+          distance;
 
-    const blur = normalized * 2.8;
+        closestIndex =
+          index;
+      }
+    }
+  );
 
-    const opacity = 1 - normalized * 0.62;
+  cards.forEach(
+    (card,index)=>{
 
-    card.style.transform = `
-      perspective(1200px)
-      translateZ(${translateZ}px)
-      rotateY(${rotate}deg)
-      scale(${scale})
-    `;
+      const distance =
+        Math.abs(
+          index - closestIndex
+        );
 
-    card.style.filter = `
-      blur(${blur}px)
-      brightness(${1 - normalized * 0.12})
-    `;
+      const direction =
+        index < closestIndex
+          ? -1
+          : 1;
 
-    card.style.opacity = opacity;
+      let scale = 1;
 
-    card.style.zIndex =
-      Math.floor(100 - distance);
-  });
+      if(distance === 0){
+
+        scale = 1.16;
+
+      }else if(distance === 1){
+
+        scale = 0.9;
+
+      }else if(distance === 2){
+
+        scale = 0.76;
+
+      }else{
+
+        scale = 0.62;
+      }
+
+      let blur = 0;
+
+      if(distance === 1){
+
+        blur = 1.4;
+
+      }else if(distance === 2){
+
+        blur = 2.8;
+
+      }else if(distance >= 3){
+
+        blur = 4;
+      }
+
+      const rotate =
+        direction *
+        Math.min(
+          distance * 16,
+          40
+        );
+
+      const translateZ =
+        distance === 0
+          ? 140
+          : 120 - distance * 46;
+
+      const offset =
+        direction *
+        distance *
+        -22;
+
+      const opacity =
+        Math.max(
+          1 - distance * 0.18,
+          0.22
+        );
+
+      card.style.transform = `
+
+        perspective(1400px)
+        translate3d(
+          ${offset}px,
+          0,
+          ${translateZ}px
+        )
+        rotateY(${rotate}deg)
+        scale(${scale})
+
+      `;
+
+      card.style.filter = `
+
+        blur(${blur}px)
+        brightness(${1 - distance * 0.08})
+
+      `;
+
+      card.style.opacity =
+        opacity;
+
+      card.style.zIndex =
+        999 - distance;
+
+      card.classList.toggle(
+        "active",
+        distance === 0
+      );
+
+      requestAnimationFrame(()=>{
+
+        card.classList.add(
+          "ready"
+        );
+      });
+    }
+  );
 }
