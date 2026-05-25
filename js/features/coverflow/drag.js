@@ -4,7 +4,8 @@ import {
 } from "../../state/actions.js";
 
 import {
-  renderRouletteOnly
+  renderRouletteOnly,
+  renderListsOnly
 } from "../../ui/render.js";
 
 // =========================
@@ -318,6 +319,8 @@ function snapToClosest(
   }
 
   renderRouletteOnly();
+
+  renderListsOnly();
 
   centerCard(
     wrap,
