@@ -19,15 +19,15 @@ window.addEventListener(
       await controller.boot();
 
       hideSplash();
-    }
-    catch(err){
+
+    }catch(err){
 
       console.error(
         "APP INIT ERROR",
         err
       );
 
-      forceStart();
+      forceStart(err);
     }
   }
 );
@@ -89,7 +89,7 @@ function hideSplash(){
 // =========================
 // FORCE START
 // =========================
-function forceStart(){
+function forceStart(err){
 
   const splash =
     document.getElementById(
@@ -108,14 +108,32 @@ function forceStart(){
 
   if(app){
 
-    app.innerHTML =
-      `
-      <div style="
+    app.innerHTML = `
+
+    <div
+      style="
         padding:40px;
         text-align:center;
-      ">
+      "
+    >
+
+      <h2>
         앱 시작 오류
-      </div>
-      `;
+      </h2>
+
+      <pre
+        style="
+          margin-top:20px;
+          white-space:pre-wrap;
+          font-size:12px;
+          opacity:0.7;
+        "
+      >
+${err}
+      </pre>
+
+    </div>
+
+    `;
   }
 }
