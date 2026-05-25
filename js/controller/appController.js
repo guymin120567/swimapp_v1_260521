@@ -1,26 +1,14 @@
 import {
-  renderLayout
-} from "../ui/renderLayout.js";
+  initController
+} from "../core/controller.js";
 
-import {
-  renderRoulette
-} from "../features/roulette/renderRoulette.js";
+// =========================
+// START
+// =========================
+export async function startApp(){
 
-import {
-  renderLists
-} from "../features/lists/renderLists.js";
+  const controller =
+    initController();
 
-import {
-  initTabs
-} from "../ui/tabs.js";
-
-export function startApp(){
-
-  renderLayout();
-
-  renderRoulette();
-
-  renderLists();
-
-  initTabs();
+  await controller.boot();
 }
