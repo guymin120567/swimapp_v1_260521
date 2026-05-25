@@ -1,4 +1,5 @@
 :root{
+
   --bg1:#dff6ff;
   --bg2:#c7ecff;
 
@@ -23,11 +24,13 @@
 
 html,
 body{
+
   width:100%;
   min-height:100%;
 }
 
 body{
+
   margin:0;
   padding:0;
 
@@ -58,6 +61,7 @@ img{
 button,
 input,
 select{
+
   font:inherit;
 }
 
@@ -77,6 +81,7 @@ select{
 }
 
 .container{
+
   width:100%;
   max-width:760px;
 
@@ -91,6 +96,7 @@ select{
 }
 
 .section-title{
+
   font-size:22px;
   font-weight:800;
 
@@ -98,10 +104,92 @@ select{
 }
 
 /* =========================
+   TAB
+========================= */
+
+.tab-bar{
+
+  position:sticky;
+
+  top:0;
+
+  z-index:100;
+
+  display:flex;
+
+  gap:10px;
+
+  margin-bottom:22px;
+
+  padding:8px 0;
+
+  backdrop-filter:
+    blur(12px);
+}
+
+.tab-btn{
+
+  flex:1;
+
+  border:none;
+
+  border-radius:16px;
+
+  padding:14px;
+
+  background:
+    rgba(255,255,255,.58);
+
+  color:var(--text);
+
+  font-size:15px;
+
+  font-weight:700;
+
+  cursor:pointer;
+
+  box-shadow:
+    0 6px 18px rgba(80,140,180,.08);
+
+  transition:
+    transform .2s ease,
+    background .2s ease,
+    color .2s ease;
+}
+
+.tab-btn.active{
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--accent),
+      var(--accent2)
+    );
+
+  color:#174569;
+}
+
+.tab-btn:active{
+
+  transform:scale(.98);
+}
+
+.tab-page{
+
+  display:none;
+}
+
+.tab-page.active{
+
+  display:block;
+}
+
+/* =========================
    ROULETTE
 ========================= */
 
 .roulette-wrap{
+
   display:grid;
 
   grid-template-columns:
@@ -109,28 +197,34 @@ select{
 
   gap:18px;
 
-  margin-bottom:22px;
+  margin-bottom:24px;
 }
 
 .roulette-slot{
+
   display:flex;
+
   flex-direction:column;
+
   align-items:center;
 
   gap:10px;
 }
 
 .roulette-label{
+
   font-size:18px;
+
   font-weight:800;
 }
 
 .roulette-card{
+
   width:100%;
 
   max-width:220px;
 
-  aspect-ratio:1 / 1;
+  aspect-ratio:3 / 4;
 
   overflow:hidden;
 
@@ -148,16 +242,23 @@ select{
   isolation:isolate;
 }
 
+/* =========================
+   SPIN
+========================= */
+
 .spin-row{
+
   margin-bottom:34px;
 }
 
 .spin-btn{
+
   width:100%;
 
   height:58px;
 
   border:none;
+
   border-radius:22px;
 
   background:
@@ -170,6 +271,7 @@ select{
   color:#174569;
 
   font-size:17px;
+
   font-weight:800;
 
   cursor:pointer;
@@ -213,18 +315,23 @@ select{
 ========================= */
 
 .coverflow{
+
   position:relative;
 
   display:flex;
+
   align-items:center;
 
   overflow-x:auto;
+
   overflow-y:hidden;
 
   gap:0;
 
+  min-height:320px;
+
   padding:
-    14px 34px 34px;
+    18px 34px 34px;
 
   scroll-behavior:smooth;
 
@@ -236,14 +343,17 @@ select{
 }
 
 .coverflow::-webkit-scrollbar{
+
   display:none;
 }
 
 .coverflow.dragging{
+
   cursor:grabbing;
 }
 
 .cover-card{
+
   flex:0 0 auto;
 
   margin-left:-34px;
@@ -258,13 +368,8 @@ select{
   transform-style:
     preserve-3d;
 
-  backface-visibility:
-    hidden;
+  backface-visibility:hidden;
 }
-
-/* =========================
-   READY
-========================= */
 
 .cover-card.ready{
 
@@ -275,10 +380,12 @@ select{
 }
 
 .cover-card:first-child{
+
   margin-left:0;
 }
 
 .cover-card.active{
+
   z-index:999 !important;
 }
 
@@ -288,9 +395,9 @@ select{
 
   isolation:isolate;
 
-  width:170px;
+  width:180px;
 
-  aspect-ratio:1 / 1;
+  aspect-ratio:3 / 4;
 
   overflow:hidden;
 
@@ -309,10 +416,6 @@ select{
     box-shadow .32s ease;
 }
 
-/* =========================
-   ACTIVE
-========================= */
-
 .cover-card.active .card-inner{
 
   transform:
@@ -327,7 +430,8 @@ select{
    IMAGE
 ========================= */
 
-.card-image{
+.card-image,
+.item-thumb-image{
 
   position:absolute;
 
@@ -337,6 +441,8 @@ select{
   height:100%;
 
   object-fit:cover;
+
+  object-position:center;
 
   display:block;
 
@@ -365,7 +471,9 @@ select{
   height:100%;
 
   display:flex;
+
   align-items:center;
+
   justify-content:center;
 
   font-size:52px;
@@ -383,6 +491,7 @@ select{
 ========================= */
 
 .card-overlay{
+
   position:absolute;
 
   left:0;
@@ -402,7 +511,9 @@ select{
 
 .card-title,
 .roulette-name{
+
   font-size:15px;
+
   font-weight:700;
 
   color:white;
@@ -420,6 +531,7 @@ select{
 ========================= */
 
 .delete-btn{
+
   position:absolute;
 
   top:10px;
@@ -431,6 +543,7 @@ select{
   height:30px;
 
   border:none;
+
   border-radius:50%;
 
   background:
@@ -439,6 +552,7 @@ select{
   color:#174569;
 
   font-size:18px;
+
   font-weight:700;
 
   cursor:pointer;
@@ -461,10 +575,14 @@ select{
 ========================= */
 
 .input-area{
+
   display:flex;
+
   flex-direction:column;
 
   gap:12px;
+
+  margin-bottom:30px;
 }
 
 .input-area input,
@@ -475,6 +593,7 @@ select{
   height:50px;
 
   border:none;
+
   border-radius:18px;
 
   padding:0 14px;
@@ -498,13 +617,88 @@ select{
 }
 
 /* =========================
+   LIST
+========================= */
+
+.item-list{
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:14px;
+}
+
+.item-row{
+
+  display:flex;
+
+  align-items:center;
+
+  gap:14px;
+
+  padding:12px;
+
+  border-radius:22px;
+
+  background:
+    rgba(255,255,255,.68);
+
+  box-shadow:
+    0 8px 24px rgba(80,140,180,.08);
+
+  backdrop-filter:
+    blur(12px);
+}
+
+.item-thumb{
+
+  position:relative;
+
+  width:82px;
+
+  height:110px;
+
+  overflow:hidden;
+
+  border-radius:16px;
+
+  background:white;
+
+  flex-shrink:0;
+}
+
+.item-name{
+
+  flex:1;
+
+  font-size:15px;
+
+  font-weight:700;
+
+  word-break:break-word;
+}
+
+/* =========================
    EMPTY
 ========================= */
 
 .empty-card{
+
   opacity:.5;
 
   padding:20px 0;
+}
+
+.empty-records{
+
+  padding:40px 20px;
+
+  text-align:center;
+
+  opacity:0.6;
+
+  font-size:14px;
 }
 
 /* =========================
@@ -521,17 +715,16 @@ select{
 
   .roulette-wrap{
 
-    grid-template-columns:
-      1fr 1fr;
-
     gap:12px;
   }
 
   .card-inner{
-    width:145px;
+
+    width:150px;
   }
 
   .roulette-card{
+
     max-width:none;
   }
 
@@ -543,6 +736,18 @@ select{
   .spin-btn{
 
     height:54px;
+  }
+
+  .coverflow{
+
+    min-height:280px;
+  }
+
+  .item-thumb{
+
+    width:72px;
+
+    height:96px;
   }
 }
 
@@ -559,18 +764,21 @@ select{
 @keyframes shuffleAnim{
 
   0%{
+
     transform:
       rotate(-0.8deg)
       scale(.992);
   }
 
   50%{
+
     transform:
       rotate(0.8deg)
       scale(1.012);
   }
 
   100%{
+
     transform:
       rotate(0deg)
       scale(1);
@@ -581,12 +789,7 @@ select{
    WINNER
 ========================= */
 
-.winner{
-
-  animation:
-    winnerPulse .9s ease;
-}
-
+.winner,
 .winner-pulse{
 
   animation:
@@ -636,6 +839,7 @@ select{
   animation:
     confettiFall 2.4s linear forwards;
 }
+
 @keyframes confettiFall{
 
   0%{
@@ -662,6 +866,7 @@ select{
     opacity:0;
   }
 }
+
 /* =========================
    SPLASH
 ========================= */
@@ -710,7 +915,6 @@ select{
   inset:0;
 
   background:
-
     radial-gradient(
       circle at center,
       rgba(120,180,255,.18),
@@ -868,60 +1072,4 @@ select{
     transform:
       translateY(0);
   }
-}
-.tab-bar{
-
-  display:flex;
-  gap:10px;
-
-  margin-bottom:20px;
-}
-
-.tab-btn{
-
-  flex:1;
-
-  border:none;
-
-  border-radius:14px;
-
-  padding:14px;
-
-  background:#1e1e1e;
-
-  color:white;
-
-  font-size:15px;
-
-  font-weight:700;
-
-  cursor:pointer;
-
-  transition:0.2s;
-}
-
-.tab-btn.active{
-
-  background:#3b82f6;
-}
-
-.tab-page{
-
-  display:none;
-}
-
-.tab-page.active{
-
-  display:block;
-}
-
-.empty-records{
-
-  padding:40px 20px;
-
-  text-align:center;
-
-  opacity:0.6;
-
-  font-size:14px;
 }
