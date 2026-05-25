@@ -869,3 +869,59 @@ select{
       translateY(0);
   }
 }
+.tab-bar{
+
+  display:flex;
+  gap:10px;
+
+  margin-bottom:20px;
+}
+
+.tab-btn{
+
+  flex:1;
+
+  border:none;
+
+  border-radius:14px;
+
+  padding:14px;
+
+  background:#1e1e1e;
+
+  color:white;
+
+  font-size:15px;
+
+  font-weight:700;
+
+  cursor:pointer;
+
+  transition:0.2s;
+}
+
+.tab-btn.active{
+
+  background:#3b82f6;
+}
+
+.tab-page{
+
+  display:none;
+}
+
+.tab-page.active{
+
+  display:block;
+}
+
+.empty-records{
+
+  padding:40px 20px;
+
+  text-align:center;
+
+  opacity:0.6;
+
+  font-size:14px;
+}
