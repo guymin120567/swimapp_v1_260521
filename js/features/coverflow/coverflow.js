@@ -6,6 +6,10 @@ import {
   renderCoverflow
 } from "./renderCoverflow.js";
 
+import {
+  bindDrag
+} from "./drag.js";
+
 // =========================
 // REFRESH ALL
 // =========================
@@ -33,6 +37,11 @@ export function refreshCoverflow(){
     items:
       state.data.swimsuits
   });
+
+  requestAnimationFrame(()=>{
+
+    bindDrag();
+  });
 }
 
 // =========================
@@ -57,16 +66,21 @@ export function refreshSingleCoverflow(
         state.data.caps
     });
 
-    return;
+  }else{
+
+    renderCoverflow({
+
+      type:"swim",
+
+      targetId:"swimCoverflow",
+
+      items:
+        state.data.swimsuits
+    });
   }
 
-  renderCoverflow({
+  requestAnimationFrame(()=>{
 
-    type:"swim",
-
-    targetId:"swimCoverflow",
-
-    items:
-      state.data.swimsuits
+    bindDrag();
   });
 }
