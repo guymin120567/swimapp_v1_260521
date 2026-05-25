@@ -5,31 +5,17 @@ export const dom = {
   // ROOT
   app:null,
 
-  // TITLE
-  capTitle:null,
-  swimTitle:null,
+  // TAB
+  rouletteTab:null,
+  inventoryTab:null,
+  recordsTab:null,
 
-  // LIST
-  capList:null,
-  swimList:null,
-
-  // RESULT
-  capResultImage:null,
-  swimResultImage:null,
-
-  capResultPlaceholder:null,
-  swimResultPlaceholder:null,
-
-  capResultName:null,
-  swimResultName:null,
-
-  // INPUT
-  itemType:null,
-  itemText:null,
-  itemImage:null,
+  // SECTION
+  rouletteSection:null,
+  listsSection:null,
+  recordsSection:null,
 
   // BUTTON
-  addButton:null,
   spinButton:null
 };
 
@@ -38,87 +24,39 @@ export const dom = {
 // =========================
 export function cacheDOM(){
 
-  // ROOT
   dom.app =
     document.getElementById(
       "app"
     );
 
-  // TITLE
-  dom.capTitle =
+  dom.rouletteTab =
     document.getElementById(
-      "capTitle"
+      "rouletteTab"
     );
 
-  dom.swimTitle =
+  dom.inventoryTab =
     document.getElementById(
-      "swimTitle"
+      "inventoryTab"
     );
 
-  // LIST
-  dom.capList =
+  dom.recordsTab =
     document.getElementById(
-      "capList"
+      "recordsTab"
     );
 
-  dom.swimList =
+  dom.rouletteSection =
     document.getElementById(
-      "swimList"
+      "rouletteSection"
     );
 
-  // RESULT IMAGE
-  dom.capResultImage =
+  dom.listsSection =
     document.getElementById(
-      "capResultImage"
+      "listsSection"
     );
 
-  dom.swimResultImage =
+  dom.recordsSection =
     document.getElementById(
-      "swimResultImage"
-    );
-
-  // PLACEHOLDER
-  dom.capResultPlaceholder =
-    document.getElementById(
-      "capResultPlaceholder"
-    );
-
-  dom.swimResultPlaceholder =
-    document.getElementById(
-      "swimResultPlaceholder"
-    );
-
-  // NAME
-  dom.capResultName =
-    document.getElementById(
-      "capResultName"
-    );
-
-  dom.swimResultName =
-    document.getElementById(
-      "swimResultName"
-    );
-
-  // INPUT
-  dom.itemType =
-    document.getElementById(
-      "itemType"
-    );
-
-  dom.itemText =
-    document.getElementById(
-      "itemText"
-    );
-
-  dom.itemImage =
-    document.getElementById(
-      "itemImage"
-    );
-
-  // BUTTON
-  dom.addButton =
-    document.getElementById(
-      "addButton"
+      "recordsSection"
     );
 
   dom.spinButton =
