@@ -14,10 +14,20 @@ import {
 } from "../state/actions.js";
 
 import {
-  renderApp,
-  renderListsOnly,
-  renderRouletteOnly
-} from "../ui/render.js";
+  renderLayout
+} from "../ui/renderLayout.js";
+
+import {
+  renderLists
+} from "../features/lists/renderLists.js";
+
+import {
+  renderRoulette
+} from "../features/roulette/renderRoulette.js";
+
+import {
+  initTabs
+} from "../ui/tabs.js";
 
 import {
   initDOM
@@ -47,14 +57,8 @@ export function initController(){
 
   async function boot(){
 
-    // =========================
-    // DOM
-    // =========================
     initDOM();
 
-    // =========================
-    // LOAD
-    // =========================
     const saved =
       await loadState();
 
@@ -71,24 +75,18 @@ export function initController(){
       );
     }
 
-    // =========================
-    // NORMALIZE
-    // =========================
     normalizeState();
 
-    // =========================
-    // RENDER
-    // =========================
-    renderApp();
+    renderLayout();
 
-    // =========================
-    // EVENTS
-    // =========================
+    renderRoulette();
+
+    renderLists();
+
+    initTabs();
+
     bindGlobal();
 
-    // =========================
-    // DRAG
-    // =========================
     bindDrag();
   }
 
@@ -116,6 +114,13 @@ export function initController(){
             state.data?.swimsuits
           )
             ? state.data.swimsuits
+            : [],
+
+        records:
+          Array.isArray(
+            state.data?.records
+          )
+            ? state.data.records
             : []
       },
 
@@ -128,30 +133,17 @@ export function initController(){
           state.selection?.swimId || null
       },
 
-      history:{
-
-        caps:
-          Array.isArray(
-            state.history?.caps
-          )
-            ? state.history.caps
-            : [],
-
-        swimsuits:
-          Array.isArray(
-            state.history?.swimsuits
-          )
-            ? state.history.swimsuits
-            : []
-      },
-
       ui:{
 
-        activeCapIndex:
-          state.ui?.activeCapIndex || 0,
+        activeTab:
+          state.ui?.activeTab ||
+          "roulette",
 
-        activeSwimIndex:
-          state.ui?.activeSwimIndex || 0,
+        activeCapId:
+          state.ui?.activeCapId || null,
+
+        activeSwimId:
+          state.ui?.activeSwimId || null,
 
         isSpinning:false
       }
@@ -166,6 +158,18 @@ export function initController(){
     await saveState(
       getState()
     );
+  }
+
+  // =========================
+  // RENDER
+  // =========================
+  function rerender(){
+
+    renderRoulette();
+
+    renderLists();
+
+    bindDrag();
   }
 
   // =========================
@@ -237,8 +241,8 @@ export function initController(){
     if(type === "cap"){
 
       addCap(item);
-    }
-    else{
+
+    }else{
 
       addSwim(item);
     }
@@ -247,9 +251,7 @@ export function initController(){
 
     imageEl.value = "";
 
-    renderListsOnly();
-
-    renderRouletteOnly();
+    rerender();
 
     await persist();
   }
@@ -272,15 +274,13 @@ export function initController(){
     if(type === "cap"){
 
       removeCap(id);
-    }
-    else{
+
+    }else{
 
       removeSwim(id);
     }
 
-    renderListsOnly();
-
-    renderRouletteOnly();
+    rerender();
 
     await persist();
   }
@@ -288,21 +288,21 @@ export function initController(){
   // =========================
   // ACTIVE
   // =========================
-  function setActiveIndex(
+  function setActiveItem(
     type,
-    index
+    id
   ){
 
     if(type === "cap"){
 
-      setActiveCap(index);
-    }
-    else{
+      setActiveCap(id);
 
-      setActiveSwim(index);
+    }else{
+
+      setActiveSwim(id);
     }
 
-    renderListsOnly();
+    renderRoulette();
   }
 
   // =========================
@@ -324,7 +324,9 @@ export function initController(){
 
           await spinAll();
 
-          renderRouletteOnly();
+          renderRoulette();
+
+          await persist();
 
           return;
         }
@@ -373,13 +375,11 @@ export function initController(){
 
         if(card){
 
-          setActiveIndex(
+          setActiveItem(
 
             card.dataset.type,
 
-            Number(
-              card.dataset.index
-            )
+            card.dataset.id
           );
         }
       }
