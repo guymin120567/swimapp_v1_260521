@@ -32,6 +32,9 @@ export function renderCoverflow({
       ? state.ui.activeCapId
       : state.ui.activeSwimId;
 
+  // =========================
+  // DEFAULT
+  // =========================
   if(
     !activeId &&
     items.length
@@ -50,12 +53,36 @@ export function renderCoverflow({
     }
   }
 
+  // =========================
+  // FIND INDEX
+  // =========================
   const activeIndex =
     items.findIndex(
       item =>
         item.id === activeId
     );
 
+  // =========================
+  // EMPTY
+  // =========================
+  if(!items.length){
+
+    target.innerHTML = `
+
+    <div class="coverflow-empty">
+
+      아이템 없음
+
+    </div>
+
+    `;
+
+    return;
+  }
+
+  // =========================
+  // HTML
+  // =========================
   target.innerHTML = `
 
   <div class="coverflow-track">
@@ -79,6 +106,7 @@ export function renderCoverflow({
           "
           data-type="${type}"
           data-id="${item.id}"
+          data-index="${index}"
           style="
             transform:
               translateX(${distance * 90}px)
