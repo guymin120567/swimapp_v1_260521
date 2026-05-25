@@ -3,8 +3,8 @@ import {
 } from "../../state/state.js";
 
 import {
-  renderCoverflow
-} from "../coverflow/renderCoverflow.js";
+  refreshCoverflow
+} from "../coverflow/coverflow.js";
 
 // =========================
 // RENDER
@@ -151,21 +151,5 @@ export function renderRoulette(){
 
   `;
 
-  renderCoverflow({
-
-    type: "cap",
-
-    targetId: "capCoverflow",
-
-    items: state.data.caps
-  });
-
-  renderCoverflow({
-
-    type: "swim",
-
-    targetId: "swimCoverflow",
-
-    items: state.data.swimsuits
-  });
+  refreshCoverflow();
 }
