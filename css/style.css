@@ -1073,3 +1073,33 @@ select{
       translateY(0);
   }
 }
+
+/* =========================
+   COVERFLOW SECTION
+========================= */
+
+.coverflow-section{
+
+  margin-bottom:42px;
+}
+
+.coverflow-title{
+
+  margin-bottom:14px;
+
+  padding-left:6px;
+
+  font-size:18px;
+
+  font-weight:800;
+}
+
+.coverflow{
+
+  scroll-snap-type:x mandatory;
+}
+
+.cover-card{
+
+  scroll-snap-align:center;
+}
