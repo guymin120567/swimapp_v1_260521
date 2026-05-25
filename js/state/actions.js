@@ -5,35 +5,65 @@ import {
 // =========================
 // ADD
 // =========================
-export function addCap(item){
+export function addCap(
+  item
+){
 
-  getState()
-    .data
-    .caps
-    .push(item);
+  const state =
+    getState();
+
+  state.data.caps.push(
+    item
+  );
+
+  // 최초 active 지정
+  if(
+    !state.ui.activeCapId
+  ){
+
+    state.ui.activeCapId =
+      item.id;
+  }
 }
 
-export function addSwim(item){
+export function addSwim(
+  item
+){
 
-  getState()
-    .data
-    .swimsuits
-    .push(item);
+  const state =
+    getState();
+
+  state.data.swimsuits.push(
+    item
+  );
+
+  // 최초 active 지정
+  if(
+    !state.ui.activeSwimId
+  ){
+
+    state.ui.activeSwimId =
+      item.id;
+  }
 }
 
 // =========================
 // REMOVE
 // =========================
-export function removeCap(id){
+export function removeCap(
+  id
+){
 
   const state =
     getState();
 
   state.data.caps =
     state.data.caps.filter(
-      item => item.id !== id
+      item =>
+        item.id !== id
     );
 
+  // 선택 제거
   if(
     state.selection.capId === id
   ){
@@ -42,26 +72,31 @@ export function removeCap(id){
       null;
   }
 
+  // active 제거
   if(
     state.ui.activeCapId === id
   ){
 
     state.ui.activeCapId =
-      state.data.caps[0]?.id ||
-      null;
+      state.data.caps[0]?.id
+      || null;
   }
 }
 
-export function removeSwim(id){
+export function removeSwim(
+  id
+){
 
   const state =
     getState();
 
   state.data.swimsuits =
     state.data.swimsuits.filter(
-      item => item.id !== id
+      item =>
+        item.id !== id
     );
 
+  // 선택 제거
   if(
     state.selection.swimId === id
   ){
@@ -70,27 +105,32 @@ export function removeSwim(id){
       null;
   }
 
+  // active 제거
   if(
     state.ui.activeSwimId === id
   ){
 
     state.ui.activeSwimId =
-      state.data.swimsuits[0]?.id ||
-      null;
+      state.data.swimsuits[0]?.id
+      || null;
   }
 }
 
 // =========================
 // SELECT
 // =========================
-export function setSelectedCap(id){
+export function setSelectedCap(
+  id
+){
 
   getState()
     .selection
     .capId = id;
 }
 
-export function setSelectedSwim(id){
+export function setSelectedSwim(
+  id
+){
 
   getState()
     .selection
@@ -100,16 +140,24 @@ export function setSelectedSwim(id){
 // =========================
 // ACTIVE
 // =========================
-export function setActiveCap(id){
+export function setActiveCap(
+  id
+){
 
-  getState()
-    .ui
-    .activeCapId = id;
+  const state =
+    getState();
+
+  state.ui.activeCapId =
+    id;
 }
 
-export function setActiveSwim(id){
+export function setActiveSwim(
+  id
+){
 
-  getState()
-    .ui
-    .activeSwimId = id;
+  const state =
+    getState();
+
+  state.ui.activeSwimId =
+    id;
 }
