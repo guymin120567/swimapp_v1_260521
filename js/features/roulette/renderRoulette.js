@@ -6,6 +6,9 @@ import {
   renderCoverflow
 } from "../coverflow/renderCoverflow.js";
 
+// =========================
+// RENDER
+// =========================
 export function renderRoulette(){
 
   const target =
@@ -19,10 +22,18 @@ export function renderRoulette(){
     getState();
 
   const cap =
-    state.selection.cap;
+    state.data.caps.find(
+      item =>
+        item.id ===
+        state.selection.capId
+    );
 
   const swim =
-    state.selection.swim;
+    state.data.swimsuits.find(
+      item =>
+        item.id ===
+        state.selection.swimId
+    );
 
   target.innerHTML = `
 
@@ -42,6 +53,7 @@ export function renderRoulette(){
           <img
             src="${cap.image}"
             class="card-image"
+            draggable="false"
           />
           `
           : `
@@ -54,7 +66,9 @@ export function renderRoulette(){
         <div class="card-overlay">
 
           <div class="roulette-name">
-            ${cap?.name || "없음"}
+            ${
+              cap?.name || "없음"
+            }
           </div>
 
         </div>
@@ -77,6 +91,7 @@ export function renderRoulette(){
           <img
             src="${swim.image}"
             class="card-image"
+            draggable="false"
           />
           `
           : `
@@ -89,7 +104,9 @@ export function renderRoulette(){
         <div class="card-overlay">
 
           <div class="roulette-name">
-            ${swim?.name || "없음"}
+            ${
+              swim?.name || "없음"
+            }
           </div>
 
         </div>
@@ -105,6 +122,7 @@ export function renderRoulette(){
     <button
       id="spinButton"
       class="spin-btn"
+      data-action="spin"
     >
       오늘의 코디 뽑기
     </button>
@@ -134,14 +152,20 @@ export function renderRoulette(){
   `;
 
   renderCoverflow({
+
     type: "cap",
+
     targetId: "capCoverflow",
+
     items: state.data.caps
   });
 
   renderCoverflow({
+
     type: "swim",
+
     targetId: "swimCoverflow",
-    items: state.data.swims
+
+    items: state.data.swimsuits
   });
 }
