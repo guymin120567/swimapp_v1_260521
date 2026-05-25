@@ -1,6 +1,6 @@
 import {
-  initController
-} from "./core/controller.js";
+  startApp
+} from "./controller/appController.js";
 
 // =========================
 // APP
@@ -13,10 +13,7 @@ window.addEventListener(
 
       showSplash();
 
-      const controller =
-        initController();
-
-      await controller.boot();
+      await startApp();
 
       hideSplash();
 
