@@ -1,9 +1,15 @@
 import {
-  getState,
-  setActiveCap,
-  setActiveSwim
+  getState
 } from "../../state/state.js";
 
+import {
+  setActiveCap,
+  setActiveSwim
+} from "../../state/actions.js";
+
+// =========================
+// RENDER
+// =========================
 export function renderCoverflow({
 
   type,
@@ -46,7 +52,7 @@ export function renderCoverflow({
 
   const activeIndex =
     items.findIndex(
-      (item)=>
+      item =>
         item.id === activeId
     );
 
@@ -64,13 +70,14 @@ export function renderCoverflow({
 
         <div
           class="
-            coverflow-card
+            cover-card
             ${
               distance === 0
                 ? "active"
                 : ""
             }
           "
+          data-type="${type}"
           data-id="${item.id}"
           style="
             transform:
@@ -78,13 +85,15 @@ export function renderCoverflow({
               scale(${distance === 0 ? 1 : 0.8})
               rotateY(${distance * -15}deg);
 
-            z-index:${999 - Math.abs(distance)};
+            z-index:
+              ${999 - Math.abs(distance)};
 
-            opacity:${
-              Math.abs(distance) > 4
-                ? 0
-                : 1 - Math.abs(distance) * 0.15
-            };
+            opacity:
+              ${
+                Math.abs(distance) > 4
+                  ? 0
+                  : 1 - Math.abs(distance) * 0.15
+              };
           "
         >
 
@@ -113,35 +122,4 @@ export function renderCoverflow({
   </div>
 
   `;
-
-  target
-    .querySelectorAll(
-      ".coverflow-card"
-    )
-    .forEach((card)=>{
-
-      card.addEventListener(
-        "click",
-        ()=>{
-
-          const id =
-            card.dataset.id;
-
-          if(type === "cap"){
-
-            setActiveCap(id);
-
-          }else{
-
-            setActiveSwim(id);
-          }
-
-          renderCoverflow({
-            type,
-            targetId,
-            items
-          });
-        }
-      );
-    });
 }
