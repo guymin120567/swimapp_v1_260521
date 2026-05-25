@@ -2,11 +2,6 @@ import {
   getState
 } from "../../state/state.js";
 
-import {
-  setActiveCap,
-  setActiveSwim
-} from "../../state/actions.js";
-
 // =========================
 // RENDER
 // =========================
@@ -27,10 +22,27 @@ export function renderCoverflow({
   const state =
     getState();
 
-  const activeIndex =
+  // =========================
+  // ACTIVE ID
+  // =========================
+  const activeId =
     type === "cap"
-      ? state.ui.activeCapIndex || 0
-      : state.ui.activeSwimIndex || 0;
+      ? state.ui.activeCapId
+      : state.ui.activeSwimId;
+
+  // =========================
+  // ACTIVE INDEX
+  // =========================
+  let activeIndex =
+    items.findIndex(
+      item =>
+        item.id === activeId
+    );
+
+  if(activeIndex < 0){
+
+    activeIndex = 0;
+  }
 
   // =========================
   // EMPTY
