@@ -2,6 +2,10 @@ import {
   getState
 } from "../../state/state.js";
 
+import {
+  renderCoverflow
+} from "../coverflow/renderCoverflow.js";
+
 export function renderRoulette(){
 
   const target =
@@ -38,7 +42,6 @@ export function renderRoulette(){
           <img
             src="${cap.image}"
             class="card-image"
-            draggable="false"
           />
           `
           : `
@@ -51,9 +54,7 @@ export function renderRoulette(){
         <div class="card-overlay">
 
           <div class="roulette-name">
-            ${
-              cap?.name || "없음"
-            }
+            ${cap?.name || "없음"}
           </div>
 
         </div>
@@ -76,7 +77,6 @@ export function renderRoulette(){
           <img
             src="${swim.image}"
             class="card-image"
-            draggable="false"
           />
           `
           : `
@@ -89,9 +89,7 @@ export function renderRoulette(){
         <div class="card-overlay">
 
           <div class="roulette-name">
-            ${
-              swim?.name || "없음"
-            }
+            ${swim?.name || "없음"}
           </div>
 
         </div>
@@ -134,4 +132,16 @@ export function renderRoulette(){
   </div>
 
   `;
+
+  renderCoverflow({
+    type: "cap",
+    targetId: "capCoverflow",
+    items: state.data.caps
+  });
+
+  renderCoverflow({
+    type: "swim",
+    targetId: "swimCoverflow",
+    items: state.data.swims
+  });
 }
