@@ -1,56 +1,47 @@
-export const defaultState = {
+const state = {
+
+  ui: {
+
+    activeTab: "roulette",
+
+    activeCapId: null,
+
+    activeSwimId: null
+  },
+
+  selection: {
+
+    cap: null,
+
+    swim: null
+  },
 
   data: {
 
     caps: [],
 
-    swimsuits: []
-  },
+    swims: [],
 
-  selection: {
-
-    capId: null,
-
-    swimId: null
-  },
-
-  history: {
-
-    caps: [],
-
-    swimsuits: []
-  },
-
-  ui: {
-
-    activeCapIndex: 0,
-
-    activeSwimIndex: 0,
-
-    isSpinning: false
+    records: []
   }
 };
 
-const state =
-  structuredClone(
-    defaultState
-  );
-
-// =========================
-// GET
-// =========================
 export function getState(){
 
   return state;
 }
 
-// =========================
-// SET
-// =========================
-export function setState(newState){
+export function setActiveTab(tab){
 
-  Object.assign(
-    state,
-    newState
-  );
+  state.ui.activeTab = tab;
+}
+
+export function setActiveCap(id){
+
+  state.ui.activeCapId = id;
+}
+
+export function setActiveSwim(id){
+
+  state.ui.activeSwimId = id;
 }
