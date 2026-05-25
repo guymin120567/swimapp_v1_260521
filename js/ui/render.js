@@ -4,60 +4,30 @@ import {
 
 import {
   renderRoulette
-} from "./renderRoulette.js";
+} from "../features/roulette/renderRoulette.js";
 
 import {
   renderLists
-} from "./renderCoverflow.js";
+} from "../features/lists/renderLists.js";
 
 // =========================
 // FULL
 // =========================
-export function renderApp() {
+export function renderApp(){
 
-  try {
+  renderLayout();
 
-    renderLayout();
-  }
-  catch (err) {
+  renderRoulette();
 
-    console.error(
-      "LAYOUT ERROR",
-      err
-    );
-  }
-
-  try {
-
-    renderRoulette();
-  }
-  catch (err) {
-
-    console.error(
-      "ROULETTE ERROR",
-      err
-    );
-  }
-
-  try {
-
-    renderLists();
-  }
-  catch (err) {
-
-    console.error(
-      "LIST ERROR",
-      err
-    );
-  }
+  renderLists();
 }
 
 // =========================
 // ROULETTE ONLY
 // =========================
-export function renderRouletteOnly() {
+export function renderRouletteOnly(){
 
-  requestAnimationFrame(() => {
+  requestAnimationFrame(()=>{
 
     renderRoulette();
   });
@@ -66,9 +36,9 @@ export function renderRouletteOnly() {
 // =========================
 // LIST ONLY
 // =========================
-export function renderListsOnly() {
+export function renderListsOnly(){
 
-  requestAnimationFrame(() => {
+  requestAnimationFrame(()=>{
 
     renderLists();
   });
