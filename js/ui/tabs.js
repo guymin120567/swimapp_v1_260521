@@ -1,3 +1,8 @@
+import {
+  getState,
+  setActiveTab
+} from "../state/state.js";
+
 export function initTabs(){
 
   const buttons =
@@ -10,6 +15,9 @@ export function initTabs(){
       ".tab-page"
     );
 
+  const state =
+    getState();
+
   buttons.forEach((button)=>{
 
     button.addEventListener(
@@ -18,6 +26,8 @@ export function initTabs(){
 
         const tab =
           button.dataset.tab;
+
+        setActiveTab(tab);
 
         buttons.forEach((btn)=>{
 
@@ -51,4 +61,14 @@ export function initTabs(){
       }
     );
   });
+
+  const initialButton =
+    document.querySelector(
+      `.tab-btn[data-tab="${state.ui.activeTab}"]`
+    );
+
+  if(initialButton){
+
+    initialButton.click();
+  }
 }
