@@ -4,7 +4,9 @@ import {
 
 import {
   setSelectedCap,
-  setSelectedSwim
+  setSelectedSwim,
+  setActiveCap,
+  setActiveSwim
 } from "../../state/actions.js";
 
 // =========================
@@ -48,6 +50,17 @@ export async function spinAll(){
   );
 
   setSelectedSwim(
+    swim?.id || null
+  );
+
+  // =========================
+  // ACTIVE SYNC
+  // =========================
+  setActiveCap(
+    cap?.id || null
+  );
+
+  setActiveSwim(
     swim?.id || null
   );
 
