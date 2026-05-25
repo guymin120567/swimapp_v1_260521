@@ -34,15 +34,21 @@ export function removeCap(id){
       item => item.id !== id
     );
 
-  state.history.caps =
-    state.history.caps.filter(
-      itemId => itemId !== id
-    );
-
   if(
     state.selection.capId === id
   ){
-    state.selection.capId = null;
+
+    state.selection.capId =
+      null;
+  }
+
+  if(
+    state.ui.activeCapId === id
+  ){
+
+    state.ui.activeCapId =
+      state.data.caps[0]?.id ||
+      null;
   }
 }
 
@@ -56,15 +62,21 @@ export function removeSwim(id){
       item => item.id !== id
     );
 
-  state.history.swimsuits =
-    state.history.swimsuits.filter(
-      itemId => itemId !== id
-    );
-
   if(
     state.selection.swimId === id
   ){
-    state.selection.swimId = null;
+
+    state.selection.swimId =
+      null;
+  }
+
+  if(
+    state.ui.activeSwimId === id
+  ){
+
+    state.ui.activeSwimId =
+      state.data.swimsuits[0]?.id ||
+      null;
   }
 }
 
@@ -88,16 +100,16 @@ export function setSelectedSwim(id){
 // =========================
 // ACTIVE
 // =========================
-export function setActiveCap(index){
+export function setActiveCap(id){
 
   getState()
     .ui
-    .activeCapIndex = index;
+    .activeCapId = id;
 }
 
-export function setActiveSwim(index){
+export function setActiveSwim(id){
 
   getState()
     .ui
-    .activeSwimIndex = index;
+    .activeSwimId = id;
 }
