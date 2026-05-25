@@ -1,4 +1,20 @@
-const state = {
+export const defaultState = {
+
+  data: {
+
+    caps: [],
+
+    swimsuits: [],
+
+    records: []
+  },
+
+  selection: {
+
+    capId: null,
+
+    swimId: null
+  },
 
   ui: {
 
@@ -6,42 +22,52 @@ const state = {
 
     activeCapId: null,
 
-    activeSwimId: null
-  },
+    activeSwimId: null,
 
-  selection: {
-
-    cap: null,
-
-    swim: null
-  },
-
-  data: {
-
-    caps: [],
-
-    swims: [],
-
-    records: []
+    isSpinning: false
   }
 };
 
+let state =
+  structuredClone(
+    defaultState
+  );
+
+// =========================
+// GET
+// =========================
 export function getState(){
 
   return state;
 }
 
+// =========================
+// SET
+// =========================
+export function setState(newState){
+
+  state = {
+
+    ...state,
+
+    ...newState
+  };
+}
+
+// =========================
+// UI
+// =========================
 export function setActiveTab(tab){
 
   state.ui.activeTab = tab;
 }
 
-export function setActiveCap(id){
+export function setActiveCapId(id){
 
   state.ui.activeCapId = id;
 }
 
-export function setActiveSwim(id){
+export function setActiveSwimId(id){
 
   state.ui.activeSwimId = id;
 }
